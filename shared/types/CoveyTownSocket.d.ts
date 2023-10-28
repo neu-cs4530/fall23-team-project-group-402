@@ -154,6 +154,8 @@ export interface GameArea<T extends GameState> extends Interactable {
 
 export type CommandID = string;
 
+export type VehicleType = 'skateboard' | 'bike' | 'horse'
+
 /**
  * Base type for a command that can be sent to an interactable.
  * This type is used only by the client/server interface, which decorates
