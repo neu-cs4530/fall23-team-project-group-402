@@ -15,15 +15,30 @@ import GameAreaController from './GameAreaController';
 import TicTacToeAreaController, { NO_GAME_IN_PROGRESS_ERROR } from './TicTacToeAreaController';
 
 describe('[T1] TicTacToeAreaController', () => {
-  const ourPlayer = new PlayerController(nanoid(), nanoid(), {
-    x: 0,
-    y: 0,
-    moving: false,
-    rotation: 'front',
-  });
+  const ourPlayer = new PlayerController(
+    nanoid(),
+    nanoid(),
+    {
+      x: 0,
+      y: 0,
+      moving: false,
+      rotation: 'front',
+    },
+    undefined,
+  );
   const otherPlayers = [
-    new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }),
-    new PlayerController(nanoid(), nanoid(), { x: 0, y: 0, moving: false, rotation: 'front' }),
+    new PlayerController(
+      nanoid(),
+      nanoid(),
+      { x: 0, y: 0, moving: false, rotation: 'front' },
+      undefined,
+    ),
+    new PlayerController(
+      nanoid(),
+      nanoid(),
+      { x: 0, y: 0, moving: false, rotation: 'front' },
+      undefined,
+    ),
   ];
 
   const mockTownController = mock<TownController>();
