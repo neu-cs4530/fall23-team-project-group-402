@@ -1,6 +1,6 @@
 import assert from 'assert';
 import Phaser from 'phaser';
-import PlayerController, { MOVEMENT_SPEED } from '../../classes/PlayerController';
+import PlayerController, { WALKING_SPEED } from '../../classes/PlayerController';
 import TownController from '../../classes/TownController';
 import { PlayerLocation } from '../../types/CoveyTownSocket';
 import { Callback } from '../VideoCall/VideoFrontend/types';
@@ -213,19 +213,19 @@ export default class TownGameScene extends Phaser.Scene {
       const primaryDirection = this.getNewMovementDirection();
       switch (primaryDirection) {
         case 'left':
-          body.setVelocityX(-MOVEMENT_SPEED);
+          body.setVelocityX(-WALKING_SPEED);
           gameObjects.sprite.anims.play('misa-left-walk', true);
           break;
         case 'right':
-          body.setVelocityX(MOVEMENT_SPEED);
+          body.setVelocityX(WALKING_SPEED);
           gameObjects.sprite.anims.play('misa-right-walk', true);
           break;
         case 'front':
-          body.setVelocityY(MOVEMENT_SPEED);
+          body.setVelocityY(WALKING_SPEED);
           gameObjects.sprite.anims.play('misa-front-walk', true);
           break;
         case 'back':
-          body.setVelocityY(-MOVEMENT_SPEED);
+          body.setVelocityY(-WALKING_SPEED);
           gameObjects.sprite.anims.play('misa-back-walk', true);
           break;
         default:
@@ -243,7 +243,7 @@ export default class TownGameScene extends Phaser.Scene {
       }
 
       // Normalize and scale the velocity so that player can't move faster along a diagonal
-      gameObjects.sprite.body.velocity.normalize().scale(MOVEMENT_SPEED);
+      gameObjects.sprite.body.velocity.normalize().scale(WALKING_SPEED);
 
       const isMoving = primaryDirection !== undefined;
       gameObjects.label.setX(body.x);
@@ -536,6 +536,7 @@ export default class TownGameScene extends Phaser.Scene {
         sprite,
         label,
         locationManagedByGameScene: false,
+        // TODO: vehcile sprite here
       };
       this._collidingLayers.forEach(layer => this.physics.add.collider(sprite, layer));
     }

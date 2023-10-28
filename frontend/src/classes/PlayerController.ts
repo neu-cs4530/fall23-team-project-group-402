@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
-import { Player as PlayerModel, PlayerLocation } from '../types/CoveyTownSocket';
-export const MOVEMENT_SPEED = 175;
+import { Player as PlayerModel, PlayerLocation, Vehicle } from '../types/CoveyTownSocket';
+export const WALKING_SPEED = 175;
 
 export type PlayerEvents = {
   movement: (newLocation: PlayerLocation) => void;
@@ -11,6 +11,7 @@ export type PlayerGameObjects = {
   sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   label: Phaser.GameObjects.Text;
   locationManagedByGameScene: boolean /* For the local player, the game scene will calculate the current location, and we should NOT apply updates when we receive events */;
+  // vehicleSprite: SomeType TODO: add vehicle sprite here once we get to that
 };
 export default class PlayerController extends (EventEmitter as new () => TypedEmitter<PlayerEvents>) {
   private _location: PlayerLocation;
@@ -19,13 +20,21 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   private readonly _userName: string;
 
+  private readonly _vehicle: Vehicle | undefined;
+
   public gameObjects?: PlayerGameObjects;
 
-  constructor(id: string, userName: string, location: PlayerLocation) {
+  constructor(
+    id: string,
+    userName: string,
+    location: PlayerLocation,
+    vehicle: Vehicle | undefined,
+  ) {
     super();
     this._id = id;
     this._userName = userName;
     this._location = location;
+    this._vehicle = vehicle;
   }
 
   set location(newLocation: PlayerLocation) {
@@ -46,8 +55,12 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     return this._id;
   }
 
+  get vehicle(): Vehicle | undefined {
+    return this._vehicle;
+  }
+
   toPlayerModel(): PlayerModel {
-    return { id: this.id, userName: this.userName, location: this.location };
+    return { id: this.id, userName: this.userName, location: this.location, vehicle: this.vehicle };
   }
 
   private _updateGameComponentLocation() {
@@ -57,19 +70,23 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
       sprite.setX(this.location.x);
       sprite.setY(this.location.y);
       if (this.location.moving) {
+        const movementSpeed = this.vehicle
+          ? WALKING_SPEED * this.vehicle.speedMultiplier
+          : WALKING_SPEED;
+
         sprite.anims.play(`misa-${this.location.rotation}-walk`, true);
         switch (this.location.rotation) {
           case 'front':
-            sprite.body.setVelocity(0, MOVEMENT_SPEED);
+            sprite.body.setVelocity(0, movementSpeed);
             break;
           case 'right':
-            sprite.body.setVelocity(MOVEMENT_SPEED, 0);
+            sprite.body.setVelocity(movementSpeed, 0);
             break;
           case 'back':
-            sprite.body.setVelocity(0, -MOVEMENT_SPEED);
+            sprite.body.setVelocity(0, -movementSpeed);
             break;
           case 'left':
-            sprite.body.setVelocity(-MOVEMENT_SPEED, 0);
+            sprite.body.setVelocity(-movementSpeed, 0);
             break;
         }
         sprite.body.velocity.normalize().scale(175);
@@ -84,6 +101,11 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
   }
 
   static fromPlayerModel(modelPlayer: PlayerModel): PlayerController {
-    return new PlayerController(modelPlayer.id, modelPlayer.userName, modelPlayer.location);
+    return new PlayerController(
+      modelPlayer.id,
+      modelPlayer.userName,
+      modelPlayer.location,
+      modelPlayer.vehicle,
+    );
   }
 }

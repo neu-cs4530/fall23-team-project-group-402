@@ -58,7 +58,7 @@ export interface Player {
   id: PlayerID;
   userName: string;
   location: PlayerLocation;
-  vehicle: Vehicle? // undefined if no vehicle equipped
+  vehicle: Vehicle | undefined // undefined if no vehicle equipped
 };
 
 export type XY = { x: number, y: number };
