@@ -32,10 +32,33 @@ export type TownSettingsUpdate = {
 export type Direction = 'front' | 'back' | 'left' | 'right';
 
 export type PlayerID = string;
+
+export type VehicleType = 'skateboard' | 'bike' | 'horse'
+
+export abstract class Vehicle {
+  private _speedMultiplier: number;
+
+  private _vehicleType: VehicleType;
+
+  constructor(speedMultiplier: number, vehicleType: VehicleType) {
+    this._speedMultiplier = speedMultiplier;
+    this._vehicleType = vehicleType;
+  }
+
+  public get speedMultiplier(): number {
+    return this._speedMultiplier;
+  }
+
+  public get vehicleType(): VehicleType {
+    return this._vehicleType;
+  }
+}
+
 export interface Player {
   id: PlayerID;
   userName: string;
   location: PlayerLocation;
+  vehicle: Vehicle? // undefined if no vehicle equipped
 };
 
 export type XY = { x: number, y: number };
@@ -153,8 +176,6 @@ export interface GameArea<T extends GameState> extends Interactable {
 }
 
 export type CommandID = string;
-
-export type VehicleType = 'skateboard' | 'bike' | 'horse'
 
 /**
  * Base type for a command that can be sent to an interactable.
