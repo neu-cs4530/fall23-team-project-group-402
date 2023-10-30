@@ -536,7 +536,7 @@ export default class TownGameScene extends Phaser.Scene {
         sprite,
         label,
         locationManagedByGameScene: false,
-        // TODO: vehcile sprite here
+        // TODO: vehicle sprite here
       };
       this._collidingLayers.forEach(layer => this.physics.add.collider(sprite, layer));
     }
