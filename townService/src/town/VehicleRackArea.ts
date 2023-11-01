@@ -35,11 +35,11 @@ export default class VehicleRackArea extends InteractableArea {
 	@param vehicle - vehicle to be added to player - Yet to be added.
 	@throws new InvalidParametersError if player is not in the game
 	*/
-  public addVehicle(player: Player, vehicle: Vehicle) {
+  public equipVehicle(player: Player, vehicle: Vehicle) {
     if (!player) {
       throw new Error('Invalid player');
     }
-    // player.addVehicle(vehicle)
+    player.equipVehicle(vehicle);
     this._emitAreaChanged(); // Do we add this?
   }
 
@@ -49,17 +49,14 @@ export default class VehicleRackArea extends InteractableArea {
    * @throws new InvalidParametersError if player is not in the game
    * @throws new InvalidParametersError if player does not have vehicle
    */
-  public removeVehicle(player: Player) {
+  public unequipVehicle(player: Player) {
     if (!player) {
       throw new Error('Invalid player');
     }
-    // Will player have vehicle attribute?
-    /*
     if (player.vehicle === undefined) {
       throw new Error('Player does not have a vehicle');
     }
-    */
-    // player.removeVehicle(vehicle)
+    player.unequipVehicle();
     this._emitAreaChanged(); // Do we add this?
   }
 
@@ -69,11 +66,11 @@ export default class VehicleRackArea extends InteractableArea {
   ): InteractableCommandReturnType<CommandType> {
     if (command.type === 'EquipVehicle') {
       const equipVehicle = command as EquipVehicleCommand;
-      this.addVehicle(player, equipVehicle.vehicle);
+      this.equipVehicle(player, equipVehicle.vehicle);
       return {} as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'UnequipVehicle') {
-      this.removeVehicle(player);
+      this.unequipVehicle(player);
     }
 
     throw new InvalidParametersError('Unknown command type');
