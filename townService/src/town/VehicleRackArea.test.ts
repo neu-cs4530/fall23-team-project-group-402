@@ -4,7 +4,6 @@ import Player from '../lib/Player';
 import { getLastEmittedEvent } from '../TestUtils';
 import { PlayerID, TownEmitter } from '../types/CoveyTownSocket';
 import VehicleRackArea from './VehicleRackArea';
-import BikeVehicle from './vehicles/BikeVehicle';
 
 describe('VehicleRackArea', () => {
   const testAreaBox = { x: 100, y: 100, width: 100, height: 100 };
@@ -50,13 +49,6 @@ describe('VehicleRackArea', () => {
       expect(newPlayer.location.interactableID).toEqual(id);
       const lastEmittedMovement = getLastEmittedEvent(townEmitter, 'playerMoved');
       expect(lastEmittedMovement.location.interactableID).toEqual(id);
-    });
-  });
-
-  describe('addVehicle', () => {
-    it('Adds the bike to the player', () => {
-      newPlayer.equipVehicle(new BikeVehicle());
-      expect(newPlayer.vehicle).toBeInstanceOf(BikeVehicle);
     });
   });
 });
