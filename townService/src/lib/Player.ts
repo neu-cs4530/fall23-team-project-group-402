@@ -72,7 +72,7 @@ export default class Player {
   public equipVehicle(vehicle: Vehicle): void {}
 
   // TODO: SWE-17: Impelemnt and test
-  public unEquipVehicle(): void {}
+  public unequipVehicle(): void {}
 
   toPlayerModel(): PlayerModel {
     return {
