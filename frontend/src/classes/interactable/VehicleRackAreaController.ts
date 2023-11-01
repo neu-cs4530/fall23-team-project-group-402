@@ -32,8 +32,7 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
     return this.occupants.length > 0;
   }
 
-  // May need to get rid of this
-  protected _updateFrom(newModel: VehicleRackAreaModel): void {
+  protected _updateFrom(): void {
     // Do I need this?
   }
 
