@@ -9,7 +9,6 @@ import {
   TownEmitter,
   VehicleRackArea as VehicleRackAreaModel,
   EquipVehicleCommand,
-  UnequipVehicleCommand,
   Vehicle,
 } from '../types/CoveyTownSocket';
 import InteractableArea from './InteractableArea';
