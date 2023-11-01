@@ -37,6 +37,9 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
     // Do I need this?
   }
 
+  /**
+   * Set vehicle to undefined when selecting no vehicle
+   */
   set vehicle(vehicle: Vehicle | undefined) {
     // May need to change
     if (this._vehicle !== vehicle) {
@@ -45,6 +48,10 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
     this.vehicle = vehicle;
   }
 
+  /**
+   * Get vehicle will return undefined when there is no vehicle selected
+   * OR when the player selects the no vehicle option
+   */
   get vehicle(): Vehicle | undefined {
     return this._vehicle;
   }
