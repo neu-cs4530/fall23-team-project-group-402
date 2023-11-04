@@ -1,4 +1,4 @@
-import { Vehicle } from '../../types/CoveyTownSocket';
+import Vehicle from './Vehicle';
 
 export default class BikeVehicle extends Vehicle {
   public constructor() {

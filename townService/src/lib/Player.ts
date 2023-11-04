@@ -3,9 +3,9 @@ import {
   Player as PlayerModel,
   PlayerLocation,
   TownEmitter,
-  Vehicle,
   VehicleType,
 } from '../types/CoveyTownSocket';
+import Vehicle from '../town/vehicles/Vehicle';
 import BikeVehicle from '../town/vehicles/BikeVehicle';
 import HorseVehicle from '../town/vehicles/HorseVehicle';
 import SkateboardVehicle from '../town/vehicles/SkateboardVehicle';
@@ -93,7 +93,7 @@ export default class Player {
       id: this._id,
       location: this.location,
       userName: this._userName,
-      vehicle: this._vehicle,
+      vehicle: this._vehicle?.toVehicleModel(),
     };
   }
 }
