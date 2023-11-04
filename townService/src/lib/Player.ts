@@ -72,7 +72,6 @@ export default class Player {
     return this._vehicle;
   }
 
-  // TODO: SWEW-17: Implement and test
   public equipVehicle(type: VehicleType): void {
     if (type === 'bike') {
       this._vehicle = new BikeVehicle();
@@ -83,7 +82,6 @@ export default class Player {
     }
   }
 
-  // TODO: SWE-17: Implement and test
   public unEquipVehicle(): void {
     this._vehicle = undefined;
   }
