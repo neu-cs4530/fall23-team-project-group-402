@@ -3,8 +3,12 @@ import {
   Player as PlayerModel,
   PlayerLocation,
   TownEmitter,
-  Vehicle,
+  VehicleType,
 } from '../types/CoveyTownSocket';
+import Vehicle from '../town/vehicles/Vehicle';
+import BikeVehicle from '../town/vehicles/BikeVehicle';
+import HorseVehicle from '../town/vehicles/HorseVehicle';
+import SkateboardVehicle from '../town/vehicles/SkateboardVehicle';
 
 /**
  * Each user who is connected to a town is represented by a Player object
@@ -68,18 +72,26 @@ export default class Player {
     return this._vehicle;
   }
 
-  // TODO: SWEW-17: Implement and test
-  public equipVehicle(vehicle: Vehicle): void {}
+  public equipVehicle(type: VehicleType): void {
+    if (type === 'bike') {
+      this._vehicle = new BikeVehicle();
+    } else if (type === 'horse') {
+      this._vehicle = new HorseVehicle();
+    } else if (type === 'skateboard') {
+      this._vehicle = new SkateboardVehicle();
+    }
+  }
 
-  // TODO: SWE-17: Impelemnt and test
-  public unEquipVehicle(): void {}
+  public unEquipVehicle(): void {
+    this._vehicle = undefined;
+  }
 
   toPlayerModel(): PlayerModel {
     return {
       id: this._id,
       location: this.location,
       userName: this._userName,
-      vehicle: this._vehicle,
+      vehicle: this._vehicle?.toVehicleModel(),
     };
   }
 }
