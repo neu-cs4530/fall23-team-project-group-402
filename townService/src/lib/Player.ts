@@ -74,14 +74,14 @@ export default class Player {
 
   /**
    * Equips a new vehicle to the player.
-   * @param vehicle The vehicle that the player is trying to equip
+   * @param type The vehicle type that the player is trying to equip
    */
-  public equipVehicle(vehicle: VehicleType): void {
-    if (vehicle === 'bike') {
+  public equipVehicle(type: VehicleType): void {
+    if (type === 'bike') {
       this._vehicle = new BikeVehicle();
-    } else if (vehicle === 'horse') {
+    } else if (type === 'horse') {
       this._vehicle = new HorseVehicle();
-    } else if (vehicle === 'skateboard') {
+    } else if (type === 'skateboard') {
       this._vehicle = new SkateboardVehicle();
     }
   }
