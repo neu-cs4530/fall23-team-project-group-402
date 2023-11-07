@@ -36,6 +36,12 @@ describe('Player', () => {
       player.equipVehicle('skateboard');
       expect(player.vehicle).toEqual(new SkateboardVehicle());
     });
+    it('allow player to re-equip the same vehicle', () => {
+      player.equipVehicle('bike');
+      expect(player.vehicle).toEqual(new BikeVehicle());
+      player.equipVehicle('bike');
+      expect(player.vehicle).toEqual(new BikeVehicle());
+    });
   });
   describe('unEquipVehicle', () => {
     it('does nothing when the player does not have a vehicle equipped', () => {
