@@ -467,6 +467,51 @@ describe('Town', () => {
       });
     });
   });
+  describe('playerEquipVehicle', () => {
+    it('player should be able to equip a vehicle', async () => {
+      const newPlayer = mockPlayer(town.townID);
+      const newPlayerObj = await town.addPlayer(newPlayer.userName, newPlayer.socket);
+      expect(newPlayerObj.vehicle).toEqual(undefined);
+
+      newPlayerObj.equipVehicle('bike');
+
+      expect(newPlayerObj.vehicle).toEqual({ speedMultiplier: 2, vehicleType: 'bike' });
+    });
+    it('player should be able to replace their equipped vehicle with different vehicle', async () => {
+      const newPlayer = mockPlayer(town.townID);
+      const newPlayerObj = await town.addPlayer(newPlayer.userName, newPlayer.socket);
+      expect(newPlayerObj.vehicle).toEqual(undefined);
+      newPlayerObj.equipVehicle('horse');
+      expect(newPlayerObj.vehicle).toEqual({ speedMultiplier: 3, vehicleType: 'horse' });
+      newPlayerObj.equipVehicle('skateboard');
+      expect(newPlayerObj.vehicle).toEqual({ speedMultiplier: 1.5, vehicleType: 'skateboard' });
+    });
+    it('player should be able to replace their equipped vehicle with same vehicle', async () => {
+      const newPlayer = mockPlayer(town.townID);
+      const newPlayerObj = await town.addPlayer(newPlayer.userName, newPlayer.socket);
+      expect(newPlayerObj.vehicle).toEqual(undefined);
+      newPlayerObj.equipVehicle('horse');
+      expect(newPlayerObj.vehicle).toEqual({ speedMultiplier: 3, vehicleType: 'horse' });
+      newPlayerObj.equipVehicle('horse');
+      expect(newPlayerObj.vehicle).toEqual({ speedMultiplier: 3, vehicleType: 'horse' });
+    });
+    it('player should be able to unequip a vehicle when vehicle is equipped', async () => {
+      const newPlayer = mockPlayer(town.townID);
+      const newPlayerObj = await town.addPlayer(newPlayer.userName, newPlayer.socket);
+      expect(newPlayerObj.vehicle).toEqual(undefined);
+      newPlayerObj.equipVehicle('horse');
+      expect(newPlayerObj.vehicle).toEqual({ speedMultiplier: 3, vehicleType: 'horse' });
+      newPlayerObj.unEquipVehicle();
+      expect(newPlayerObj.vehicle).toEqual(undefined);
+    });
+    it('player should be able to unequip a vehicle when vehicle is not equipped', async () => {
+      const newPlayer = mockPlayer(town.townID);
+      const newPlayerObj = await town.addPlayer(newPlayer.userName, newPlayer.socket);
+      expect(newPlayerObj.vehicle).toEqual(undefined);
+      newPlayerObj.unEquipVehicle();
+      expect(newPlayerObj.vehicle).toEqual(undefined);
+    });
+  });
   describe('Socket event listeners created in addPlayer', () => {
     describe('on socket disconnect', () => {
       function disconnectPlayer(playerToLeave: MockedPlayer) {
