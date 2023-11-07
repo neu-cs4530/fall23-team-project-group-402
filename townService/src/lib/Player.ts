@@ -72,6 +72,10 @@ export default class Player {
     return this._vehicle;
   }
 
+  /**
+   * Equips a new vehicle to the player.
+   * @param type The vehicle type that the player is trying to equip
+   */
   public equipVehicle(type: VehicleType): void {
     if (type === 'bike') {
       this._vehicle = new BikeVehicle();
@@ -82,6 +86,9 @@ export default class Player {
     }
   }
 
+  /**
+   * Unequips the player's current vehicle (if they have one equipped).
+   */
   public unEquipVehicle(): void {
     this._vehicle = undefined;
   }
