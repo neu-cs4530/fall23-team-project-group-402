@@ -1,4 +1,8 @@
-import { Vehicle, VehicleRackArea as VehicleRackAreaModel } from '../../types/CoveyTownSocket';
+import {
+  Vehicle,
+  VehicleRackArea as VehicleRackAreaModel,
+  VehicleType,
+} from '../../types/CoveyTownSocket';
 import InteractableAreaController, { BaseInteractableEventMap } from './InteractableAreaController';
 
 /**
@@ -9,7 +13,7 @@ export type VehicleRackAreaEvents = BaseInteractableEventMap & {
    * A vehicleChange event indicates that the vehicle selected for this vehicle rack area has changed.
    * Must implement Vehicle type to
    */
-  vehicleChange: (vehicle: Vehicle | undefined) => void;
+  vehicleChange: (vehicle: VehicleType | undefined) => void;
 };
 
 export default class VehicleRackAreaController extends InteractableAreaController<
