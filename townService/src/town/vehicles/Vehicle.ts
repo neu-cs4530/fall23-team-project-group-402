@@ -1,9 +1,9 @@
 import { VehicleType, Vehicle as VehicleModel } from '../../types/CoveyTownSocket';
 
 export default abstract class Vehicle {
-  protected speedMultiplier: number;
+  public speedMultiplier: number;
 
-  protected vehicleType: VehicleType;
+  public vehicleType: VehicleType;
 
   constructor(speedMultiplier: number, vehicleType: VehicleType) {
     this.speedMultiplier = speedMultiplier;
