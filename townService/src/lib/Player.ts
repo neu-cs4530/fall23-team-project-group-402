@@ -3,8 +3,12 @@ import {
   Player as PlayerModel,
   PlayerLocation,
   TownEmitter,
-  Vehicle,
+  VehicleType,
 } from '../types/CoveyTownSocket';
+import Vehicle from '../town/vehicles/Vehicle';
+import BikeVehicle from '../town/vehicles/BikeVehicle';
+import HorseVehicle from '../town/vehicles/HorseVehicle';
+import SkateboardVehicle from '../town/vehicles/SkateboardVehicle';
 
 /**
  * Each user who is connected to a town is represented by a Player object
@@ -68,18 +72,38 @@ export default class Player {
     return this._vehicle;
   }
 
-  // TODO: SWEW-17: Implement and test
-  public equipVehicle(vehicle: Vehicle): void {}
+  /**
+   * Equips a new vehicle to the player.
+   * @param type The vehicle type that the player is trying to equip
+   */
+  public equipVehicle(type: VehicleType): void {
+    if (type === 'bike') {
+      this._vehicle = new BikeVehicle();
+    } else if (type === 'horse') {
+      this._vehicle = new HorseVehicle();
+    } else if (type === 'skateboard') {
+      this._vehicle = new SkateboardVehicle();
+    }
+  }
 
+<<<<<<< HEAD
   // TODO: SWE-17: Impelemnt and test
   public unequipVehicle(): void {}
+=======
+  /**
+   * Unequips the player's current vehicle (if they have one equipped).
+   */
+  public unEquipVehicle(): void {
+    this._vehicle = undefined;
+  }
+>>>>>>> main
 
   toPlayerModel(): PlayerModel {
     return {
       id: this._id,
       location: this.location,
       userName: this._userName,
-      vehicle: this._vehicle,
+      vehicle: this._vehicle?.toVehicleModel(),
     };
   }
 }

@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 import { Player as PlayerModel, PlayerLocation, Vehicle } from '../types/CoveyTownSocket';
-export const WALKING_SPEED = 175;
+import SpeedUtils from './SpeedUtils';
 
 export type PlayerEvents = {
   movement: (newLocation: PlayerLocation) => void;
@@ -70,9 +70,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
       sprite.setX(this.location.x);
       sprite.setY(this.location.y);
       if (this.location.moving) {
-        const movementSpeed = this.vehicle
-          ? WALKING_SPEED * this.vehicle.speedMultiplier
-          : WALKING_SPEED;
+        const movementSpeed = SpeedUtils.playerSpeed(this.vehicle);
 
         sprite.anims.play(`misa-${this.location.rotation}-walk`, true);
         switch (this.location.rotation) {
