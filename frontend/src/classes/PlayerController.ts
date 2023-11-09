@@ -1,14 +1,6 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
-import {
-  Player as PlayerModel,
-  PlayerLocation,
-  Vehicle,
-  VehicleType,
-} from '../types/CoveyTownSocket';
-import HorseVehicle from '../../../townService/src/town/vehicles/HorseVehicle';
-import BikeVehicle from '../../../townService/src/town/vehicles/BikeVehicle';
-import SkateboardVehicle from '../../../townService/src/town/vehicles/SkateboardVehicle';
+import { Player as PlayerModel, PlayerLocation, Vehicle } from '../types/CoveyTownSocket';
 import SpeedUtils from './SpeedUtils';
 
 export type PlayerEvents = {
