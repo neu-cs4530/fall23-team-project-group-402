@@ -51,4 +51,50 @@ describe('VehicleRackArea', () => {
       expect(lastEmittedMovement.location.interactableID).toEqual(id);
     });
   });
+  describe('equipVehicle', () => {
+    it('equips a bike', () => {
+      expect(newPlayer.vehicle).toBeUndefined();
+      newPlayer.equipVehicle('bike');
+      expect(newPlayer.vehicle).not.toBeUndefined();
+      expect(newPlayer.vehicle?.toVehicleModel()).toEqual({
+        speedMultiplier: 2,
+        vehicleType: 'bike',
+      });
+    });
+    it('equips a skateboard', () => {
+      expect(newPlayer.vehicle).toBeUndefined();
+      newPlayer.equipVehicle('skateboard');
+      expect(newPlayer.vehicle).not.toBeUndefined();
+      expect(newPlayer.vehicle?.toVehicleModel()).toEqual({
+        speedMultiplier: 1.5,
+        vehicleType: 'skateboard',
+      });
+    });
+    it('equips a horse', () => {
+      expect(newPlayer.vehicle).toBeUndefined();
+      newPlayer.equipVehicle('horse');
+      expect(newPlayer.vehicle).not.toBeUndefined();
+      expect(newPlayer.vehicle?.toVehicleModel()).toEqual({
+        speedMultiplier: 3,
+        vehicleType: 'horse',
+      });
+    });
+  });
+  describe('unEquipVehicle', () => {
+    beforeEach(() => {
+      newPlayer.equipVehicle('bike');
+    });
+    it('unequips the current vehicle', () => {
+      expect(newPlayer.vehicle).not.toBeUndefined();
+      newPlayer.unEquipVehicle();
+      expect(newPlayer.vehicle).toBeUndefined();
+    });
+    it('does not throw error if you already have no vehicle', () => {
+      expect(newPlayer.vehicle).not.toBeUndefined();
+      newPlayer.unEquipVehicle();
+      expect(newPlayer.vehicle).toBeUndefined();
+      newPlayer.unEquipVehicle();
+      expect(newPlayer.vehicle).toBeUndefined();
+    });
+  });
 });
