@@ -86,17 +86,12 @@ export default class Player {
     }
   }
 
-<<<<<<< HEAD
-  // TODO: SWE-17: Impelemnt and test
-  public unequipVehicle(): void {}
-=======
   /**
    * Unequips the player's current vehicle (if they have one equipped).
    */
   public unEquipVehicle(): void {
     this._vehicle = undefined;
   }
->>>>>>> main
 
   toPlayerModel(): PlayerModel {
     return {
