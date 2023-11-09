@@ -76,9 +76,7 @@ export interface BoundingBox {
   height: number;
 };
 
-export interface VehicleRackArea extends Interactable {
-  vehicle?: Vehicle;
-}
+export type VehicleRackArea = Interactable
 
 export interface ViewingArea extends Interactable {
   video?: string;

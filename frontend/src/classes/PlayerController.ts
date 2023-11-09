@@ -1,6 +1,14 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
-import { Player as PlayerModel, PlayerLocation, Vehicle } from '../types/CoveyTownSocket';
+import {
+  Player as PlayerModel,
+  PlayerLocation,
+  Vehicle,
+  VehicleType,
+} from '../types/CoveyTownSocket';
+import HorseVehicle from '../../../townService/src/town/vehicles/HorseVehicle';
+import BikeVehicle from '../../../townService/src/town/vehicles/BikeVehicle';
+import SkateboardVehicle from '../../../townService/src/town/vehicles/SkateboardVehicle';
 import SpeedUtils from './SpeedUtils';
 
 export type PlayerEvents = {
@@ -20,7 +28,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   private readonly _userName: string;
 
-  private readonly _vehicle: Vehicle | undefined;
+  private _vehicle: Vehicle | undefined;
 
   public gameObjects?: PlayerGameObjects;
 
@@ -53,6 +61,10 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   get id(): string {
     return this._id;
+  }
+
+  set vehicle(vehicle: Vehicle | undefined) {
+    this._vehicle = vehicle;
   }
 
   get vehicle(): Vehicle | undefined {
