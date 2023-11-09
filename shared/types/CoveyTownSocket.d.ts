@@ -206,7 +206,7 @@ export interface GameMoveCommand<MoveType> {
 }
 export interface EquipVehicleCommand {
 	type: 'EquipVehicle';
-	vehicle: Vehicle;
+	vehicle: VehicleType;
 }
 export interface UnequipVehicleCommand {
 	type: 'UnequipVehicle';

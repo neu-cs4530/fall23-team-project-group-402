@@ -9,7 +9,7 @@ import {
   TownEmitter,
   VehicleRackArea as VehicleRackAreaModel,
   EquipVehicleCommand,
-  Vehicle,
+  VehicleType,
 } from '../types/CoveyTownSocket';
 import InteractableArea from './InteractableArea';
 
@@ -34,7 +34,7 @@ export default class VehicleRackArea extends InteractableArea {
 	@param vehicle - vehicle to be added to player - Yet to be added.
 	@throws new InvalidParametersError if player is not in the game
 	*/
-  public equipVehicle(player: Player, vehicle: Vehicle) {
+  public equipVehicle(player: Player, vehicle: VehicleType) {
     if (!player) {
       throw new Error('Invalid player');
     }
@@ -55,7 +55,7 @@ export default class VehicleRackArea extends InteractableArea {
     if (player.vehicle === undefined) {
       throw new Error('Player does not have a vehicle');
     }
-    player.unequipVehicle();
+    player.unEquipVehicle();
     this._emitAreaChanged(); // Do we add this?
   }
 
