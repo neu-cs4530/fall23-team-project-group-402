@@ -97,4 +97,36 @@ describe('VehicleRackArea', () => {
       expect(newPlayer.vehicle).toBeUndefined();
     });
   });
+  test('toModel sets the ID, video, isPlaying, occupants, and elapsedTimeSec', () => {
+    const model = testArea.toModel();
+    expect(model).toEqual({
+      id,
+      occupants: [newPlayer.id],
+      type: 'VehicleRackArea',
+    });
+  });
+  describe('fromMapObject', () => {
+    it('Throws an error if the width or height are missing', () => {
+      expect(() =>
+        VehicleRackArea.fromMapObject(
+          { id: 1, name: nanoid(), visible: true, x: 0, y: 0 },
+          townEmitter,
+        ),
+      ).toThrowError();
+    });
+    it('Creates a new viewing area using the provided boundingBox and id, with isPlaying defaulting to false and progress to 0, and emitter', () => {
+      const x = 30;
+      const y = 20;
+      const width = 10;
+      const height = 20;
+      const name = 'name';
+      const val = VehicleRackArea.fromMapObject(
+        { x, y, width, height, name, id: 10, visible: true },
+        townEmitter,
+      );
+      expect(val.boundingBox).toEqual({ x, y, width, height });
+      expect(val.id).toEqual(name);
+      expect(val.occupantsByID).toEqual([]);
+    });
+  });
 });
