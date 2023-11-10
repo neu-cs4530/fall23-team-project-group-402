@@ -17,7 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'VehicleRackArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -75,6 +75,8 @@ export interface BoundingBox {
   width: number;
   height: number;
 };
+
+export type VehicleRackArea = Interactable
 
 export interface ViewingArea extends Interactable {
   video?: string;
@@ -183,7 +185,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand | EquipVehicleCommand | UnequipVehicleCommand;
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
@@ -200,11 +202,20 @@ export interface GameMoveCommand<MoveType> {
   gameID: GameInstanceID;
   move: MoveType;
 }
+export interface EquipVehicleCommand {
+	type: 'EquipVehicle';
+	vehicle: VehicleType;
+}
+export interface UnequipVehicleCommand {
+	type: 'UnequipVehicle';
+}
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:
   CommandType extends ViewingAreaUpdateCommand ? undefined :
   CommandType extends GameMoveCommand<TicTacToeMove> ? undefined :
   CommandType extends LeaveGameCommand ? undefined :
+  CommandType extends EquipVehicleCommand ? undefined :
+  CommandType extends UnequipVehicleCommand ? undefined :
   never;
 
 export type InteractableCommandResponse<MessageType> = {
