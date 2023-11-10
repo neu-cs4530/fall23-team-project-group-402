@@ -11,8 +11,8 @@ import {
 } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import TownController from '../TownController';
-import GameAreaController from './GameAreaController';
-import TicTacToeAreaController, { NO_GAME_IN_PROGRESS_ERROR } from './TicTacToeAreaController';
+import GameAreaController, { NO_GAME_IN_PROGRESS_ERROR } from './GameAreaController';
+import TicTacToeAreaController from './TicTacToeAreaController';
 
 describe('[T1] TicTacToeAreaController', () => {
   const ourPlayer = new PlayerController(
