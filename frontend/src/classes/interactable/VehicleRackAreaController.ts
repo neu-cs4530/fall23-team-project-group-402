@@ -10,7 +10,7 @@ import TownController from '../TownController';
 import InteractableAreaController, { BaseInteractableEventMap } from './InteractableAreaController';
 
 /**
- * The events that a ViewingAreaController can emit
+ * The events that a VehicleRackAreaController can emit
  */
 export type VehicleRackAreaEvents = BaseInteractableEventMap;
 
@@ -23,7 +23,7 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
   protected _townController: TownController;
 
   /**
-   * Create a new ConversationAreaController
+   * Create a new VehicleRackAreaController
    * @param id
    * @param topic
    */
@@ -63,12 +63,8 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
       case 'horse':
         vehicle = new HorseVehicle();
         break;
-
       case 'skateboard':
         vehicle = new SkateboardVehicle();
-        break;
-      case undefined:
-        vehicle = undefined;
         break;
       default:
         vehicle = undefined;
@@ -80,7 +76,7 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
   public toInteractableAreaModel(): VehicleRackAreaModel {
     return {
       id: this.id,
-      occupants: this.occupants.map(player => player.id), //???
+      occupants: this.occupants.map(player => player.id),
       type: 'VehicleRackArea',
     };
   }

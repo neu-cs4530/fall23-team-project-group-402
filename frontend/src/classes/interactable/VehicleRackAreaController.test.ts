@@ -38,10 +38,10 @@ describe('VehicleRackAreaController', () => {
     });
   });
   describe('set Vehicle', () => {
-    it('does not update the property if the vehicle is the same type', () => {
+    it('does not send a vehicleChange if the vehicle is the same type', () => {
       const vehicleCopy = `${testArea.vehicle}`;
       testArea.vehicle = vehicleCopy as VehicleType;
-      expect(mockListeners.topicChange).not.toBeCalled();
+      expect(mockListeners.vehicleChange).not.toBeCalled();
     });
     it('sets the vehicle to be a bike', () => {
       const newVehicle = 'bike';

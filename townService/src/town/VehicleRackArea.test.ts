@@ -54,7 +54,7 @@ describe('VehicleRackArea', () => {
   describe('equipVehicle', () => {
     it('equips a bike', () => {
       expect(newPlayer.vehicle).toBeUndefined();
-      newPlayer.equipVehicle('bike');
+      testArea.equipVehicle(newPlayer, 'bike');
       expect(newPlayer.vehicle).not.toBeUndefined();
       expect(newPlayer.vehicle?.toVehicleModel()).toEqual({
         speedMultiplier: 2,
@@ -63,7 +63,7 @@ describe('VehicleRackArea', () => {
     });
     it('equips a skateboard', () => {
       expect(newPlayer.vehicle).toBeUndefined();
-      newPlayer.equipVehicle('skateboard');
+      testArea.equipVehicle(newPlayer, 'skateboard');
       expect(newPlayer.vehicle).not.toBeUndefined();
       expect(newPlayer.vehicle?.toVehicleModel()).toEqual({
         speedMultiplier: 1.5,
@@ -72,7 +72,7 @@ describe('VehicleRackArea', () => {
     });
     it('equips a horse', () => {
       expect(newPlayer.vehicle).toBeUndefined();
-      newPlayer.equipVehicle('horse');
+      testArea.equipVehicle(newPlayer, 'horse');
       expect(newPlayer.vehicle).not.toBeUndefined();
       expect(newPlayer.vehicle?.toVehicleModel()).toEqual({
         speedMultiplier: 3,
@@ -86,18 +86,18 @@ describe('VehicleRackArea', () => {
     });
     it('unequips the current vehicle', () => {
       expect(newPlayer.vehicle).not.toBeUndefined();
-      newPlayer.unEquipVehicle();
+      testArea.unequipVehicle(newPlayer);
       expect(newPlayer.vehicle).toBeUndefined();
     });
     it('does not throw error if you already have no vehicle', () => {
       expect(newPlayer.vehicle).not.toBeUndefined();
-      newPlayer.unEquipVehicle();
+      testArea.unequipVehicle(newPlayer);
       expect(newPlayer.vehicle).toBeUndefined();
-      newPlayer.unEquipVehicle();
+      testArea.unequipVehicle(newPlayer);
       expect(newPlayer.vehicle).toBeUndefined();
     });
   });
-  test('toModel sets the ID, video, isPlaying, occupants, and elapsedTimeSec', () => {
+  test('toModel sets the ID and occupants', () => {
     const model = testArea.toModel();
     expect(model).toEqual({
       id,
@@ -114,7 +114,7 @@ describe('VehicleRackArea', () => {
         ),
       ).toThrowError();
     });
-    it('Creates a new viewing area using the provided boundingBox and id, with isPlaying defaulting to false and progress to 0, and emitter', () => {
+    it('Creates a new vehicle rack area using the provided boundingBox, id, and emitter', () => {
       const x = 30;
       const y = 20;
       const width = 10;

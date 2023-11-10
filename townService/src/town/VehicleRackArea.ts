@@ -15,9 +15,9 @@ import InteractableArea from './InteractableArea';
 
 export default class VehicleRackArea extends InteractableArea {
   /**
-   * Creates a new ViewingArea
+   * Creates a new VehicleRackArea
    *
-   * @param viewingArea model containing this area's starting state
+   * @param vehicleRackArea model containing this area's starting state
    * @param coordinates the bounding box that defines this viewing area
    * @param townEmitter a broadcast emitter that can be used to emit updates to players
    */
@@ -30,33 +30,32 @@ export default class VehicleRackArea extends InteractableArea {
   }
 
   /**
-	@param player - player to add the vehicle to
-	@param vehicle - vehicle to be added to player - Yet to be added.
-	@throws new InvalidParametersError if player is not in the game
-	*/
+   * Equips given vehicle to given player.
+   *
+   * @param player - player to add the vehicle to
+   * @param vehicle - vehicle to be added to player - Yet to be added.
+   * @throws new InvalidParametersError if player is not in the game
+   */
   public equipVehicle(player: Player, vehicle: VehicleType) {
     if (!player) {
       throw new Error('Invalid player');
     }
     player.equipVehicle(vehicle);
-    this._emitAreaChanged(); // Do we add this?
+    this._emitAreaChanged();
   }
 
   /**
-   * removes vehicle from player
+   * removes vehicle from given player
+   *
    * @param player - player to remove vehicle from
    * @throws new InvalidParametersError if player is not in the game
-   * @throws new InvalidParametersError if player does not have vehicle
    */
   public unequipVehicle(player: Player) {
     if (!player) {
       throw new Error('Invalid player');
     }
-    if (player.vehicle === undefined) {
-      throw new Error('Player does not have a vehicle');
-    }
     player.unEquipVehicle();
-    this._emitAreaChanged(); // Do we add this?
+    this._emitAreaChanged();
   }
 
   public handleCommand<CommandType extends InteractableCommand>(
@@ -76,16 +75,16 @@ export default class VehicleRackArea extends InteractableArea {
   }
 
   /**
-   * Creates a new ConversationArea object that will represent a Conversation Area object in the town map.
-   * @param mapObject An ITiledMapObject that represents a rectangle in which this conversation area exists
-   * @param broadcastEmitter An emitter that can be used by this conversation area to broadcast updates
+   * Creates a new VehicleRackArea object that will represent a Vehicle Rack Area object in the town map.
+   * @param mapObject An ITiledMapObject that represents a rectangle in which this rack area exists
+   * @param broadcastEmitter An emitter that can be used by this rack area to broadcast updates
    * @returns
    */
   public toModel(): VehicleRackAreaModel {
     return {
       id: this.id,
       occupants: this.occupantsByID,
-      type: 'VehicleRackArea', // Figure out what uses this
+      type: 'VehicleRackArea',
     };
   }
 
