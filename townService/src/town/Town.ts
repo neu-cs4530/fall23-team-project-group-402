@@ -22,6 +22,7 @@ import { logError } from '../Utils';
 import ConversationArea from './ConversationArea';
 import GameAreaFactory from './games/GameAreaFactory';
 import InteractableArea from './InteractableArea';
+import VehicleRackArea from './VehicleRackArea';
 import ViewingArea from './ViewingArea';
 
 /**
@@ -393,6 +394,11 @@ export default class Town {
       .map(eachViewingAreaObject =>
         ViewingArea.fromMapObject(eachViewingAreaObject, this._broadcastEmitter),
       );
+    const vehicleRackAreas = objectLayer.objects
+      .filter(eachObject => eachObject.type === 'VehicleRackArea')
+      .map(eachViewingAreaObject =>
+        VehicleRackArea.fromMapObject(eachViewingAreaObject, this._broadcastEmitter),
+      );
 
     const conversationAreas = objectLayer.objects
       .filter(eachObject => eachObject.type === 'ConversationArea')
@@ -407,6 +413,7 @@ export default class Town {
     this._interactables = this._interactables
       .concat(viewingAreas)
       .concat(conversationAreas)
+      .concat(vehicleRackAreas)
       .concat(gameAreas);
     this._validateInteractables();
   }
