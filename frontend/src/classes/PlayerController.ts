@@ -1,6 +1,11 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
-import { Player as PlayerModel, PlayerLocation, Vehicle } from '../types/CoveyTownSocket';
+import {
+  Player as PlayerModel,
+  PlayerLocation,
+  Vehicle,
+  VehicleType,
+} from '../types/CoveyTownSocket';
 import SpeedUtils from './SpeedUtils';
 
 export type PlayerEvents = {
@@ -63,6 +68,29 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     return this._vehicle;
   }
 
+  public equipVehicle(vehicleType: VehicleType | undefined) {
+    let speedMultiplier: number;
+    switch (vehicleType) {
+      case 'bike':
+        speedMultiplier = 2;
+        break;
+      case 'skateboard':
+        speedMultiplier = 1.5;
+        break;
+      case 'horse':
+        speedMultiplier = 3;
+        break;
+      default:
+        speedMultiplier = 1;
+        break;
+    }
+    this._vehicle = {
+      speedMultiplier: speedMultiplier,
+      vehicleType: vehicleType,
+    };
+    console.log(SpeedUtils.playerSpeed(this.vehicle));
+  }
+
   toPlayerModel(): PlayerModel {
     return { id: this.id, userName: this.userName, location: this.location, vehicle: this.vehicle };
   }
@@ -75,7 +103,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
       sprite.setY(this.location.y);
       if (this.location.moving) {
         const movementSpeed = SpeedUtils.playerSpeed(this.vehicle);
-
+        console.log(movementSpeed);
         sprite.anims.play(`misa-${this.location.rotation}-walk`, true);
         switch (this.location.rotation) {
           case 'front':
