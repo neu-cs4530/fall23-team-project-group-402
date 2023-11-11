@@ -35,6 +35,19 @@ export type PlayerID = string;
 
 export type VehicleType = 'skateboard' | 'bike' | 'horse'
 
+export function getVehicle(type: VehicleType | undefined) : Vehicle | undefined {
+  switch (type) {
+    case 'skateboard':
+      return new SkateboardVehicle();
+    case 'bike':
+      return new BikeVehicle();
+    case 'horse':
+      return new HorseVehicle();
+    default:
+      return undefined;
+  }
+}
+
 export interface Vehicle {
   speedMultiplier: number;
   vehicleType: VehicleType;

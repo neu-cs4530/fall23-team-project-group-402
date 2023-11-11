@@ -1,8 +1,5 @@
-import BikeVehicle from '../../../../townService/src/town/vehicles/BikeVehicle';
-import HorseVehicle from '../../../../townService/src/town/vehicles/HorseVehicle';
-import SkateboardVehicle from '../../../../townService/src/town/vehicles/SkateboardVehicle';
 import {
-  Vehicle,
+  getVehicle,
   VehicleRackArea as VehicleRackAreaModel,
   VehicleType,
 } from '../../types/CoveyTownSocket';
@@ -25,7 +22,8 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
   /**
    * Create a new VehicleRackAreaController
    * @param id
-   * @param topic
+   * @param vehicle
+   * @param townController
    */
   constructor(id: string, townController: TownController, vehicle?: VehicleType) {
     super(id);
@@ -55,22 +53,11 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
   }
 
   public equipVehicle(): void {
-    let vehicle: Vehicle | undefined = undefined;
-    switch (this._vehicle) {
-      case 'bike':
-        vehicle = new BikeVehicle();
-        break;
-      case 'horse':
-        vehicle = new HorseVehicle();
-        break;
-      case 'skateboard':
-        vehicle = new SkateboardVehicle();
-        break;
-      default:
-        vehicle = undefined;
-        break;
-    }
-    this._townController.ourPlayer.vehicle = vehicle;
+    console.log(this._townController.ourPlayer.id);
+    const ourPlayer = this.occupants.find(
+      occupant => occupant.id === this._townController.ourPlayer.id,
+    );
+    console.log(ourPlayer);
   }
 
   public toInteractableAreaModel(): VehicleRackAreaModel {

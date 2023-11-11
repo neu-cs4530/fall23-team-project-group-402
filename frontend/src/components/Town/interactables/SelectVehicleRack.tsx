@@ -1,4 +1,13 @@
-import { Button, Modal, ModalContent, ModalHeader, ModalOverlay } from '@chakra-ui/react';
+import {
+  Button,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+} from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import VehicleRackAreaController from '../../../classes/interactable/VehicleRackAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../classes/TownController';
@@ -13,7 +22,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     vehicleArea?.name,
   );
   const isOpen = newRack !== undefined;
-
+  vehicleRackAreaController.occupants = coveyTownController.players;
   const [vehicle, setVehicle] = useState<VehicleType | undefined>(
     vehicleRackAreaController.vehicle,
   );
@@ -33,17 +42,25 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   }, [coveyTownController, newRack]);
 
   const closeModal = useCallback(() => {
-    coveyTownController.unPause();
-    close();
-  }, [coveyTownController]);
+    if (newRack) {
+      coveyTownController.interactEnd(newRack);
+      coveyTownController.unPause();
+    }
+  }, [coveyTownController, newRack]);
 
   function handleVehicleClick(selectedVehicle: VehicleType) {
-    setVehicle(selectedVehicle);
-    console.log(vehicle);
+    setVehicle(() => {
+      vehicleRackAreaController.vehicle = selectedVehicle;
+      console.log(vehicleRackAreaController.vehicle);
+      return selectedVehicle; // Return the new state value
+    });
   }
 
   function handleVehicleEquip() {
     console.log('Equipping Vehicle');
+    console.log(vehicleRackAreaController);
+    console.log(coveyTownController.ourPlayer.vehicle);
+    vehicleRackAreaController.equipVehicle();
   }
 
   return (
@@ -56,19 +73,25 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>Select a vehicle </ModalHeader>
-        {vehicles.map(vehicleEnum => (
-          <Button
-            key={vehicleEnum.type}
-            style={{
-              backgroundColor: vehicle === vehicleEnum.type ? 'yellow' : 'transparent',
-            }}
-            onClick={() => handleVehicleClick(vehicleEnum.type as VehicleType)}>
-            {vehicleEnum.label}
+        <ModalCloseButton />
+        <ModalBody pb={6}>
+          {vehicles.map(vehicleEnum => (
+            <Button
+              key={vehicleEnum.type}
+              style={{
+                backgroundColor: vehicle === vehicleEnum.type ? 'yellow' : 'transparent',
+              }}
+              onClick={() => handleVehicleClick(vehicleEnum.type as VehicleType)}>
+              {vehicleEnum.label}
+            </Button>
+          ))}
+        </ModalBody>
+        <ModalFooter>
+          <Button colorScheme='blue' mr={3} onClick={handleVehicleEquip} disabled={!vehicle}>
+            Equip
           </Button>
-        ))}
-        <Button onClick={handleVehicleEquip} disabled={!vehicle}>
-          Equip
-        </Button>
+          <Button onClick={closeModal}>Cancel</Button>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );

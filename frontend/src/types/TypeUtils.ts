@@ -20,6 +20,13 @@ export function isViewingArea(interactable: Interactable): interactable is Viewi
   return interactable.type === 'ViewingArea';
 }
 
+/**
+ * Test to see if an interactable is a vehicle rack area
+ */
+export function isVehicleRackArea(interactable: Interactable): interactable is ViewingArea {
+  return interactable.type === 'VehicleRackArea';
+}
+
 export function isTicTacToeArea(
   interactable: Interactable,
 ): interactable is GameArea<TicTacToeGameState> {
