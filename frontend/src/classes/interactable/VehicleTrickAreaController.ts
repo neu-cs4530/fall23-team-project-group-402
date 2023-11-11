@@ -1,4 +1,5 @@
-import { GameArea, VehicleTrickGameState } from '../../types/CoveyTownSocket';
+import { GameArea, GameStatus, VehicleTrickGameState } from '../../types/CoveyTownSocket';
+import PlayerController from '../PlayerController';
 import GameAreaController, {
   GameEventTypes,
   NO_GAME_IN_PROGRESS_ERROR,
@@ -24,14 +25,14 @@ export default class VehicleTrickAreaController extends GameAreaController<
    * Returns the player's current target word.
    */
   get currentWord(): string {
-    return this.currentWord;
+    return this._currentWord;
   }
 
   /**
    * Returns the player's current score.
    */
   get currentScore(): number {
-    return this.currentScore;
+    return this._currentScore;
   }
 
   /**
@@ -47,6 +48,29 @@ export default class VehicleTrickAreaController extends GameAreaController<
    */
   public isActive(): boolean {
     return this._model.game?.state.status === 'IN_PROGRESS';
+  }
+
+  /**
+   * Returns the status of the game.
+   * Defaults to 'WAITING_TO_START' if the game is not in progress
+   */
+  get status(): GameStatus {
+    const status = this._model.game?.state.status;
+    if (!status) {
+      return 'WAITING_TO_START';
+    }
+    return status;
+  }
+
+  /**
+   * Returns the player playing the game if there is one, or undefined otherwise
+   */
+  get player(): PlayerController | undefined {
+    const player = this._model.game?.state.player;
+    if (player) {
+      return this.occupants.find(eachOccupant => eachOccupant.id === player);
+    }
+    return undefined;
   }
 
   /**
