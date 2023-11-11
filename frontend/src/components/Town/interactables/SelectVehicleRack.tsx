@@ -7,6 +7,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  useToast,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import VehicleRackAreaController from '../../../classes/interactable/VehicleRackAreaController';
@@ -26,12 +27,26 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   const [vehicle, setVehicle] = useState<VehicleType | undefined>(
     vehicleRackAreaController.vehicle,
   );
+  const toast = useToast();
 
   const vehicles = [
-    { type: 'bike', label: 'Bike', imageSrc: 'bike_image_url.jpg' },
-    { type: 'skateboard', label: 'Skateboard', imageSrc: 'skateboard_image_url.jpg' },
-    { type: 'horse', label: 'Horse', imageSrc: 'horse_image_url.jpg' },
+    { type: 'skateboard', label: 'Skateboard', imageSrc: '' },
+    { type: 'bike', label: 'Bike', imageSrc: '' },
+    { type: 'horse', label: 'Horse', imageSrc: '' },
   ];
+
+  /**
+   * Function found on internet that title cases a given string
+   * Used for the toast to display what vehicle was equipped
+   *
+   * @param str string to tile case
+   * @returns title cased string
+   */
+  function toTitleCase(str: string) {
+    return str.replace(/\w\S*/g, function (txt) {
+      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+    });
+  }
 
   useEffect(() => {
     if (newRack) {
@@ -48,7 +63,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     }
   }, [coveyTownController, newRack]);
 
-  function handleVehicleClick(selectedVehicle: VehicleType) {
+  function handleSelectVehicle(selectedVehicle: VehicleType) {
     setVehicle(() => {
       vehicleRackAreaController.vehicle = selectedVehicle;
       console.log(vehicleRackAreaController.vehicle);
@@ -56,11 +71,33 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     });
   }
 
-  function handleVehicleEquip() {
-    console.log('Equipping Vehicle');
-    console.log(vehicleRackAreaController);
-    console.log(coveyTownController.ourPlayer.vehicle);
-    vehicleRackAreaController.equipVehicle();
+  function handleRemoveVehicle() {
+    setVehicle(() => {
+      vehicleRackAreaController.vehicle = undefined;
+      console.log(vehicleRackAreaController.vehicle);
+      return undefined;
+    });
+  }
+
+  function handleEquipVehicle() {
+    try {
+      vehicleRackAreaController.equipVehicle();
+      toast({
+        title: `Success`,
+        description:
+          coveyTownController.ourPlayer.vehicle?.vehicleType !== undefined
+            ? `Equipped: ${toTitleCase(coveyTownController.ourPlayer.vehicle?.vehicleType)}`
+            : `Unequipped Vehicle`,
+        status: 'info',
+      });
+    } catch (error) {
+      toast({
+        title: `Error equipping vehicle`,
+        description: (error as Error).toString,
+        status: 'error',
+      });
+    }
+    closeModal();
   }
 
   return (
@@ -81,13 +118,21 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
               style={{
                 backgroundColor: vehicle === vehicleEnum.type ? 'yellow' : 'transparent',
               }}
-              onClick={() => handleVehicleClick(vehicleEnum.type as VehicleType)}>
+              onClick={() => handleSelectVehicle(vehicleEnum.type as VehicleType)}>
               {vehicleEnum.label}
             </Button>
           ))}
+          <Button
+            key={'undefined'}
+            style={{
+              backgroundColor: vehicle === undefined ? 'yellow' : 'transparent',
+            }}
+            onClick={handleRemoveVehicle}>
+            Unequip
+          </Button>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={handleVehicleEquip} disabled={!vehicle}>
+          <Button colorScheme='blue' mr={3} onClick={handleEquipVehicle}>
             Equip
           </Button>
           <Button onClick={closeModal}>Cancel</Button>
