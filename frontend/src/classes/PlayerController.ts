@@ -20,7 +20,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   private readonly _userName: string;
 
-  private readonly _vehicle: Vehicle | undefined;
+  private _vehicle: Vehicle | undefined;
 
   public gameObjects?: PlayerGameObjects;
 
@@ -53,6 +53,10 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   get id(): string {
     return this._id;
+  }
+
+  set vehicle(vehicle: Vehicle | undefined) {
+    this._vehicle = vehicle;
   }
 
   get vehicle(): Vehicle | undefined {

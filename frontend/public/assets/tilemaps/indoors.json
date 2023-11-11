@@ -4,7 +4,7 @@
      "export":
         {
          "format":"json",
-         "target":"..\/maps\/indoors2.json"
+         "target":"..\/maps\/indoors.json"
         }
     },
  "height":45,
@@ -526,6 +526,17 @@
                  "y":868.333333333333
                 }, 
                 {
+                 "height":97.2451828458965,
+                 "id":54,
+                 "name":"RackArea",
+                 "rotation":0,
+                 "type":"VehicleRackArea",
+                 "visible":true,
+                 "width":127.936061146963,
+                 "x":3135.20852212916,
+                 "y":899.913726028651
+                }, 
+                {
                  "height":150.833333333333,
                  "id":37,
                  "name":"Basement TV",
@@ -585,12 +596,12 @@
                  "type":"",
                  "visible":true,
                  "width":0,
-                 "x":3110.91365347094,
-                 "y":878.861767209433
+                 "x":3182.3128021734,
+                 "y":873.369525001552
                 }, 
                 {
                  "height":216.317265322473,
-                 "id":48,
+                 "id":53,
                  "name":"Basement Dining Table 1",
                  "rotation":0,
                  "type":"ConversationArea",
@@ -617,7 +628,7 @@
          "y":0
         }],
  "nextlayerid":8,
- "nextobjectid":52,
+ "nextobjectid":55,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tiledversion":"1.10.2",
