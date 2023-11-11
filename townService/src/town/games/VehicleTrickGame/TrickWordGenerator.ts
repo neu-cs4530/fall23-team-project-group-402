@@ -5,9 +5,9 @@ import * as fs from 'fs';
  */
 const WORDS_FILENAME = 'trick_words.txt';
 
-const FILE_ERROR_MESSAGE = 'Unable to read the word list file';
+export const FILE_ERROR_MESSAGE = 'Unable to read the word list file';
 
-const WORD_LIST_NOT_LOADED_MESSAGE = 'Word list not yet loaded';
+export const WORD_LIST_NOT_LOADED_MESSAGE = 'Word list not yet loaded';
 
 /**
  * Class used to load the allowed words for the trick game and
