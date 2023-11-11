@@ -2,6 +2,7 @@ import InvalidParametersError, {
   GAME_FULL_MESSAGE,
   GAME_NOT_IN_PROGRESS_MESSAGE,
   PLAYER_NOT_IN_GAME_MESSAGE,
+  TIME_EXPIRED_MESSAGE,
 } from '../../../lib/InvalidParametersError';
 import Player from '../../../lib/Player';
 import { GameMove, VehicleTrickGameState, VehicleTrickMove } from '../../../types/CoveyTownSocket';
@@ -19,7 +20,7 @@ const TRICK_TIME_ALLOWED = 15;
 const CORRECT_WORD_POINTS = 100;
 
 /**
- * The typing game a player can play when they have a vehicle equipped so that
+ * The typing game a user can play when they have a vehicle equipped so that
  * they can see themselves do tricks.
  */
 export default class VehicleTrickGame extends Game<VehicleTrickGameState, VehicleTrickMove> {
@@ -40,6 +41,15 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
     this._wordGenerator.loadWords();
   }
 
+  /**
+   * Applies a player's move to the game.
+   * A move is invalid if:
+   *  - The game is not in progress
+   *  - The move is made by a player not in the game
+   *  - A word is guessed after the allowed time has expired
+   * @param move The move to apply to the game
+   * @throws InvalidParametersError if the move is invalid
+   */
   public applyMove(move: GameMove<VehicleTrickMove>): void {
     if (this.state.status !== 'IN_PROGRESS') {
       throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
@@ -50,7 +60,7 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
     }
 
     if (!this._moveTimeValid) {
-      throw new InvalidParametersError('Time has run out');
+      throw new InvalidParametersError(TIME_EXPIRED_MESSAGE);
     }
 
     const guess = move.move.word;
@@ -69,6 +79,11 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
     };
   }
 
+  /**
+   * Adds a player to the game.
+   * @param player The player to join the game
+   * @throws InvalidParametersError if the game is full
+   */
   protected _join(player: Player): void {
     if (this.state.player) {
       throw new InvalidParametersError(GAME_FULL_MESSAGE);
@@ -84,6 +99,11 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
     this._gameStartEpoch = Date.now();
   }
 
+  /**
+   * Removes a player from the game.
+   * @param player The player to remove
+   * @throws InvalidParametersError if the player is not in the game
+   */
   protected _leave(player: Player): void {
     if (this.state.player !== player.id) {
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
@@ -95,6 +115,11 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
     };
   }
 
+  /**
+   * Determines if a move was made within the allowed time.
+   * @param epochMilliOfMove The epoch time in milliseconds when the move was made.
+   * @returns True if the move occurred at a valid time, false otherwise
+   */
   private _moveTimeValid(epochMilliOfMove: number): boolean {
     if (!this._gameStartEpoch) {
       return false;

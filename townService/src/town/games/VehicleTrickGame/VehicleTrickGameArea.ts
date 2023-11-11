@@ -15,6 +15,11 @@ import {
 import GameArea from '../GameArea';
 import VehicleTrickGame from './VehicleTrickGame';
 
+/**
+ * A VehicleTrickGameArea is a GameArea that hosts a VehicleTrickGame.
+ * @see VehicleTrickGame
+ * @see GameArea
+ */
 export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
   protected getType(): InteractableType {
     return 'VehicleTrickArea';
@@ -47,6 +52,12 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
     this._emitAreaChanged();
   }
 
+  /**
+   * Handles a command from a player in this game area.
+   * @param command command to handle
+   * @param player player making the request
+   * @returns response to the command, @see InteractableCommandResponse
+   */
   public handleCommand<CommandType extends InteractableCommand>(
     command: CommandType,
     player: Player,
