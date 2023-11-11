@@ -305,6 +305,10 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     return ret;
   }
 
+  public get interactableAreas() {
+    return this._interactableControllers;
+  }
+
   public get conversationAreas(): ConversationAreaController[] {
     const ret = this._interactableControllers.filter(
       eachInteractable => eachInteractable instanceof ConversationAreaController,
@@ -747,7 +751,7 @@ export function useTownSettings() {
  */
 export function useInteractableAreaController<T>(interactableAreaID: string): T {
   const townController = useTownController();
-  const interactableAreaController = townController.gameAreas.find(
+  const interactableAreaController = townController.interactableAreas.find(
     eachArea => eachArea.id == interactableAreaID,
   );
   if (!interactableAreaController) {
