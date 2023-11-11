@@ -1,8 +1,4 @@
-import {
-  getVehicle,
-  VehicleRackArea as VehicleRackAreaModel,
-  VehicleType,
-} from '../../types/CoveyTownSocket';
+import { VehicleRackArea as VehicleRackAreaModel, VehicleType } from '../../types/CoveyTownSocket';
 import TownController from '../TownController';
 import InteractableAreaController, { BaseInteractableEventMap } from './InteractableAreaController';
 
@@ -58,6 +54,7 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
       occupant => occupant.id === this._townController.ourPlayer.id,
     );
     console.log(ourPlayer);
+    ourPlayer?.equipVehicle(this._vehicle);
   }
 
   public toInteractableAreaModel(): VehicleRackAreaModel {
