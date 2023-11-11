@@ -31,22 +31,22 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
 
   private _wordGenerator: TrickWordGenerator;
 
-  public constructor() {
+  public constructor(wordGenerator: TrickWordGenerator | undefined = undefined) {
     super({
       targetWord: '',
       currentScore: 0,
       status: 'WAITING_TO_START',
     });
-    this._wordGenerator = new TrickWordGenerator();
+    this._wordGenerator = wordGenerator ?? new TrickWordGenerator();
     this._wordGenerator.loadWords();
   }
 
   /**
-   * Applies a player's move to the game.
+   * Applies a player's move to the game. If the guessed word is the target word,
+   * we update the player's score and generate a new word.
    * A move is invalid if:
    *  - The game is not in progress
    *  - The move is made by a player not in the game
-   *  - A word is guessed after the allowed time has expired
    * @param move The move to apply to the game
    * @throws InvalidParametersError if the move is invalid
    */
@@ -69,14 +69,10 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
       const updatedPoints = this.state.currentScore + CORRECT_WORD_POINTS;
       this.state = {
         ...this.state,
+        targetWord: this._wordGenerator.nextWord(),
         currentScore: updatedPoints,
       };
     }
-
-    this.state = {
-      ...this.state,
-      targetWord: this._wordGenerator.nextWord(),
-    };
   }
 
   /**
