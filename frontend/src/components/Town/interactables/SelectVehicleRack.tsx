@@ -116,7 +116,8 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
             <Button
               key={vehicleEnum.type}
               style={{
-                backgroundColor: vehicle === vehicleEnum.type ? 'yellow' : 'transparent',
+                backgroundColor: vehicle === vehicleEnum.type ? 'lightBlue' : 'transparent',
+                borderColor: vehicle === vehicleEnum.type ? 'darkBlue' : 'transparent',
               }}
               onClick={() => handleSelectVehicle(vehicleEnum.type as VehicleType)}>
               {vehicleEnum.label}
@@ -125,7 +126,8 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
           <Button
             key={'undefined'}
             style={{
-              backgroundColor: vehicle === undefined ? 'yellow' : 'transparent',
+              backgroundColor: vehicle === undefined ? 'lightBlue' : 'transparent',
+              borderColor: vehicle === undefined ? 'darkBlue' : 'transparent',
             }}
             onClick={handleRemoveVehicle}>
             Unequip
