@@ -223,7 +223,7 @@ export default class TownGameScene extends Phaser.Scene {
     }
     const ourPlayer = this.coveyTownController.ourPlayer;
     const movementSpeed = SpeedUtils.playerSpeed(ourPlayer.vehicle);
-    const vehicleType = 'horse';//ourPlayer.vehicle ? ourPlayer.vehicle.vehicleType : 'walk';
+    const vehicleType = ourPlayer.vehicle ? ourPlayer.vehicle.vehicleType : 'walk';
     const gameObjects = ourPlayer.gameObjects;
     if (gameObjects && this._cursors) {
       const prevVelocity = gameObjects.sprite.body.velocity.clone();
@@ -547,7 +547,7 @@ export default class TownGameScene extends Phaser.Scene {
   createPlayerSprites(player: PlayerController) {
     if (!player.gameObjects) {
       const sprite = this.physics.add
-        .sprite(player.location.x, player.location.y, 'atlas', 'misa-front')
+        .sprite(player.location.x, player.location.y, 'walk-atlas', 'walk-front')
         .setSize(30, 40)
         .setOffset(0, 24);
       const label = this.add.text(
