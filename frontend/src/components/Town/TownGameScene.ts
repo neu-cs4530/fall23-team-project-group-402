@@ -9,7 +9,7 @@ import ConversationArea from './interactables/ConversationArea';
 import GameArea from './interactables/GameArea';
 import Transporter from './interactables/Transporter';
 import ViewingArea from './interactables/ViewingArea';
-import { WALKING_SPEED } from '../../classes/SpeedUtils';
+import SpeedUtils from '../../classes/SpeedUtils';
 import VehicleRackArea from './interactables/VehicleRackArea';
 
 // Still not sure what the right type is here... "Interactable" doesn't do it
@@ -206,7 +206,9 @@ export default class TownGameScene extends Phaser.Scene {
     if (this._paused) {
       return;
     }
-    const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
+    const ourPlayer = this.coveyTownController.ourPlayer;
+    const movementSpeed = SpeedUtils.playerSpeed(ourPlayer.vehicle);
+    const gameObjects = ourPlayer.gameObjects;
     if (gameObjects && this._cursors) {
       const prevVelocity = gameObjects.sprite.body.velocity.clone();
       const body = gameObjects.sprite.body as Phaser.Physics.Arcade.Body;
@@ -217,19 +219,19 @@ export default class TownGameScene extends Phaser.Scene {
       const primaryDirection = this.getNewMovementDirection();
       switch (primaryDirection) {
         case 'left':
-          body.setVelocityX(-WALKING_SPEED);
+          body.setVelocityX(-movementSpeed);
           gameObjects.sprite.anims.play('misa-left-walk', true);
           break;
         case 'right':
-          body.setVelocityX(WALKING_SPEED);
+          body.setVelocityX(movementSpeed);
           gameObjects.sprite.anims.play('misa-right-walk', true);
           break;
         case 'front':
-          body.setVelocityY(WALKING_SPEED);
+          body.setVelocityY(movementSpeed);
           gameObjects.sprite.anims.play('misa-front-walk', true);
           break;
         case 'back':
-          body.setVelocityY(-WALKING_SPEED);
+          body.setVelocityY(-movementSpeed);
           gameObjects.sprite.anims.play('misa-back-walk', true);
           break;
         default:
@@ -247,7 +249,7 @@ export default class TownGameScene extends Phaser.Scene {
       }
 
       // Normalize and scale the velocity so that player can't move faster along a diagonal
-      gameObjects.sprite.body.velocity.normalize().scale(WALKING_SPEED);
+      gameObjects.sprite.body.velocity.normalize().scale(movementSpeed);
 
       const isMoving = primaryDirection !== undefined;
       gameObjects.label.setX(body.x);
