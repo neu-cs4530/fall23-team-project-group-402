@@ -1,0 +1,495 @@
+{
+  "frames": {
+    "skateboard-left": {
+      "frame": {
+        "x": 31,
+        "y": 51,
+        "w": 30,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-left-move.000": {
+      "frame": {
+        "x": 31,
+        "y": 148,
+        "w": 30,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 30,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-left-move.001": {
+      "frame": {
+        "x": 63,
+        "y": 49,
+        "w": 29,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 29,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-left-move.002": {
+      "frame": {
+        "x": 31,
+        "y": 51,
+        "w": 30,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-left-move.003": {
+      "frame": {
+        "x": 31,
+        "y": 51,
+        "w": 30,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-right": {
+      "frame": {
+        "x": 35,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-right-move.000": {
+      "frame": {
+        "x": 35,
+        "y": 99,
+        "w": 30,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 30,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-right-move.001": {
+      "frame": {
+        "x": 67,
+        "y": 1,
+        "w": 29,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 3,
+        "w": 29,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-right-move.002": {
+      "frame": {
+        "x": 35,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-right-move.003": {
+      "frame": {
+        "x": 35,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-front": {
+      "frame": {
+        "x": 1,
+        "y": 148,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 49
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-front-move.000": {
+      "frame": {
+        "x": 1,
+        "y": 243,
+        "w": 28,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 28,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 49
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-front-move.001": {
+      "frame": {
+        "x": 1,
+        "y": 51,
+        "w": 28,
+        "h": 47
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 28,
+        "h": 47
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 49
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-front-move.002": {
+      "frame": {
+        "x": 1,
+        "y": 148,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 49
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-front-move.003": {
+      "frame": {
+        "x": 1,
+        "y": 148,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 49
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-back": {
+      "frame": {
+        "x": 1,
+        "y": 100,
+        "w": 32,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 32,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 34,
+        "h": 50
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-back-move.000": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 32,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 32,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 34,
+        "h": 50
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-back-move.001": {
+      "frame": {
+        "x": 1,
+        "y": 196,
+        "w": 32,
+        "h": 45
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 32,
+        "h": 45
+      },
+      "sourceSize": {
+        "w": 34,
+        "h": 50
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-back-move.002": {
+      "frame": {
+        "x": 1,
+        "y": 100,
+        "w": 32,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 32,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 34,
+        "h": 50
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-back-move.003": {
+      "frame": {
+        "x": 1,
+        "y": 100,
+        "w": 32,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 32,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 34,
+        "h": 50
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "skateboard-atlas.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 97,
+      "h": 288
+    },
+    "scale": 1
+  }
+}
