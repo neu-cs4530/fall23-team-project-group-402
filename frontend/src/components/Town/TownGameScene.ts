@@ -260,7 +260,9 @@ export default class TownGameScene extends Phaser.Scene {
             gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-right`);
           } else if (prevVelocity.y < 0) {
             gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-back`);
-          } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-front`);
+          } else if (prevVelocity.y > 0) {
+            gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-front`);
+          }
           break;
       }
 
@@ -309,8 +311,8 @@ export default class TownGameScene extends Phaser.Scene {
       for (const player of this._players) {
         if (player.gameObjects?.label && player.gameObjects?.sprite.body) {
           player.gameObjects.label.setX(player.gameObjects.sprite.body.x);
-          const labelYOffset = player.vehicle ? 40 : 20;
-          player.gameObjects.label.setY(player.gameObjects.sprite.body.y - labelYOffset);
+          const playerLabelYOffset = player.vehicle ? 40 : 20;
+          player.gameObjects.label.setY(player.gameObjects.sprite.body.y - playerLabelYOffset);
         }
       }
     }
@@ -501,7 +503,7 @@ export default class TownGameScene extends Phaser.Scene {
   createAnimations(vehicleType: string, xFrames: number, yFrames: number) {
     const { anims } = this;
     anims.create({
-      key:  `${vehicleType}-left-move`,
+      key: `${vehicleType}-left-move`,
       frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
         prefix: `${vehicleType}-left-move.`,
         start: 0,
@@ -512,7 +514,7 @@ export default class TownGameScene extends Phaser.Scene {
       repeat: -1,
     });
     anims.create({
-      key:  `${vehicleType}-right-move`,
+      key: `${vehicleType}-right-move`,
       frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
         prefix: `${vehicleType}-right-move.`,
         start: 0,
@@ -523,7 +525,7 @@ export default class TownGameScene extends Phaser.Scene {
       repeat: -1,
     });
     anims.create({
-      key:  `${vehicleType}-front-move`,
+      key: `${vehicleType}-front-move`,
       frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
         prefix: `${vehicleType}-front-move.`,
         start: 0,
@@ -534,7 +536,7 @@ export default class TownGameScene extends Phaser.Scene {
       repeat: -1,
     });
     anims.create({
-      key:  `${vehicleType}-back-move`,
+      key: `${vehicleType}-back-move`,
       frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
         prefix: `${vehicleType}-back-move.`,
         start: 0,
