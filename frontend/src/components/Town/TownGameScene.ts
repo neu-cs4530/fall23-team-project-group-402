@@ -147,6 +147,11 @@ export default class TownGameScene extends Phaser.Scene {
       this._resourcePathPrefix + '/assets/atlas/skateboard-atlas.png',
       this._resourcePathPrefix + '/assets/atlas/skateboard-atlas.json',
     );
+    this.load.atlas(
+      'horse-atlas',
+      this._resourcePathPrefix + '/assets/atlas/horse-atlas.png',
+      this._resourcePathPrefix + '/assets/atlas/horse-atlas.json',
+    );
   }
 
   updatePlayers(players: PlayerController[]) {
@@ -218,7 +223,7 @@ export default class TownGameScene extends Phaser.Scene {
     }
     const ourPlayer = this.coveyTownController.ourPlayer;
     const movementSpeed = SpeedUtils.playerSpeed(ourPlayer.vehicle);
-    const vehicleType = 'skateboard';//ourPlayer.vehicle ? ourPlayer.vehicle.vehicleType : 'walk';
+    const vehicleType = 'horse';//ourPlayer.vehicle ? ourPlayer.vehicle.vehicleType : 'walk';
     const gameObjects = ourPlayer.gameObjects;
     if (gameObjects && this._cursors) {
       const prevVelocity = gameObjects.sprite.body.velocity.clone();
@@ -460,9 +465,10 @@ export default class TownGameScene extends Phaser.Scene {
 
     // Create the player's walking animations from the texture atlas. These are stored in the global
     // animation manager so any sprite can access them.
-    this.createAnimations('walk', 3);
-    this.createAnimations('bike', 3);
-    this.createAnimations('skateboard', 3);
+    this.createAnimations('walk', 3, 3);
+    this.createAnimations('bike', 3, 3);
+    this.createAnimations('skateboard', 3, 3);
+    this.createAnimations('horse', 4, 3);
 
     const camera = this.cameras.main;
     camera.startFollow(this.coveyTownController.ourPlayer.gameObjects.sprite);
@@ -490,14 +496,14 @@ export default class TownGameScene extends Phaser.Scene {
     this.coveyTownController.addListener('playersChanged', players => this.updatePlayers(players));
   }
 
-  createAnimations(vehicleType: string, numFrames: number) {
+  createAnimations(vehicleType: string, xFrames: number, yFrames: number) {
     const { anims } = this;
     anims.create({
       key:  `${vehicleType}-left-move`,
       frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
         prefix: `${vehicleType}-left-move.`,
         start: 0,
-        end: numFrames,
+        end: xFrames,
         zeroPad: 3,
       }),
       frameRate: 10,
@@ -508,7 +514,7 @@ export default class TownGameScene extends Phaser.Scene {
       frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
         prefix: `${vehicleType}-right-move.`,
         start: 0,
-        end: numFrames,
+        end: xFrames,
         zeroPad: 3,
       }),
       frameRate: 10,
@@ -519,7 +525,7 @@ export default class TownGameScene extends Phaser.Scene {
       frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
         prefix: `${vehicleType}-front-move.`,
         start: 0,
-        end: numFrames,
+        end: yFrames,
         zeroPad: 3,
       }),
       frameRate: 10,
@@ -530,7 +536,7 @@ export default class TownGameScene extends Phaser.Scene {
       frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
         prefix: `${vehicleType}-back-move.`,
         start: 0,
-        end: numFrames,
+        end: yFrames,
         zeroPad: 3,
       }),
       frameRate: 10,
