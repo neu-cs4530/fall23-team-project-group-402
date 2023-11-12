@@ -137,6 +137,11 @@ export default class TownGameScene extends Phaser.Scene {
       this._resourcePathPrefix + '/assets/atlas/atlas.png',
       this._resourcePathPrefix + '/assets/atlas/atlas.json',
     );
+    this.load.atlas(
+      'bike-atlas',
+      this._resourcePathPrefix + '/assets/atlas/bike-atlas.png',
+      this._resourcePathPrefix + '/assets/atlas/bike-atlas.json',
+    );
   }
 
   updatePlayers(players: PlayerController[]) {
@@ -208,6 +213,7 @@ export default class TownGameScene extends Phaser.Scene {
     }
     const ourPlayer = this.coveyTownController.ourPlayer;
     const movementSpeed = SpeedUtils.playerSpeed(ourPlayer.vehicle);
+    const vehicleType = 'bike';//ourPlayer.vehicle ? ourPlayer.vehicle.vehicleType : 'walk';
     const gameObjects = ourPlayer.gameObjects;
     if (gameObjects && this._cursors) {
       const prevVelocity = gameObjects.sprite.body.velocity.clone();
@@ -220,31 +226,31 @@ export default class TownGameScene extends Phaser.Scene {
       switch (primaryDirection) {
         case 'left':
           body.setVelocityX(-movementSpeed);
-          gameObjects.sprite.anims.play('misa-left-walk', true);
+          gameObjects.sprite.anims.play(`${vehicleType}-left-move`, true);
           break;
         case 'right':
           body.setVelocityX(movementSpeed);
-          gameObjects.sprite.anims.play('misa-right-walk', true);
+          gameObjects.sprite.anims.play(`${vehicleType}-right-move`, true);
           break;
         case 'front':
           body.setVelocityY(movementSpeed);
-          gameObjects.sprite.anims.play('misa-front-walk', true);
+          gameObjects.sprite.anims.play(`${vehicleType}-front-move`, true);
           break;
         case 'back':
           body.setVelocityY(-movementSpeed);
-          gameObjects.sprite.anims.play('misa-back-walk', true);
+          gameObjects.sprite.anims.play(`${vehicleType}-back-move`, true);
           break;
         default:
           // Not moving
           gameObjects.sprite.anims.stop();
           // If we were moving, pick and idle frame to use
           if (prevVelocity.x < 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-left');
+            gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-left`);
           } else if (prevVelocity.x > 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-right');
+            gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-right`);
           } else if (prevVelocity.y < 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-back');
-          } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture('atlas', 'misa-front');
+            gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-back`);
+          } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-front`);
           break;
       }
 
@@ -449,51 +455,7 @@ export default class TownGameScene extends Phaser.Scene {
 
     // Create the player's walking animations from the texture atlas. These are stored in the global
     // animation manager so any sprite can access them.
-    const { anims } = this;
-    anims.create({
-      key: 'misa-left-walk',
-      frames: anims.generateFrameNames('atlas', {
-        prefix: 'misa-left-walk.',
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    anims.create({
-      key: 'misa-right-walk',
-      frames: anims.generateFrameNames('atlas', {
-        prefix: 'misa-right-walk.',
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    anims.create({
-      key: 'misa-front-walk',
-      frames: anims.generateFrameNames('atlas', {
-        prefix: 'misa-front-walk.',
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    anims.create({
-      key: 'misa-back-walk',
-      frames: anims.generateFrameNames('atlas', {
-        prefix: 'misa-back-walk.',
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
+    this.createAnimations('bike', 3);
 
     const camera = this.cameras.main;
     camera.startFollow(this.coveyTownController.ourPlayer.gameObjects.sprite);
@@ -521,6 +483,54 @@ export default class TownGameScene extends Phaser.Scene {
     this.coveyTownController.addListener('playersChanged', players => this.updatePlayers(players));
   }
 
+  createAnimations(vehicleType: string, numFrames: number) {
+    const { anims } = this;
+    anims.create({
+      key:  `${vehicleType}-left-move`,
+      frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
+        prefix: `${vehicleType}-left-move.`,
+        start: 0,
+        end: numFrames,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    anims.create({
+      key:  `${vehicleType}-right-move`,
+      frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
+        prefix: `${vehicleType}-right-move.`,
+        start: 0,
+        end: numFrames,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    anims.create({
+      key:  `${vehicleType}-front-move`,
+      frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
+        prefix: `${vehicleType}-front-move.`,
+        start: 0,
+        end: numFrames,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    anims.create({
+      key:  `${vehicleType}-back-move`,
+      frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
+        prefix: `${vehicleType}-back-move.`,
+        start: 0,
+        end: numFrames,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+  }
+
   createPlayerSprites(player: PlayerController) {
     if (!player.gameObjects) {
       const sprite = this.physics.add
@@ -534,7 +544,7 @@ export default class TownGameScene extends Phaser.Scene {
         {
           font: '18px monospace',
           color: '#000000',
-          // padding: {x: 20, y: 10},
+          // padding: {x: 20, y: 10}, //TODO: how to not cover the vehicle?
           backgroundColor: '#ffffff',
         },
       );
