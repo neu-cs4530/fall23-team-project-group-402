@@ -269,7 +269,8 @@ export default class TownGameScene extends Phaser.Scene {
 
       const isMoving = primaryDirection !== undefined;
       gameObjects.label.setX(body.x);
-      gameObjects.label.setY(body.y - 20);
+      const labelYOffset = ourPlayer.vehicle ? 40 : 20;
+      gameObjects.label.setY(body.y - labelYOffset);
       const x = gameObjects.sprite.getBounds().centerX;
       const y = gameObjects.sprite.getBounds().centerY;
       //Move the sprite
@@ -308,7 +309,8 @@ export default class TownGameScene extends Phaser.Scene {
       for (const player of this._players) {
         if (player.gameObjects?.label && player.gameObjects?.sprite.body) {
           player.gameObjects.label.setX(player.gameObjects.sprite.body.x);
-          player.gameObjects.label.setY(player.gameObjects.sprite.body.y - 20);
+          const labelYOffset = player.vehicle ? 40 : 20;
+          player.gameObjects.label.setY(player.gameObjects.sprite.body.y - labelYOffset);
         }
       }
     }

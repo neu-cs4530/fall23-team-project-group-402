@@ -97,8 +97,9 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
         sprite.anims.stop();
         sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-${this.location.rotation}`);
       }
+      const labelYOffset = this.vehicle ? 40 : 20;
       label.setX(sprite.body.x);
-      label.setY(sprite.body.y - 20);
+      label.setY(sprite.body.y - labelYOffset);
     }
   }
 
