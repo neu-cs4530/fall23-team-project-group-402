@@ -133,9 +133,9 @@ export default class TownGameScene extends Phaser.Scene {
     );
     this.load.tilemapTiledJSON('map', this._resourcePathPrefix + '/assets/tilemaps/indoors.json');
     this.load.atlas(
-      'atlas',
-      this._resourcePathPrefix + '/assets/atlas/atlas.png',
-      this._resourcePathPrefix + '/assets/atlas/atlas.json',
+      'walk-atlas',
+      this._resourcePathPrefix + '/assets/atlas/walk-atlas.png',
+      this._resourcePathPrefix + '/assets/atlas/walk-atlas.json',
     );
     this.load.atlas(
       'bike-atlas',
@@ -213,7 +213,7 @@ export default class TownGameScene extends Phaser.Scene {
     }
     const ourPlayer = this.coveyTownController.ourPlayer;
     const movementSpeed = SpeedUtils.playerSpeed(ourPlayer.vehicle);
-    const vehicleType = 'bike';//ourPlayer.vehicle ? ourPlayer.vehicle.vehicleType : 'walk';
+    const vehicleType = 'walk';//ourPlayer.vehicle ? ourPlayer.vehicle.vehicleType : 'walk';
     const gameObjects = ourPlayer.gameObjects;
     if (gameObjects && this._cursors) {
       const prevVelocity = gameObjects.sprite.body.velocity.clone();
@@ -424,7 +424,7 @@ export default class TownGameScene extends Phaser.Scene {
     // has a bit of whitespace, so I'm using setSize & setOffset to control the size of the
     // player's body.
     const sprite = this.physics.add
-      .sprite(spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front')
+      .sprite(spawnPoint.x, spawnPoint.y, 'walk-atlas', 'walk-front')
       .setSize(30, 40)
       .setOffset(0, 24)
       .setDepth(6);
@@ -456,6 +456,7 @@ export default class TownGameScene extends Phaser.Scene {
     // Create the player's walking animations from the texture atlas. These are stored in the global
     // animation manager so any sprite can access them.
     this.createAnimations('bike', 3);
+    this.createAnimations('walk', 3);
 
     const camera = this.cameras.main;
     camera.startFollow(this.coveyTownController.ourPlayer.gameObjects.sprite);
