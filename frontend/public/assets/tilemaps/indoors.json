@@ -573,12 +573,12 @@
                 {
                  "height":83.8442547785938,
                  "id":43,
-                 "name":"Tic Tac Toe 1",
+                 "name":"TrickArea",
                  "properties":[
                         {
                          "name":"type",
                          "type":"string",
-                         "value":"TicTacToe"
+                         "value":"VehicleTrick"
                         }],
                  "rotation":0,
                  "type":"GameArea",
