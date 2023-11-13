@@ -1,9 +1,14 @@
 import * as fs from 'fs';
+import * as path from 'path';
+import { fileURLToPath } from 'url';
+
+const F = fileURLToPath(import.meta.url);
+const DIRNAME = path.dirname(F);
 
 /**
  * The filename containing all of the allowed words.
  */
-const WORDS_FILENAME = 'trick_words.txt';
+const WORDS_FILENAME = path.join(DIRNAME, 'trick_words.txt');
 
 export const FILE_ERROR_MESSAGE = 'Unable to read the word list file';
 
