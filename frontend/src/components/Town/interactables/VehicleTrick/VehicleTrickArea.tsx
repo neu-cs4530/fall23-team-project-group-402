@@ -25,6 +25,7 @@ import useTownController from '../../../../hooks/useTownController';
 import { GameResult, GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
 import TicTacToeLeaderboard from '../Leaderboard';
+import VehicleTrick from './VehicleTrick';
 
 /**
  * The TicTacToeArea component renders the TicTacToe game area.
@@ -59,7 +60,112 @@ import TicTacToeLeaderboard from '../Leaderboard';
  *
  */
 function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
-  return <Box>{interactableID}</Box>;
+  const gameAreaController = useInteractableAreaController<TicTacToeAreaController>(interactableID);
+  const townController = useTownController();
+
+  // const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
+  const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
+  const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
+  const [startingGame, setStartingGame] = useState(false);
+  const toast = useToast();
+
+  useEffect(() => {
+    const updateGameState = () => {
+      // setHistory(gameAreaController.history);
+      setGameStatus(gameAreaController.status || 'WAITING_TO_START');
+      setObservers(gameAreaController.observers);
+    };
+    gameAreaController.addListener('gameUpdated', updateGameState);
+    // Remove game end toast later
+    const onGameEnd = () => {
+      toast({
+        title: "Time's up!",
+        description: 'Time has concluded',
+        status: 'info',
+      });
+    };
+    gameAreaController.addListener('gameEnd', onGameEnd);
+    return () => {
+      gameAreaController.removeListener('gameEnd', onGameEnd);
+      gameAreaController.removeListener('gameUpdated', updateGameState);
+    };
+  }, [townController, gameAreaController, toast]);
+
+  let gameStatusText = <></>;
+  if (gameStatus === 'IN_PROGRESS') {
+    gameStatusText = <>Game in progress</>;
+  } else {
+    let startGameButton = <></>;
+    if (
+      (gameAreaController.status === 'WAITING_TO_START' && !gameAreaController.isPlayer) ||
+      gameAreaController.status === 'OVER'
+    ) {
+      startGameButton = (
+        <Button
+          onClick={async () => {
+            setStartingGame(true);
+            try {
+              await gameAreaController.joinGame();
+            } catch (err) {
+              toast({
+                title: 'Error joining game',
+                description: (err as Error).toString(),
+                status: 'error',
+              });
+            }
+            setStartingGame(false);
+          }}
+          isLoading={startingGame}
+          disabled={startingGame}>
+          Start Game
+        </Button>
+      );
+    }
+    gameStatusText = (
+      <b>
+        Game {gameStatus === 'WAITING_TO_START' ? 'not yet started' : 'over'}. {startGameButton}
+      </b>
+    );
+  }
+
+  return (
+    <Container>
+      <Accordion allowToggle>
+        <AccordionItem>
+          <Heading as='h3'>
+            <AccordionButton>
+              <Box as='span' flex='1' textAlign='left'>
+                Leaderboard
+                <AccordionIcon />
+              </Box>
+            </AccordionButton>
+          </Heading>
+          <AccordionPanel>
+            <>To-Do</>
+          </AccordionPanel>
+        </AccordionItem>
+        <AccordionItem>
+          <Heading as='h3'>
+            <AccordionButton>
+              <Box as='span' flex='1' textAlign='left'>
+                Current Observers
+                <AccordionIcon />
+              </Box>
+            </AccordionButton>
+          </Heading>
+          <AccordionPanel>
+            <List aria-label='list of observers in the game'>
+              {observers.map(player => {
+                return <ListItem key={player.id}>{player.userName}</ListItem>;
+              })}
+            </List>
+          </AccordionPanel>
+        </AccordionItem>
+      </Accordion>
+      {gameStatusText}
+      <VehicleTrick gameAreaController={gameAreaController} />
+    </Container>
+  );
 }
 
 /**
