@@ -12,20 +12,16 @@ import InvalidParametersError, {
 describe('VehicleTrickGame', () => {
   let game: VehicleTrickGame;
   let wordGenerator: TrickWordGenerator;
-  let loadWordsSpy: jest.SpyInstance;
   let nextWordSpy: jest.SpyInstance;
 
   beforeEach(() => {
     wordGenerator = new TrickWordGenerator();
-    loadWordsSpy = jest.spyOn(wordGenerator, 'loadWords');
     nextWordSpy = jest.spyOn(wordGenerator, 'nextWord');
 
-    loadWordsSpy.mockImplementation(() => {});
     nextWordSpy.mockReturnValue('testing');
 
     game = new VehicleTrickGame(wordGenerator);
 
-    mockClear(loadWordsSpy);
     mockClear(nextWordSpy);
   });
 
@@ -40,25 +36,6 @@ describe('VehicleTrickGame', () => {
     expect(game.state.targetWord).toEqual(targetWord);
     expect(game.state.currentScore).toEqual(currentScore);
   }
-
-  describe('constructor', () => {
-    it('it loads the words upon construction', () => {
-      expect(loadWordsSpy).not.toHaveBeenCalled();
-      game = new VehicleTrickGame(wordGenerator);
-      expect(loadWordsSpy).toHaveBeenCalled();
-    });
-    it('throws an error if loading the words throws and error', () => {
-      loadWordsSpy.mockImplementation(() => {
-        throw new Error('error');
-      });
-
-      expect(loadWordsSpy).not.toHaveBeenCalled();
-      expect(() => {
-        game = new VehicleTrickGame(wordGenerator);
-      }).toThrowError();
-      expect(loadWordsSpy).toHaveBeenCalled();
-    });
-  });
   describe('applyMove', () => {
     describe('invalid moves', () => {
       it('throws an error if the game is not in progress', () => {

@@ -38,7 +38,6 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
       status: 'WAITING_TO_START',
     });
     this._wordGenerator = wordGenerator ?? new TrickWordGenerator();
-    this._wordGenerator.loadWords();
   }
 
   /**
