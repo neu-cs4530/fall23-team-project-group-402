@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import VehicleRackAreaController from '../../../classes/interactable/VehicleRackAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../classes/TownController';
 import useTownController from '../../../hooks/useTownController';
-import { VehicleType } from '../../../types/CoveyTownSocket';
+import { Vehicle, VehicleType } from '../../../types/CoveyTownSocket';
 import VehicleRackArea from './VehicleRackArea';
 
 export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackArea }): JSX.Element {
@@ -24,8 +24,11 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   );
   const isOpen = newRack !== undefined;
   vehicleRackAreaController.occupants = coveyTownController.players;
-  const [vehicle, setVehicle] = useState<VehicleType | undefined>(
+  const [selectedVehicle, setSelectedVehicle] = useState<VehicleType | undefined>(
     vehicleRackAreaController.vehicle,
+  );
+  const [equippedVehicle, setEquippedVehicle] = useState<Vehicle | undefined>(
+    coveyTownController.ourPlayer.vehicle,
   );
   const toast = useToast();
 
@@ -61,18 +64,24 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
       coveyTownController.interactEnd(newRack);
       coveyTownController.unPause();
     }
-  }, [coveyTownController, newRack]);
+    vehicleRackAreaController.addListener('equipChange', setEquippedVehicle);
+    vehicleRackAreaController.addListener('unequipChange', setEquippedVehicle);
+    return () => {
+      vehicleRackAreaController.removeListener('equipChange', setEquippedVehicle);
+      vehicleRackAreaController.removeListener('unequipChange', setEquippedVehicle);
+    };
+  }, [coveyTownController, newRack, vehicleRackAreaController]);
 
-  function handleSelectVehicle(selectedVehicle: VehicleType) {
-    setVehicle(() => {
-      vehicleRackAreaController.vehicle = selectedVehicle;
+  function handleSelectVehicle(vehicleType: VehicleType) {
+    setSelectedVehicle(() => {
+      vehicleRackAreaController.vehicle = vehicleType;
       console.log(vehicleRackAreaController.vehicle);
-      return selectedVehicle; // Return the new state value
+      return vehicleType; // Return the new state value
     });
   }
 
   function handleRemoveVehicle() {
-    setVehicle(() => {
+    setSelectedVehicle(() => {
       vehicleRackAreaController.vehicle = undefined;
       console.log(vehicleRackAreaController.vehicle);
       return undefined;
@@ -116,8 +125,8 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
             <Button
               key={vehicleEnum.type}
               style={{
-                backgroundColor: vehicle === vehicleEnum.type ? 'lightBlue' : 'transparent',
-                borderColor: vehicle === vehicleEnum.type ? 'darkBlue' : 'transparent',
+                backgroundColor: selectedVehicle === vehicleEnum.type ? 'lightBlue' : 'transparent',
+                borderColor: selectedVehicle === vehicleEnum.type ? 'darkBlue' : 'transparent',
               }}
               onClick={() => handleSelectVehicle(vehicleEnum.type as VehicleType)}>
               {vehicleEnum.label}
@@ -126,8 +135,8 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
           <Button
             key={'undefined'}
             style={{
-              backgroundColor: vehicle === undefined ? 'lightBlue' : 'transparent',
-              borderColor: vehicle === undefined ? 'darkBlue' : 'transparent',
+              backgroundColor: selectedVehicle === undefined ? 'lightBlue' : 'transparent',
+              borderColor: selectedVehicle === undefined ? 'darkBlue' : 'transparent',
             }}
             onClick={handleRemoveVehicle}>
             Unequip

@@ -1,11 +1,23 @@
-import { VehicleRackArea as VehicleRackAreaModel, VehicleType } from '../../types/CoveyTownSocket';
+import {
+  Vehicle,
+  VehicleRackArea as VehicleRackAreaModel,
+  VehicleType,
+} from '../../types/CoveyTownSocket';
 import TownController from '../TownController';
 import InteractableAreaController, { BaseInteractableEventMap } from './InteractableAreaController';
 
 /**
  * The events that a VehicleRackAreaController can emit
  */
-export type VehicleRackAreaEvents = BaseInteractableEventMap;
+export type VehicleRackAreaEvents = BaseInteractableEventMap & {
+  /**
+   * An equipChange event indicates that the player has changed their vehicle
+   * Listeners are passed the new state in the parameter `isPlaying`
+   */
+  equipChange: (vehicle: Vehicle | undefined) => void;
+
+  unEquipChange: (vehicle: Vehicle | undefined) => void;
+};
 
 export default class VehicleRackAreaController extends InteractableAreaController<
   VehicleRackAreaEvents,
@@ -52,7 +64,14 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
     const ourPlayer = this.occupants.find(
       occupant => occupant.id === this._townController.ourPlayer.id,
     );
-    ourPlayer?.equipVehicle(this._vehicle);
+    if (ourPlayer?.vehicle?.vehicleType !== this._vehicle) {
+      ourPlayer?.equipVehicle(this._vehicle);
+      if (this._vehicle === undefined) {
+        this.emit('unequipChange', ourPlayer?.vehicle);
+      } else {
+        this.emit('equipChange', ourPlayer?.vehicle);
+      }
+    }
   }
 
   public toInteractableAreaModel(): VehicleRackAreaModel {
