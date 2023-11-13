@@ -221,15 +221,10 @@ export default class TownGameScene extends Phaser.Scene {
     if (this._paused) {
       return;
     }
-<<<<<<< HEAD
-    const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
-    const walkingSpeed = SpeedUtils.playerSpeed(this.coveyTownController.ourPlayer.vehicle);
-=======
     const ourPlayer = this.coveyTownController.ourPlayer;
     const movementSpeed = SpeedUtils.playerSpeed(ourPlayer.vehicle);
     const vehicleType = ourPlayer.vehicle ? ourPlayer.vehicle.vehicleType : 'walk';
     const gameObjects = ourPlayer.gameObjects;
->>>>>>> main
     if (gameObjects && this._cursors) {
       const prevVelocity = gameObjects.sprite.body.velocity.clone();
       const body = gameObjects.sprite.body as Phaser.Physics.Arcade.Body;
@@ -240,22 +235,6 @@ export default class TownGameScene extends Phaser.Scene {
       const primaryDirection = this.getNewMovementDirection();
       switch (primaryDirection) {
         case 'left':
-<<<<<<< HEAD
-          body.setVelocityX(-walkingSpeed);
-          gameObjects.sprite.anims.play('misa-left-walk', true);
-          break;
-        case 'right':
-          body.setVelocityX(walkingSpeed);
-          gameObjects.sprite.anims.play('misa-right-walk', true);
-          break;
-        case 'front':
-          body.setVelocityY(walkingSpeed);
-          gameObjects.sprite.anims.play('misa-front-walk', true);
-          break;
-        case 'back':
-          body.setVelocityY(-walkingSpeed);
-          gameObjects.sprite.anims.play('misa-back-walk', true);
-=======
           body.setVelocityX(-movementSpeed);
           gameObjects.sprite.anims.play(`${vehicleType}-left-move`, true);
           break;
@@ -270,7 +249,6 @@ export default class TownGameScene extends Phaser.Scene {
         case 'back':
           body.setVelocityY(-movementSpeed);
           gameObjects.sprite.anims.play(`${vehicleType}-back-move`, true);
->>>>>>> main
           break;
         default:
           // Not moving
@@ -289,11 +267,7 @@ export default class TownGameScene extends Phaser.Scene {
       }
 
       // Normalize and scale the velocity so that player can't move faster along a diagonal
-<<<<<<< HEAD
-      gameObjects.sprite.body.velocity.normalize().scale(walkingSpeed);
-=======
       gameObjects.sprite.body.velocity.normalize().scale(movementSpeed);
->>>>>>> main
 
       const isMoving = primaryDirection !== undefined;
       gameObjects.label.setX(body.x);
