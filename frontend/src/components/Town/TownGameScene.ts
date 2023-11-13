@@ -9,7 +9,7 @@ import ConversationArea from './interactables/ConversationArea';
 import GameArea from './interactables/GameArea';
 import Transporter from './interactables/Transporter';
 import ViewingArea from './interactables/ViewingArea';
-import { WALKING_SPEED } from '../../classes/SpeedUtils';
+import SpeedUtils from '../../classes/SpeedUtils';
 import VehicleRackArea from './interactables/VehicleRackArea';
 
 // Still not sure what the right type is here... "Interactable" doesn't do it
@@ -133,9 +133,24 @@ export default class TownGameScene extends Phaser.Scene {
     );
     this.load.tilemapTiledJSON('map', this._resourcePathPrefix + '/assets/tilemaps/indoors.json');
     this.load.atlas(
-      'atlas',
-      this._resourcePathPrefix + '/assets/atlas/atlas.png',
-      this._resourcePathPrefix + '/assets/atlas/atlas.json',
+      'walk-atlas',
+      this._resourcePathPrefix + '/assets/atlas/walk-atlas.png',
+      this._resourcePathPrefix + '/assets/atlas/walk-atlas.json',
+    );
+    this.load.atlas(
+      'bike-atlas',
+      this._resourcePathPrefix + '/assets/atlas/bike-atlas.png',
+      this._resourcePathPrefix + '/assets/atlas/bike-atlas.json',
+    );
+    this.load.atlas(
+      'skateboard-atlas',
+      this._resourcePathPrefix + '/assets/atlas/skateboard-atlas.png',
+      this._resourcePathPrefix + '/assets/atlas/skateboard-atlas.json',
+    );
+    this.load.atlas(
+      'horse-atlas',
+      this._resourcePathPrefix + '/assets/atlas/horse-atlas.png',
+      this._resourcePathPrefix + '/assets/atlas/horse-atlas.json',
     );
   }
 
@@ -206,7 +221,10 @@ export default class TownGameScene extends Phaser.Scene {
     if (this._paused) {
       return;
     }
-    const gameObjects = this.coveyTownController.ourPlayer.gameObjects;
+    const ourPlayer = this.coveyTownController.ourPlayer;
+    const movementSpeed = SpeedUtils.playerSpeed(ourPlayer.vehicle);
+    const vehicleType = ourPlayer.vehicle ? ourPlayer.vehicle.vehicleType : 'walk';
+    const gameObjects = ourPlayer.gameObjects;
     if (gameObjects && this._cursors) {
       const prevVelocity = gameObjects.sprite.body.velocity.clone();
       const body = gameObjects.sprite.body as Phaser.Physics.Arcade.Body;
@@ -217,41 +235,44 @@ export default class TownGameScene extends Phaser.Scene {
       const primaryDirection = this.getNewMovementDirection();
       switch (primaryDirection) {
         case 'left':
-          body.setVelocityX(-WALKING_SPEED);
-          gameObjects.sprite.anims.play('misa-left-walk', true);
+          body.setVelocityX(-movementSpeed);
+          gameObjects.sprite.anims.play(`${vehicleType}-left-move`, true);
           break;
         case 'right':
-          body.setVelocityX(WALKING_SPEED);
-          gameObjects.sprite.anims.play('misa-right-walk', true);
+          body.setVelocityX(movementSpeed);
+          gameObjects.sprite.anims.play(`${vehicleType}-right-move`, true);
           break;
         case 'front':
-          body.setVelocityY(WALKING_SPEED);
-          gameObjects.sprite.anims.play('misa-front-walk', true);
+          body.setVelocityY(movementSpeed);
+          gameObjects.sprite.anims.play(`${vehicleType}-front-move`, true);
           break;
         case 'back':
-          body.setVelocityY(-WALKING_SPEED);
-          gameObjects.sprite.anims.play('misa-back-walk', true);
+          body.setVelocityY(-movementSpeed);
+          gameObjects.sprite.anims.play(`${vehicleType}-back-move`, true);
           break;
         default:
           // Not moving
           gameObjects.sprite.anims.stop();
           // If we were moving, pick and idle frame to use
           if (prevVelocity.x < 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-left');
+            gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-left`);
           } else if (prevVelocity.x > 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-right');
+            gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-right`);
           } else if (prevVelocity.y < 0) {
-            gameObjects.sprite.setTexture('atlas', 'misa-back');
-          } else if (prevVelocity.y > 0) gameObjects.sprite.setTexture('atlas', 'misa-front');
+            gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-back`);
+          } else if (prevVelocity.y > 0) {
+            gameObjects.sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-front`);
+          }
           break;
       }
 
       // Normalize and scale the velocity so that player can't move faster along a diagonal
-      gameObjects.sprite.body.velocity.normalize().scale(WALKING_SPEED);
+      gameObjects.sprite.body.velocity.normalize().scale(movementSpeed);
 
       const isMoving = primaryDirection !== undefined;
       gameObjects.label.setX(body.x);
-      gameObjects.label.setY(body.y - 20);
+      const labelYOffset = ourPlayer.vehicle ? 40 : 20;
+      gameObjects.label.setY(body.y - labelYOffset);
       const x = gameObjects.sprite.getBounds().centerX;
       const y = gameObjects.sprite.getBounds().centerY;
       //Move the sprite
@@ -290,7 +311,8 @@ export default class TownGameScene extends Phaser.Scene {
       for (const player of this._players) {
         if (player.gameObjects?.label && player.gameObjects?.sprite.body) {
           player.gameObjects.label.setX(player.gameObjects.sprite.body.x);
-          player.gameObjects.label.setY(player.gameObjects.sprite.body.y - 20);
+          const playerLabelYOffset = player.vehicle ? 40 : 20;
+          player.gameObjects.label.setY(player.gameObjects.sprite.body.y - playerLabelYOffset);
         }
       }
     }
@@ -416,7 +438,7 @@ export default class TownGameScene extends Phaser.Scene {
     // has a bit of whitespace, so I'm using setSize & setOffset to control the size of the
     // player's body.
     const sprite = this.physics.add
-      .sprite(spawnPoint.x, spawnPoint.y, 'atlas', 'misa-front')
+      .sprite(spawnPoint.x, spawnPoint.y, 'walk-atlas', 'walk-front')
       .setSize(30, 40)
       .setOffset(0, 24)
       .setDepth(6);
@@ -447,51 +469,10 @@ export default class TownGameScene extends Phaser.Scene {
 
     // Create the player's walking animations from the texture atlas. These are stored in the global
     // animation manager so any sprite can access them.
-    const { anims } = this;
-    anims.create({
-      key: 'misa-left-walk',
-      frames: anims.generateFrameNames('atlas', {
-        prefix: 'misa-left-walk.',
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    anims.create({
-      key: 'misa-right-walk',
-      frames: anims.generateFrameNames('atlas', {
-        prefix: 'misa-right-walk.',
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    anims.create({
-      key: 'misa-front-walk',
-      frames: anims.generateFrameNames('atlas', {
-        prefix: 'misa-front-walk.',
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
-    anims.create({
-      key: 'misa-back-walk',
-      frames: anims.generateFrameNames('atlas', {
-        prefix: 'misa-back-walk.',
-        start: 0,
-        end: 3,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: -1,
-    });
+    this.createAnimations('walk', 3, 3);
+    this.createAnimations('bike', 3, 3);
+    this.createAnimations('skateboard', 3, 3);
+    this.createAnimations('horse', 4, 3);
 
     const camera = this.cameras.main;
     camera.startFollow(this.coveyTownController.ourPlayer.gameObjects.sprite);
@@ -519,10 +500,58 @@ export default class TownGameScene extends Phaser.Scene {
     this.coveyTownController.addListener('playersChanged', players => this.updatePlayers(players));
   }
 
+  createAnimations(vehicleType: string, xFrames: number, yFrames: number) {
+    const { anims } = this;
+    anims.create({
+      key: `${vehicleType}-left-move`,
+      frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
+        prefix: `${vehicleType}-left-move.`,
+        start: 0,
+        end: xFrames,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    anims.create({
+      key: `${vehicleType}-right-move`,
+      frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
+        prefix: `${vehicleType}-right-move.`,
+        start: 0,
+        end: xFrames,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    anims.create({
+      key: `${vehicleType}-front-move`,
+      frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
+        prefix: `${vehicleType}-front-move.`,
+        start: 0,
+        end: yFrames,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+    anims.create({
+      key: `${vehicleType}-back-move`,
+      frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
+        prefix: `${vehicleType}-back-move.`,
+        start: 0,
+        end: yFrames,
+        zeroPad: 3,
+      }),
+      frameRate: 10,
+      repeat: -1,
+    });
+  }
+
   createPlayerSprites(player: PlayerController) {
     if (!player.gameObjects) {
       const sprite = this.physics.add
-        .sprite(player.location.x, player.location.y, 'atlas', 'misa-front')
+        .sprite(player.location.x, player.location.y, 'walk-atlas', 'walk-front')
         .setSize(30, 40)
         .setOffset(0, 24);
       const label = this.add.text(
@@ -540,7 +569,6 @@ export default class TownGameScene extends Phaser.Scene {
         sprite,
         label,
         locationManagedByGameScene: false,
-        // TODO: vehicle sprite here
       };
       this._collidingLayers.forEach(layer => this.physics.add.collider(sprite, layer));
     }
