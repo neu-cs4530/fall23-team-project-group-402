@@ -573,12 +573,12 @@
                 {
                  "height":83.8442547785938,
                  "id":43,
-                 "name":"TrickArea",
+                 "name":"Tic Tac Toe 1",
                  "properties":[
                         {
                          "name":"type",
                          "type":"string",
-                         "value":"VehicleTrick"
+                         "value":"TicTacToe"
                         }],
                  "rotation":0,
                  "type":"GameArea",
@@ -587,6 +587,23 @@
                  "x":2943.98493302529,
                  "y":904.2207668969
                 }, 
+                {
+                 "height":114.984998877434,
+                 "id":54,
+                 "name":"VehicleTrickArea",
+                 "properties":[
+                     {
+                      "name":"type",
+                      "type":"string",
+                      "value":"VehicleTrick"
+                     }],
+                 "rotation":0,
+                 "type":"GameArea",
+                 "visible":true,
+                 "width":33.3237089787632,
+                 "x":3166.0889426285,
+                 "y":681.779691863079
+                },
                 {
                  "height":0,
                  "id":45,
