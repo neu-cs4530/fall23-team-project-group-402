@@ -18,14 +18,13 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
-import TicTacToeAreaController from '../../../../classes/interactable/TicTacToeAreaController';
 import PlayerController from '../../../../classes/PlayerController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
 import { GameResult, GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
-import TicTacToeLeaderboard from '../Leaderboard';
 import VehicleTrick from './VehicleTrick';
+import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 
 /**
  * The TicTacToeArea component renders the TicTacToe game area.
@@ -60,13 +59,15 @@ import VehicleTrick from './VehicleTrick';
  *
  */
 function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }): JSX.Element {
-  const gameAreaController = useInteractableAreaController<TicTacToeAreaController>(interactableID);
+  const gameAreaController =
+    useInteractableAreaController<VehicleTrickAreaController>(interactableID);
   const townController = useTownController();
 
   // const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [startingGame, setStartingGame] = useState(false);
+  const [player, setPlayer] = useState<PlayerController | undefined>(gameAreaController.player);
   const toast = useToast();
 
   useEffect(() => {
@@ -74,6 +75,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
       // setHistory(gameAreaController.history);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
       setObservers(gameAreaController.observers);
+      setPlayer(gameAreaController.player);
     };
     gameAreaController.addListener('gameUpdated', updateGameState);
     // Remove game end toast later
@@ -155,14 +157,17 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
           </Heading>
           <AccordionPanel>
             <List aria-label='list of observers in the game'>
-              {observers.map(player => {
-                return <ListItem key={player.id}>{player.userName}</ListItem>;
+              {observers.map(currPlayer => {
+                return <ListItem key={currPlayer.id}>{currPlayer.userName}</ListItem>;
               })}
             </List>
           </AccordionPanel>
         </AccordionItem>
       </Accordion>
       {gameStatusText}
+      <List aria-label='list of players in the game'>
+        <ListItem>Player: {player?.userName || '(No player yet!)'}</ListItem>
+      </List>
       <VehicleTrick gameAreaController={gameAreaController} />
     </Container>
   );
