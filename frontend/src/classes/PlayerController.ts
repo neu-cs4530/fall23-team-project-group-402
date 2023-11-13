@@ -16,7 +16,6 @@ export type PlayerGameObjects = {
   sprite: Phaser.Types.Physics.Arcade.SpriteWithDynamicBody;
   label: Phaser.GameObjects.Text;
   locationManagedByGameScene: boolean /* For the local player, the game scene will calculate the current location, and we should NOT apply updates when we receive events */;
-  // vehicleSprite: SomeType TODO: add vehicle sprite here once we get to that
 };
 export default class PlayerController extends (EventEmitter as new () => TypedEmitter<PlayerEvents>) {
   private _location: PlayerLocation;
@@ -101,10 +100,10 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
       if (!sprite.anims) return;
       sprite.setX(this.location.x);
       sprite.setY(this.location.y);
+      const vehicleType = this.vehicle ? this.vehicle.vehicleType : 'walk';
       if (this.location.moving) {
         const movementSpeed = SpeedUtils.playerSpeed(this.vehicle);
-        console.log(movementSpeed);
-        sprite.anims.play(`misa-${this.location.rotation}-walk`, true);
+        sprite.anims.play(`${vehicleType}-${this.location.rotation}-move`, true);
         switch (this.location.rotation) {
           case 'front':
             sprite.body.setVelocity(0, movementSpeed);
@@ -123,10 +122,11 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
       } else {
         sprite.body.setVelocity(0, 0);
         sprite.anims.stop();
-        sprite.setTexture('atlas', `misa-${this.location.rotation}`);
+        sprite.setTexture(`${vehicleType}-atlas`, `${vehicleType}-${this.location.rotation}`);
       }
+      const labelYOffset = this.vehicle ? 40 : 20;
       label.setX(sprite.body.x);
-      label.setY(sprite.body.y - 20);
+      label.setY(sprite.body.y - labelYOffset);
     }
   }
 

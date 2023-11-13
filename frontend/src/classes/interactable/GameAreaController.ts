@@ -10,6 +10,10 @@ import PlayerController from '../PlayerController';
 import TownController from '../TownController';
 import InteractableAreaController, { BaseInteractableEventMap } from './InteractableAreaController';
 
+export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
+
+export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
+
 export type GameEventTypes = BaseInteractableEventMap & {
   gameStart: () => void;
   gameUpdated: () => void;

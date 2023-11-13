@@ -6,11 +6,11 @@ import {
   TicTacToeGridPosition,
 } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
-import GameAreaController, { GameEventTypes } from './GameAreaController';
-
-export const PLAYER_NOT_IN_GAME_ERROR = 'Player is not in game';
-
-export const NO_GAME_IN_PROGRESS_ERROR = 'No game in progress';
+import GameAreaController, {
+  GameEventTypes,
+  NO_GAME_IN_PROGRESS_ERROR,
+  PLAYER_NOT_IN_GAME_ERROR,
+} from './GameAreaController';
 
 export type TicTacToeCell = 'X' | 'O' | undefined;
 export type TicTacToeEvents = GameEventTypes & {

@@ -17,7 +17,7 @@ export type TownJoinResponse = {
   interactables: TypedInteractable[];
 }
 
-export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'VehicleRackArea';
+export type InteractableType = 'ConversationArea' | 'ViewingArea' | 'TicTacToeArea' | 'VehicleRackArea' | 'VehicleTrickArea';
 export interface Interactable {
   type: InteractableType;
   id: InteractableID;
@@ -108,6 +108,16 @@ export interface GameMove<MoveType> {
   move: MoveType;
 }
 
+export interface VehicleTrickMove {
+  word: string
+}
+
+export interface VehicleTrickGameState extends GameState {
+  targetWord: string
+  currentScore: number
+  player?: PlayerID
+}
+
 export type TicTacToeGridPosition = 0 | 1 | 2;
 
 /**
@@ -185,7 +195,8 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand | EquipVehicleCommand | UnequipVehicleCommand;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand | EquipVehicleCommand | UnequipVehicleCommand | GameMoveCommand<VehicleTrickMove>;
+
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
   update: ViewingArea;
