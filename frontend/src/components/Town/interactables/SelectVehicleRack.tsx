@@ -90,7 +90,8 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
 
   function handleEquipVehicle() {
     try {
-      vehicleRackAreaController.equipVehicle();
+      const vehicle = vehicleRackAreaController.equipVehicle();
+      coveyTownController.emitVehicleChange(vehicle);
       toast({
         title: `Success`,
         description:
