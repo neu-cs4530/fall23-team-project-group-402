@@ -81,9 +81,9 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     // Remove game end toast later
     const onGameEnd = () => {
       toast({
-        title: 'LOL',
+        title: 'Game over',
         description: 'Time has concluded',
-        status: 'info',
+        status: 'success',
       });
     };
     gameAreaController.addListener('gameEnd', onGameEnd);
@@ -132,7 +132,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
 
   if (gameStatus === 'IN_PROGRESS') {
     return <VehicleTrick gameAreaController={gameAreaController} />;
-  } else if (gameStatus === 'WAITING_TO_START') {
+  } else {
     return (
       <Container>
         <Accordion allowToggle>

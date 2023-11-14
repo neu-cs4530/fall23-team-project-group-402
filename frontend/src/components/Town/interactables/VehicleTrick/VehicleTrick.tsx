@@ -48,11 +48,6 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   useEffect(() => {
     // Exit the useEffect if the timer reaches 0
     if (seconds === 0) {
-      toast({
-        title: 'Time is Up!',
-        description: 'Time is over',
-        status: 'info',
-      });
       return;
     }
 
