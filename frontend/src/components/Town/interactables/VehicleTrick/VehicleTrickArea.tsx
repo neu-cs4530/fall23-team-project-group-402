@@ -165,10 +165,8 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
         </AccordionItem>
       </Accordion>
       {gameStatusText}
-      <List aria-label='list of players in the game'>
-        <ListItem>Player: {player?.userName || '(No player yet!)'}</ListItem>
-      </List>
-      <VehicleTrick gameAreaController={gameAreaController} />
+      <Box>Player: {player?.userName || '(No player yet!)'}</Box>
+      {gameStatus === 'IN_PROGRESS' && <VehicleTrick gameAreaController={gameAreaController} />}
     </Container>
   );
 }
