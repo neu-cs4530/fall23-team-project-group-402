@@ -71,6 +71,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   const toast = useToast();
 
   useEffect(() => {
+    townController.pause();
     const updateGameState = () => {
       // setHistory(gameAreaController.history);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
@@ -187,6 +188,7 @@ export default function VehicleTrickAreaWrapper(): JSX.Element {
     if (gameArea) {
       townController.interactEnd(gameArea);
       const controller = townController.getGameAreaController(gameArea);
+      townController.unPause();
       controller.leaveGame();
     }
   }, [townController, gameArea]);
