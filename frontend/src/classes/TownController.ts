@@ -510,8 +510,6 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     assert(ourPlayer);
     ourPlayer.vehicle = newVehicle;
     this.emit('playerVehicleChanged', ourPlayer);
-    console.log('Vehicle changed');
-    console.log(this.players);
   }
 
   /**
