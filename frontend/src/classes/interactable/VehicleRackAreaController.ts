@@ -9,15 +9,7 @@ import InteractableAreaController, { BaseInteractableEventMap } from './Interact
 /**
  * The events that a VehicleRackAreaController can emit
  */
-export type VehicleRackAreaEvents = BaseInteractableEventMap & {
-  /**
-   * An equipChange event indicates that the player has changed their vehicle
-   * Listeners are passed the new state in the parameter `isPlaying`
-   */
-  equipChange: (vehicle: Vehicle | undefined) => void;
-
-  unEquipChange: (vehicle: Vehicle | undefined) => void;
-};
+export type VehicleRackAreaEvents = BaseInteractableEventMap;
 
 export default class VehicleRackAreaController extends InteractableAreaController<
   VehicleRackAreaEvents,
@@ -60,18 +52,11 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
     return this._vehicle;
   }
 
-  public equipVehicle(): void {
+  public equipVehicle(): Vehicle | undefined {
     const ourPlayer = this.occupants.find(
       occupant => occupant.id === this._townController.ourPlayer.id,
     );
-    if (ourPlayer?.vehicle?.vehicleType !== this._vehicle) {
-      ourPlayer?.equipVehicle(this._vehicle);
-      if (this._vehicle === undefined) {
-        this.emit('unequipChange', ourPlayer?.vehicle);
-      } else {
-        this.emit('equipChange', ourPlayer?.vehicle);
-      }
-    }
+    return ourPlayer?.equipVehicle(this._vehicle);
   }
 
   public toInteractableAreaModel(): VehicleRackAreaModel {
