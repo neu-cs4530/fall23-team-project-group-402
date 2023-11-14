@@ -33,6 +33,8 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
 
   private _timerIntervalId?: NodeJS.Timeout;
 
+  private _usedWords: Array<string> = [];
+
   public constructor(wordGenerator: TrickWordGenerator | undefined = undefined) {
     super({
       targetWord: '',
@@ -40,6 +42,18 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
       status: 'WAITING_TO_START',
     });
     this._wordGenerator = wordGenerator ?? new TrickWordGenerator();
+  }
+
+  /**
+   * Gets a new word and ensures that it is not repeated.
+   */
+  private _getNextWord(): string {
+    let nextWord = this._wordGenerator.nextWord();
+    while (this._usedWords.includes(nextWord)) {
+      nextWord = this._wordGenerator.nextWord();
+    }
+    this._usedWords.push(nextWord);
+    return nextWord;
   }
 
   /**
@@ -70,7 +84,7 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
       const updatedPoints = this.state.currentScore + CORRECT_WORD_POINTS;
       this.state = {
         ...this.state,
-        targetWord: this._wordGenerator.nextWord(),
+        targetWord: this._getNextWord(),
         currentScore: updatedPoints,
       };
     }
@@ -88,7 +102,7 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
 
     this.state = {
       ...this.state,
-      targetWord: this._wordGenerator.nextWord(),
+      targetWord: this._getNextWord(),
       player: player.id,
       status: 'IN_PROGRESS',
     };
