@@ -81,7 +81,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     // Remove game end toast later
     const onGameEnd = () => {
       toast({
-        title: "Time's up!",
+        title: 'LOL',
         description: 'Time has concluded',
         status: 'info',
       });
@@ -130,45 +130,48 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     );
   }
 
-  return (
-    <Container>
-      <Accordion allowToggle>
-        <AccordionItem>
-          <Heading as='h3'>
-            <AccordionButton>
-              <Box as='span' flex='1' textAlign='left'>
-                Leaderboard
-                <AccordionIcon />
-              </Box>
-            </AccordionButton>
-          </Heading>
-          <AccordionPanel>
-            <>To-Do</>
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem>
-          <Heading as='h3'>
-            <AccordionButton>
-              <Box as='span' flex='1' textAlign='left'>
-                Current Observers
-                <AccordionIcon />
-              </Box>
-            </AccordionButton>
-          </Heading>
-          <AccordionPanel>
-            <List aria-label='list of observers in the game'>
-              {observers.map(currPlayer => {
-                return <ListItem key={currPlayer.id}>{currPlayer.userName}</ListItem>;
-              })}
-            </List>
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>
-      {gameStatusText}
-      <Box>Player: {player?.userName || '(No player yet!)'}</Box>
-      {gameStatus === 'IN_PROGRESS' && <VehicleTrick gameAreaController={gameAreaController} />}
-    </Container>
-  );
+  if (gameStatus === 'IN_PROGRESS') {
+    return <VehicleTrick gameAreaController={gameAreaController} />;
+  } else if (gameStatus === 'WAITING_TO_START') {
+    return (
+      <Container>
+        <Accordion allowToggle>
+          <AccordionItem>
+            <Heading as='h3'>
+              <AccordionButton>
+                <Box as='span' flex='1' textAlign='left'>
+                  Leaderboard
+                  <AccordionIcon />
+                </Box>
+              </AccordionButton>
+            </Heading>
+            <AccordionPanel>
+              <>To-Do</>
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <Heading as='h3'>
+              <AccordionButton>
+                <Box as='span' flex='1' textAlign='left'>
+                  Current Observers
+                  <AccordionIcon />
+                </Box>
+              </AccordionButton>
+            </Heading>
+            <AccordionPanel>
+              <List aria-label='list of observers in the game'>
+                {observers.map(currPlayer => {
+                  return <ListItem key={currPlayer.id}>{currPlayer.userName}</ListItem>;
+                })}
+              </List>
+            </AccordionPanel>
+          </AccordionItem>
+        </Accordion>
+        {gameStatusText}
+        <Box>Player: {player?.userName || '(No player yet!)'}</Box>
+      </Container>
+    );
+  }
 }
 
 /**

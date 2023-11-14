@@ -1,4 +1,4 @@
-import { Box, Button, chakra, Container, useToast } from '@chakra-ui/react';
+import { Box, Button, Center, chakra, Container, Input, useToast } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 
@@ -25,5 +25,69 @@ export type VehicleTrickGameProps = {
  * @param gameAreaController the controller for the TicTacToe game
  */
 export default function VehicleTrick({ gameAreaController }: VehicleTrickGameProps): JSX.Element {
-  return <Box>Sup</Box>;
+  const [title, setTitle] = useState<string>('');
+  const [seconds, setSeconds] = useState(15);
+  const [score, setScore] = useState(0);
+  const [targetWord, setTargetWord] = useState('');
+  const toast = useToast();
+
+  useEffect(() => {
+    const updateTargetWord = () => {
+      setTargetWord(gameAreaController.currentWord);
+      setTitle('');
+    };
+
+    gameAreaController.addListener('scoreChanged', setScore);
+    gameAreaController.addListener('targetWordChanged', updateTargetWord);
+    return () => {
+      gameAreaController.removeListener('scoreChanged', setScore);
+      gameAreaController.removeListener('targetWordChanged', updateTargetWord);
+    };
+  }, [gameAreaController]);
+
+  useEffect(() => {
+    // Exit the useEffect if the timer reaches 0
+    if (seconds === 0) {
+      toast({
+        title: 'Time is Up!',
+        description: 'Time is over',
+        status: 'info',
+      });
+      return;
+    }
+
+    // Update the timer every second
+    const timerInterval = setInterval(() => {
+      setSeconds(prevSeconds => prevSeconds - 1);
+    }, 1000);
+
+    // Clean up the interval on component unmount
+    return () => clearInterval(timerInterval);
+  }, [seconds]);
+
+  return (
+    <Container>
+      <Box>
+        <b>Time Left:</b> {seconds} seconds
+      </Box>
+      <Box mt={1}>
+        <b>Score: </b> {score}
+      </Box>
+      <Box mt={4} textAlign='center'>
+        {targetWord}
+      </Box>
+      <Input
+        mt={4}
+        textAlign='center'
+        name='title'
+        value={title}
+        placeholder='type word here'
+        autoFocus
+        onChange={event => {
+          setTitle(event.target.value);
+          gameAreaController.enterWord(event.target.value);
+        }}
+      />
+    </Container>
+  );
 }
