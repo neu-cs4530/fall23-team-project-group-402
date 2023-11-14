@@ -237,6 +237,7 @@ export type InteractableCommandResponse<MessageType> = {
 }
 
 export interface ServerToClientEvents {
+  playerVehicleChanged: (movedPlayer: Player) => void;
   playerMoved: (movedPlayer: Player) => void;
   playerDisconnect: (disconnectedPlayer: Player) => void;
   playerJoined: (newPlayer: Player) => void;
@@ -253,4 +254,5 @@ export interface ClientToServerEvents {
   playerMovement: (movementData: PlayerLocation) => void;
   interactableUpdate: (update: Interactable) => void;
   interactableCommand: (command: InteractableCommand & InteractableCommandBase) => void;
+  playerVehicleChange: (vehicleData: Vehicle | undefined) => void;
 }
