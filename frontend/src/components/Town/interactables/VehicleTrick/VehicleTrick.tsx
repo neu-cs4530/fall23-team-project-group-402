@@ -29,6 +29,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   const [seconds, setSeconds] = useState(15);
   const [score, setScore] = useState(0);
   const [targetWord, setTargetWord] = useState('');
+  const [activeInput, setActiveInput] = useState(false);
   const toast = useToast();
 
   useEffect(() => {
@@ -48,6 +49,13 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   useEffect(() => {
     // Exit the useEffect if the timer reaches 0
     if (seconds === 0) {
+      toast({
+        title: 'Game over',
+        description: 'Time has concluded',
+        status: 'success',
+      });
+      setTitle('');
+      setActiveInput(true);
       return;
     }
 
@@ -76,6 +84,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
         textAlign='center'
         name='title'
         value={title}
+        isDisabled={activeInput}
         placeholder='type word here'
         autoFocus
         onChange={event => {
