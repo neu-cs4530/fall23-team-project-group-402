@@ -1,4 +1,3 @@
-import assert from 'assert';
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 import {
@@ -30,8 +29,6 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   public gameObjects?: PlayerGameObjects;
 
-  public movementSpeed: number;
-
   constructor(
     id: string,
     userName: string,
@@ -43,7 +40,6 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     this._userName = userName;
     this._location = location;
     this._vehicle = vehicle;
-    this.movementSpeed = SpeedUtils.playerSpeed(this.vehicle);
   }
 
   set location(newLocation: PlayerLocation) {
@@ -128,7 +124,6 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
             break;
           case 'left':
             sprite.body.setVelocity(-movementSpeed, 0);
-            console.log('left velocity', sprite.body.velocity);
             break;
         }
         sprite.body.velocity.normalize().scale(movementSpeed);
