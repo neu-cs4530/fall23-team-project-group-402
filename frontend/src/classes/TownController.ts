@@ -24,6 +24,7 @@ import {
   PlayerID,
   PlayerLocation,
   TownSettingsUpdate,
+  Vehicle,
   ViewingArea as ViewingAreaModel,
 } from '../types/CoveyTownSocket';
 import {
@@ -80,6 +81,13 @@ export type TownEvents = {
    * the new location can be found on the PlayerController.
    */
   playerMoved: (movedPlayer: PlayerController) => void;
+
+  /**
+   * An event that indicates that a player has changed their vehicle. This event is dispatched after updating the player's location -
+   * the new location can be found on the PlayerController.
+   */
+
+  playerVehicleChanged: (changedPlayer: PlayerController) => void;
 
   /**
    * An event that indicates that the set of active interactable areas has changed. This event is dispatched
@@ -397,6 +405,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
       const newPlayerObj = PlayerController.fromPlayerModel(newPlayer);
       this._players = this.players.concat([newPlayerObj]);
       this.emit('playerMoved', newPlayerObj);
+      this.emit('playerVehicleChanged', newPlayerObj);
     });
     /**
      * When a player disconnects from the town, update local state
@@ -422,6 +431,25 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
           playerToUpdate.location = movedPlayer.location;
         }
         this.emit('playerMoved', playerToUpdate);
+      }
+    });
+
+    /**
+     * When a player moves, update local state and emit an event to the controller's event listeners
+     */
+    this._socket.on('playerVehicleChanged', movedPlayer => {
+      const playerToUpdate = this.players.find(eachPlayer => eachPlayer.id === movedPlayer.id);
+      if (playerToUpdate) {
+        if (playerToUpdate === this._ourPlayer) {
+          /*
+           * If we are told that WE moved, we shouldn't update our x,y because it's probably lagging behind
+           * real time. However: we SHOULD update our interactable ID, because its value is managed by the server
+           */
+          playerToUpdate.vehicle = movedPlayer.vehicle;
+        } else {
+          playerToUpdate.vehicle = movedPlayer.vehicle;
+        }
+        this.emit('playerVehicleChanged', playerToUpdate);
       }
     });
 
@@ -467,6 +495,23 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     assert(ourPlayer);
     ourPlayer.location = newLocation;
     this.emit('playerMoved', ourPlayer);
+  }
+
+  /**
+   * Emit a vehicle change event for the current player, updating the state locally and
+   * also notifying the townService that our player changed vehicles.
+   *
+   *
+   * @param newLVehicle
+   */
+  public emitVehicleChange(newVehicle: Vehicle | undefined) {
+    this._socket.emit('playerVehicleChange', newVehicle);
+    const ourPlayer = this._ourPlayer;
+    assert(ourPlayer);
+    ourPlayer.vehicle = newVehicle;
+    this.emit('playerVehicleChanged', ourPlayer);
+    console.log('Vehicle changed');
+    console.log(this.players);
   }
 
   /**
