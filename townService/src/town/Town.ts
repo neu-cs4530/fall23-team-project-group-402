@@ -16,6 +16,7 @@ import {
   PlayerLocation,
   ServerToClientEvents,
   SocketData,
+  Vehicle,
   ViewingArea as ViewingAreaModel,
 } from '../types/CoveyTownSocket';
 import { logError } from '../Utils';
@@ -145,6 +146,14 @@ export default class Town {
       this._updatePlayerLocation(newPlayer, movementData);
     });
 
+    /**
+     * Register an event listener for the client socket: if the
+     * client updates their vehicle, inform the CoveyTownController
+     */
+    socket.on('playerVehicleChange', (vehicleData: Vehicle | undefined) => {
+      this._updatePlayerVehicle(newPlayer, vehicleData);
+    });
+
     // Set up a listener to process updates to interactables.
     // Currently only knows how to process updates for ViewingArea's, and
     // ignores any other updates for any other kind of interactable.
@@ -255,6 +264,22 @@ export default class Town {
     player.location = location;
 
     this._broadcastEmitter.emit('playerMoved', player.toPlayerModel());
+  }
+
+  /**
+   * Updates the location of a player within the town
+   *
+   * If the player has changed conversation areas, this method also updates the
+   * corresponding ConversationArea objects tracked by the town controller, and dispatches
+   * any onConversationUpdated events as appropriate
+   *
+   * @param player Player to update location for
+   * @param location New location for this player
+   */
+  private _updatePlayerVehicle(player: Player, vehicle: Vehicle | undefined): void {
+    player.vehicle = vehicle;
+
+    this._broadcastEmitter.emit('playerVehicleChanged', player.toPlayerModel());
   }
 
   /**
