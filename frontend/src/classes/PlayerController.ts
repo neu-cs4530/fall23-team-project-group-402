@@ -1,3 +1,4 @@
+import assert from 'assert';
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
 import {
@@ -10,6 +11,7 @@ import SpeedUtils from './SpeedUtils';
 
 export type PlayerEvents = {
   movement: (newLocation: PlayerLocation) => void;
+  vehicleChange: (newVehicle: Vehicle | undefined) => void;
 };
 
 export type PlayerGameObjects = {
@@ -28,6 +30,8 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   public gameObjects?: PlayerGameObjects;
 
+  public movementSpeed: number;
+
   constructor(
     id: string,
     userName: string,
@@ -39,6 +43,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     this._userName = userName;
     this._location = location;
     this._vehicle = vehicle;
+    this.movementSpeed = SpeedUtils.playerSpeed(this.vehicle);
   }
 
   set location(newLocation: PlayerLocation) {
@@ -67,7 +72,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     return this._vehicle;
   }
 
-  public equipVehicle(vehicleType: VehicleType | undefined) {
+  public equipVehicle(vehicleType: VehicleType | undefined): Vehicle | undefined {
     let speedMultiplier: number;
     switch (vehicleType) {
       case 'bike':
@@ -83,11 +88,18 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
         speedMultiplier = 1;
         break;
     }
-    this._vehicle = {
-      speedMultiplier: speedMultiplier,
-      vehicleType: vehicleType,
-    };
-    console.log(SpeedUtils.playerSpeed(this.vehicle));
+    if (this._vehicle?.vehicleType !== vehicleType) {
+      this.emit('vehicleChange', this._vehicle);
+    }
+    if (vehicleType) {
+      this._vehicle = {
+        speedMultiplier: speedMultiplier,
+        vehicleType: vehicleType,
+      };
+    } else {
+      this._vehicle = undefined;
+    }
+    return this._vehicle;
   }
 
   toPlayerModel(): PlayerModel {
@@ -116,9 +128,10 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
             break;
           case 'left':
             sprite.body.setVelocity(-movementSpeed, 0);
+            console.log('left velocity', sprite.body.velocity);
             break;
         }
-        sprite.body.velocity.normalize().scale(175);
+        sprite.body.velocity.normalize().scale(movementSpeed);
       } else {
         sprite.body.setVelocity(0, 0);
         sprite.anims.stop();
