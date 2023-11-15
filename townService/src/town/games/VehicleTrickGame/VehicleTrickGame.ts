@@ -31,6 +31,10 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
 
   private _wordGenerator: TrickWordGenerator;
 
+  private _timerIntervalId?: NodeJS.Timeout;
+
+  private _usedWords: Array<string> = [];
+
   public constructor(wordGenerator: TrickWordGenerator | undefined = undefined) {
     super({
       targetWord: '',
@@ -38,7 +42,18 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
       status: 'WAITING_TO_START',
     });
     this._wordGenerator = wordGenerator ?? new TrickWordGenerator();
-    this._wordGenerator.loadWords();
+  }
+
+  /**
+   * Gets a new word and ensures that it is not repeated.
+   */
+  private _getNextWord(): string {
+    let nextWord = this._wordGenerator.nextWord();
+    while (this._usedWords.includes(nextWord)) {
+      nextWord = this._wordGenerator.nextWord();
+    }
+    this._usedWords.push(nextWord);
+    return nextWord;
   }
 
   /**
@@ -59,7 +74,7 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
 
-    if (!this._moveTimeValid) {
+    if (!this._moveTimeValid(Date.now())) {
       throw new InvalidParametersError(TIME_EXPIRED_MESSAGE);
     }
 
@@ -69,7 +84,7 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
       const updatedPoints = this.state.currentScore + CORRECT_WORD_POINTS;
       this.state = {
         ...this.state,
-        targetWord: this._wordGenerator.nextWord(),
+        targetWord: this._getNextWord(),
         currentScore: updatedPoints,
       };
     }
@@ -87,12 +102,18 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
 
     this.state = {
       ...this.state,
-      targetWord: this._wordGenerator.nextWord(),
+      targetWord: this._getNextWord(),
       player: player.id,
       status: 'IN_PROGRESS',
     };
 
     this._gameStartEpoch = Date.now();
+
+    // Sets up a callback to check every 0.5 seconds if the timer has run out
+    // so that we can end the game
+    this._timerIntervalId = setInterval(() => {
+      this._endGameIfTimeElapsed();
+    }, 500);
   }
 
   /**
@@ -105,10 +126,16 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
       throw new InvalidParametersError(PLAYER_NOT_IN_GAME_MESSAGE);
     }
 
-    this.state = {
-      ...this.state,
-      status: 'OVER',
-    };
+    this._endGame();
+  }
+
+  /**
+   * Ends the current game if time has expired.
+   */
+  private _endGameIfTimeElapsed() {
+    if (!this._moveTimeValid(Date.now())) {
+      this._endGame();
+    }
   }
 
   /**
@@ -126,5 +153,17 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
     }
 
     return (epochMilliOfMove - this._gameStartEpoch) / 1000 < TRICK_TIME_ALLOWED;
+  }
+
+  /**
+   * Ends the current game.
+   */
+  private _endGame(): void {
+    this.state = {
+      ...this.state,
+      status: 'OVER',
+    };
+
+    clearInterval(this._timerIntervalId);
   }
 }

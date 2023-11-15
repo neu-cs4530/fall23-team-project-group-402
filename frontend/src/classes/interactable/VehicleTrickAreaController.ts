@@ -7,7 +7,7 @@ import GameAreaController, {
 
 export type VehicleTrickEvents = GameEventTypes & {
   targetWordChanged: (newWord: string) => void;
-  scoreChanged: (newScore: number) => number;
+  scoreChanged: (newScore: number) => void;
 };
 
 /**
