@@ -6,9 +6,6 @@ import {
   Vehicle,
   VehicleType,
 } from '../types/CoveyTownSocket';
-import BikeVehicle from '../town/vehicles/BikeVehicle';
-import HorseVehicle from '../town/vehicles/HorseVehicle';
-import SkateboardVehicle from '../town/vehicles/SkateboardVehicle';
 
 /**
  * Each user who is connected to a town is represented by a Player object
