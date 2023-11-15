@@ -1,31 +1,57 @@
-import { MockProxy, mock, mockClear } from 'jest-mock-extended';
+import assert from 'assert';
+import { mock, mockClear } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
-import { PlayerLocation, VehicleType } from '../../types/CoveyTownSocket';
+import { VehicleType } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import TownController from '../TownController';
 import VehicleRackAreaController, { VehicleRackAreaEvents } from './VehicleRackAreaController';
 
 describe('VehicleRackAreaController', () => {
-  let testArea: VehicleRackAreaController;
-  const townController: MockProxy<TownController> = mock<TownController>();
   const mockListeners = mock<VehicleRackAreaEvents>();
-  beforeEach(() => {
-    const playerLocation: PlayerLocation = {
-      moving: false,
+  const ourPlayer = new PlayerController(
+    nanoid(),
+    nanoid(),
+    {
       x: 0,
       y: 0,
+      moving: false,
       rotation: 'front',
-    };
-    testArea = new VehicleRackAreaController(nanoid(), townController);
-    testArea.occupants = [
-      new PlayerController(nanoid(), nanoid(), playerLocation, undefined),
-      new PlayerController(nanoid(), nanoid(), playerLocation, undefined),
-      new PlayerController(nanoid(), nanoid(), playerLocation, undefined),
-    ];
-    mockClear(townController);
+    },
+    undefined,
+  );
+  const otherPlayers = [
+    new PlayerController(
+      nanoid(),
+      nanoid(),
+      { x: 0, y: 0, moving: false, rotation: 'front' },
+      undefined,
+    ),
+    new PlayerController(
+      nanoid(),
+      nanoid(),
+      { x: 0, y: 0, moving: false, rotation: 'front' },
+      undefined,
+    ),
+  ];
+
+  const mockTownController = mock<TownController>();
+  Object.defineProperty(mockTownController, 'ourPlayer', {
+    get: () => ourPlayer,
+  });
+  Object.defineProperty(mockTownController, 'players', {
+    get: () => [ourPlayer, ...otherPlayers],
+  });
+  mockTownController.getPlayer.mockImplementation(playerID => {
+    const p = mockTownController.players.find(player => player.id === playerID);
+    assert(p);
+    return p;
+  });
+  const testArea = new VehicleRackAreaController(nanoid(), mockTownController);
+
+  beforeEach(() => {
+    mockClear(mockTownController);
     mockClear(mockListeners.vehicleChange);
     mockClear(mockListeners.occupantsChange);
-    testArea.addListener('vehicleChange', mockListeners.vehicleChange);
     testArea.addListener('occupantsChange', mockListeners.occupantsChange);
   });
   describe('isActive', () => {
@@ -34,6 +60,7 @@ describe('VehicleRackAreaController', () => {
       expect(testArea.isActive()).toBe(false);
     });
     it('Returns true if the occupants list is not empty', () => {
+      testArea.occupants = mockTownController.players;
       expect(testArea.isActive()).toBe(true);
     });
   });
@@ -78,8 +105,9 @@ describe('VehicleRackAreaController', () => {
     it('equips skateboard to our player', () => {
       const newVehicle = 'skateboard';
       testArea.vehicle = newVehicle;
-      testArea.equipVehicle();
-      expect(townController.ourPlayer.vehicle).toEqual({
+      console.log('controller', testArea.toInteractableAreaModel());
+      console.log('id', mockTownController.ourPlayer.id);
+      expect(testArea.equipVehicle()).toEqual({
         speedMultiplier: 1.5,
         vehicleType: 'skateboard',
       });
@@ -88,7 +116,7 @@ describe('VehicleRackAreaController', () => {
       const newVehicle = 'bike';
       testArea.vehicle = newVehicle;
       testArea.equipVehicle();
-      expect(townController.ourPlayer.vehicle).toEqual({
+      expect(mockTownController.ourPlayer.vehicle).toEqual({
         speedMultiplier: 2,
         vehicleType: 'bike',
       });
@@ -97,7 +125,7 @@ describe('VehicleRackAreaController', () => {
       const newVehicle = 'horse';
       testArea.vehicle = newVehicle;
       testArea.equipVehicle();
-      expect(townController.ourPlayer.vehicle).toEqual({
+      expect(mockTownController.ourPlayer.vehicle).toEqual({
         speedMultiplier: 3,
         vehicleType: 'horse',
       });
@@ -106,7 +134,7 @@ describe('VehicleRackAreaController', () => {
       const newVehicle = undefined;
       testArea.vehicle = newVehicle;
       testArea.equipVehicle();
-      expect(townController.ourPlayer.vehicle).toEqual(undefined);
+      expect(mockTownController.ourPlayer.vehicle).toEqual(undefined);
     });
   });
   describe('setting the occupants property', () => {
