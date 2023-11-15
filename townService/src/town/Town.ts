@@ -267,14 +267,11 @@ export default class Town {
   }
 
   /**
-   * Updates the location of a player within the town
+   * Updates the vehicle of a player within the town
    *
-   * If the player has changed conversation areas, this method also updates the
-   * corresponding ConversationArea objects tracked by the town controller, and dispatches
-   * any onConversationUpdated events as appropriate
    *
    * @param player Player to update location for
-   * @param location New location for this player
+   * @param vehicle New location for this player
    */
   private _updatePlayerVehicle(player: Player, vehicle: Vehicle | undefined): void {
     player.vehicle = vehicle;

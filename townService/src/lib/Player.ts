@@ -74,11 +74,20 @@ export default class Player {
    */
   public equipVehicle(type: VehicleType): void {
     if (type === 'bike') {
-      this.vehicle = new BikeVehicle();
+      this.vehicle = {
+        vehicleType: type,
+        speedMultiplier: 2,
+      };
     } else if (type === 'horse') {
-      this.vehicle = new HorseVehicle();
+      this.vehicle = {
+        vehicleType: type,
+        speedMultiplier: 2,
+      };
     } else if (type === 'skateboard') {
-      this.vehicle = new SkateboardVehicle();
+      this.vehicle = {
+        vehicleType: type,
+        speedMultiplier: 2,
+      };
     }
   }
 

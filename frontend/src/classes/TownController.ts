@@ -83,8 +83,8 @@ export type TownEvents = {
   playerMoved: (movedPlayer: PlayerController) => void;
 
   /**
-   * An event that indicates that a player has changed their vehicle. This event is dispatched after updating the player's location -
-   * the new location can be found on the PlayerController.
+   * An event that indicates that a player has changed their vehicle. This event is dispatched after updating the player's vehicle -
+   * the new vehicle can be found on the PlayerController.
    */
 
   playerVehicleChanged: (changedPlayer: PlayerController) => void;
@@ -435,20 +435,12 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     });
 
     /**
-     * When a player moves, update local state and emit an event to the controller's event listeners
+     * When a player changes vehicle, update local state and emit an event to the controller's event listeners
      */
-    this._socket.on('playerVehicleChanged', movedPlayer => {
-      const playerToUpdate = this.players.find(eachPlayer => eachPlayer.id === movedPlayer.id);
+    this._socket.on('playerVehicleChanged', vehiclePlayer => {
+      const playerToUpdate = this.players.find(eachPlayer => eachPlayer.id === vehiclePlayer.id);
       if (playerToUpdate) {
-        if (playerToUpdate === this._ourPlayer) {
-          /*
-           * If we are told that WE moved, we shouldn't update our x,y because it's probably lagging behind
-           * real time. However: we SHOULD update our interactable ID, because its value is managed by the server
-           */
-          playerToUpdate.vehicle = movedPlayer.vehicle;
-        } else {
-          playerToUpdate.vehicle = movedPlayer.vehicle;
-        }
+        playerToUpdate.vehicle = vehiclePlayer.vehicle;
         this.emit('playerVehicleChanged', playerToUpdate);
       }
     });
@@ -502,7 +494,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
    * also notifying the townService that our player changed vehicles.
    *
    *
-   * @param newLVehicle
+   * @param newVehicle
    */
   public emitVehicleChange(newVehicle: Vehicle | undefined) {
     this._socket.emit('playerVehicleChange', newVehicle);
