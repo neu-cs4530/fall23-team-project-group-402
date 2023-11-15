@@ -105,8 +105,6 @@ describe('VehicleRackAreaController', () => {
     it('equips skateboard to our player', () => {
       const newVehicle = 'skateboard';
       testArea.vehicle = newVehicle;
-      console.log('controller', testArea.toInteractableAreaModel());
-      console.log('id', mockTownController.ourPlayer.id);
       expect(testArea.equipVehicle()).toEqual({
         speedMultiplier: 1.5,
         vehicleType: 'skateboard',
