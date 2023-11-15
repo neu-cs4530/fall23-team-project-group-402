@@ -13,7 +13,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 import VehicleRackAreaController from '../../../classes/interactable/VehicleRackAreaController';
 import { useInteractable, useInteractableAreaController } from '../../../classes/TownController';
 import useTownController from '../../../hooks/useTownController';
-import { Vehicle, VehicleType } from '../../../types/CoveyTownSocket';
+import { VehicleType } from '../../../types/CoveyTownSocket';
 import VehicleRackArea from './VehicleRackArea';
 
 export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackArea }): JSX.Element {
@@ -26,9 +26,6 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   vehicleRackAreaController.occupants = coveyTownController.players;
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleType | undefined>(
     vehicleRackAreaController.vehicle,
-  );
-  const [equippedVehicle, setEquippedVehicle] = useState<Vehicle | undefined>(
-    coveyTownController.ourPlayer.vehicle,
   );
   const toast = useToast();
 
@@ -64,13 +61,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
       coveyTownController.interactEnd(newRack);
       coveyTownController.unPause();
     }
-    vehicleRackAreaController.addListener('equipChange', setEquippedVehicle);
-    vehicleRackAreaController.addListener('unequipChange', setEquippedVehicle);
-    return () => {
-      vehicleRackAreaController.removeListener('equipChange', setEquippedVehicle);
-      vehicleRackAreaController.removeListener('unequipChange', setEquippedVehicle);
-    };
-  }, [coveyTownController, newRack, vehicleRackAreaController]);
+  }, [coveyTownController, newRack]);
 
   function handleSelectVehicle(vehicleType: VehicleType) {
     setSelectedVehicle(() => {
