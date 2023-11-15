@@ -56,7 +56,7 @@ describe('VehicleRackArea', () => {
       expect(newPlayer.vehicle).toBeUndefined();
       testArea.equipVehicle(newPlayer, 'bike');
       expect(newPlayer.vehicle).not.toBeUndefined();
-      expect(newPlayer.vehicle?.toVehicleModel()).toEqual({
+      expect(newPlayer.vehicle).toEqual({
         speedMultiplier: 2,
         vehicleType: 'bike',
       });
@@ -65,7 +65,7 @@ describe('VehicleRackArea', () => {
       expect(newPlayer.vehicle).toBeUndefined();
       testArea.equipVehicle(newPlayer, 'skateboard');
       expect(newPlayer.vehicle).not.toBeUndefined();
-      expect(newPlayer.vehicle?.toVehicleModel()).toEqual({
+      expect(newPlayer.vehicle).toEqual({
         speedMultiplier: 1.5,
         vehicleType: 'skateboard',
       });
@@ -74,7 +74,7 @@ describe('VehicleRackArea', () => {
       expect(newPlayer.vehicle).toBeUndefined();
       testArea.equipVehicle(newPlayer, 'horse');
       expect(newPlayer.vehicle).not.toBeUndefined();
-      expect(newPlayer.vehicle?.toVehicleModel()).toEqual({
+      expect(newPlayer.vehicle).toEqual({
         speedMultiplier: 3,
         vehicleType: 'horse',
       });

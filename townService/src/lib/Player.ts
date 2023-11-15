@@ -78,12 +78,12 @@ export default class Player {
     } else if (type === 'horse') {
       this.vehicle = {
         vehicleType: type,
-        speedMultiplier: 2,
+        speedMultiplier: 3,
       };
     } else if (type === 'skateboard') {
       this.vehicle = {
         vehicleType: type,
-        speedMultiplier: 2,
+        speedMultiplier: 1.5,
       };
     }
   }
