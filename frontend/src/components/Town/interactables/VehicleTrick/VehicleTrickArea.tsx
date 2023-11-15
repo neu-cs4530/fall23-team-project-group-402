@@ -6,6 +6,7 @@ import {
   AccordionPanel,
   Box,
   Button,
+  Center,
   Container,
   Heading,
   List,
@@ -94,43 +95,6 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     };
   }, [townController, gameAreaController, toast]);
 
-  let gameStatusText = <></>;
-  if (gameStatus === 'IN_PROGRESS') {
-    gameStatusText = <>Game in progress</>;
-  } else {
-    let startGameButton = <></>;
-    if (
-      (gameAreaController.status === 'WAITING_TO_START' && !gameAreaController.isPlayer) ||
-      gameAreaController.status === 'OVER'
-    ) {
-      startGameButton = (
-        <Button
-          onClick={async () => {
-            setStartingGame(true);
-            try {
-              await gameAreaController.joinGame();
-            } catch (err) {
-              toast({
-                title: 'Error joining game',
-                description: (err as Error).toString(),
-                status: 'error',
-              });
-            }
-            setStartingGame(false);
-          }}
-          isLoading={startingGame}
-          disabled={startingGame}>
-          Start Game
-        </Button>
-      );
-    }
-    gameStatusText = (
-      <b>
-        Game {gameStatus === 'WAITING_TO_START' ? 'not yet started' : 'over'}. {startGameButton}
-      </b>
-    );
-  }
-
   if (gameStatus === 'IN_PROGRESS') {
     return <VehicleTrick gameAreaController={gameAreaController} />;
   } else {
@@ -168,8 +132,27 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
             </AccordionPanel>
           </AccordionItem>
         </Accordion>
-        {gameStatusText}
-        <Box>Player: {player?.userName || '(No player yet!)'}</Box>
+        <Center>
+          <Button
+            mt={4}
+            onClick={async () => {
+              setStartingGame(true);
+              try {
+                await gameAreaController.joinGame();
+              } catch (err) {
+                toast({
+                  title: 'Error joining game',
+                  description: (err as Error).toString(),
+                  status: 'error',
+                });
+              }
+              setStartingGame(false);
+            }}
+            isLoading={startingGame}
+            disabled={startingGame}>
+            Start Game
+          </Button>
+        </Center>
       </Container>
     );
   }
