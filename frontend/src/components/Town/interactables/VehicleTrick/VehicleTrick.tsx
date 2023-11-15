@@ -1,5 +1,5 @@
-import { Box, Button, Center, chakra, Container, Input, useToast } from '@chakra-ui/react';
-import React, { useEffect, useState } from 'react';
+import { Box, Button, Container, Input, useToast } from '@chakra-ui/react';
+import React, { ChangeEvent, useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 
 export type VehicleTrickGameProps = {
@@ -25,17 +25,18 @@ export type VehicleTrickGameProps = {
  * @param gameAreaController the controller for the TicTacToe game
  */
 export default function VehicleTrick({ gameAreaController }: VehicleTrickGameProps): JSX.Element {
-  const [title, setTitle] = useState<string>('');
+  const [input, setInput] = useState<string>('');
   const [seconds, setSeconds] = useState(15);
   const [score, setScore] = useState(0);
   const [targetWord, setTargetWord] = useState('');
   const [activeInput, setActiveInput] = useState(false);
+  const [userInitials, setUserInitials] = useState('');
   const toast = useToast();
 
   useEffect(() => {
     const updateTargetWord = () => {
       setTargetWord(gameAreaController.currentWord);
-      setTitle('');
+      setInput('');
     };
 
     gameAreaController.addListener('scoreChanged', setScore);
@@ -54,7 +55,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
         description: 'Time has concluded',
         status: 'success',
       });
-      setTitle('');
+      setInput('');
       setActiveInput(true);
       return;
     }
@@ -66,32 +67,86 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
 
     // Clean up the interval on component unmount
     return () => clearInterval(timerInterval);
-  }, [seconds]);
+  }, [seconds, toast]);
 
-  return (
-    <Container>
-      <Box>
-        <b>Time Left:</b> {seconds} seconds
-      </Box>
-      <Box mt={1}>
-        <b>Score: </b> {score}
-      </Box>
-      <Box mt={4} textAlign='center'>
-        {targetWord}
-      </Box>
-      <Input
-        mt={4}
-        textAlign='center'
-        name='title'
-        value={title}
-        isDisabled={activeInput}
-        placeholder='type word here'
-        autoFocus
-        onChange={event => {
-          setTitle(event.target.value);
-          gameAreaController.enterWord(event.target.value);
-        }}
-      />
-    </Container>
-  );
+  function onlyLetters(word: string) {
+    const validCharacters = /^[A-Za-z]+$/;
+    return validCharacters.test(word) || word === '';
+  }
+
+  const handleInitialsChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const inputValue = e.target.value.slice(0, 3);
+    if (onlyLetters(inputValue)) {
+      setUserInitials(inputValue.toUpperCase());
+    }
+  };
+
+  function handleClick(event: { preventDefault: () => void }) {
+    event.preventDefault(); // magic, sorry.
+
+    toast({
+      title: 'Acknowledgement',
+      description: 'User Initials have been acknowledged',
+      status: 'success',
+    });
+  }
+
+  if (!activeInput) {
+    return (
+      <Container>
+        <Box>
+          <b>Time Left:</b> {seconds} seconds
+        </Box>
+        <Box mt={1}>
+          <b>Score: </b> {score}
+        </Box>
+        <Box mt={4} textAlign='center'>
+          {targetWord}
+        </Box>
+        <Input
+          mt={4}
+          textAlign='center'
+          name='title'
+          value={input}
+          isDisabled={activeInput}
+          placeholder='type word here'
+          autoFocus
+          onChange={event => {
+            const targetValue = event.target.value;
+            if (onlyLetters(targetValue)) {
+              setInput(targetValue);
+            }
+            gameAreaController.enterWord(targetValue);
+          }}
+        />
+      </Container>
+    );
+  } else {
+    return (
+      <Container>
+        <Box textAlign='center'>
+          <b>Your Score: </b> {score}
+        </Box>
+        <Box textAlign='center' mt={4}>
+          <Box>
+            <b>Enter Your Three-Letter Initials:</b>
+          </Box>
+          <Box>
+            <Input
+              mt={4}
+              textAlign='center'
+              name='initials'
+              placeholder='initials'
+              value={userInitials}
+              width={100}
+              onChange={handleInitialsChange}
+            />
+          </Box>
+          <Button mt={4} bg='lightblue' type='submit' onClick={handleClick} width={100}>
+            Submit
+          </Button>
+        </Box>
+      </Container>
+    );
+  }
 }
