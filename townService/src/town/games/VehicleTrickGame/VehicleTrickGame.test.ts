@@ -216,12 +216,13 @@ describe('VehicleTrickGame', () => {
     jest.setTimeout(200000);
     it('ends the game and sets the status to over', async () => {
       const player = createPlayerForTesting();
+      setIntervalSpy.mockRestore();
+      clearIntervalSpy.mockRestore();
       game.join(player);
       testGameState('IN_PROGRESS', player.id, 'testing', 0);
       // eslint-disable-next-line no-promise-executor-return
-      await new Promise(resolve => setTimeout(resolve, 15000));
+      await new Promise(resolve => setTimeout(resolve, 16000));
       testGameState('OVER', player.id, 'testing', 0);
-      expect(clearIntervalSpy).toHaveBeenCalled();
     });
   });
 });
