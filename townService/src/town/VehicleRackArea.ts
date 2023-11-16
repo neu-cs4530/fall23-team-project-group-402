@@ -1,6 +1,5 @@
 import { ITiledMapObject } from '@jonbell/tiled-map-type-guard';
 import InvalidParametersError from '../lib/InvalidParametersError';
-import Player from '../lib/Player';
 import {
   BoundingBox,
   InteractableCommand,
@@ -8,8 +7,6 @@ import {
   InteractableID,
   TownEmitter,
   VehicleRackArea as VehicleRackAreaModel,
-  EquipVehicleCommand,
-  VehicleType,
 } from '../types/CoveyTownSocket';
 import InteractableArea from './InteractableArea';
 
@@ -27,51 +24,6 @@ export default class VehicleRackArea extends InteractableArea {
     townEmitter: TownEmitter,
   ) {
     super(id, coordinates, townEmitter);
-  }
-
-  /**
-   * Equips given vehicle to given player.
-   *
-   * @param player - player to add the vehicle to
-   * @param vehicle - vehicle to be added to player - Yet to be added.
-   * @throws new InvalidParametersError if player is not in the game
-   */
-  public equipVehicle(player: Player, vehicle: VehicleType) {
-    if (!player) {
-      throw new Error('Invalid player');
-    }
-    player.equipVehicle(vehicle);
-    this._emitAreaChanged();
-  }
-
-  /**
-   * removes vehicle from given player
-   *
-   * @param player - player to remove vehicle from
-   * @throws new InvalidParametersError if player is not in the game
-   */
-  public unequipVehicle(player: Player) {
-    if (!player) {
-      throw new Error('Invalid player');
-    }
-    player.unEquipVehicle();
-    this._emitAreaChanged();
-  }
-
-  public handleCommand<CommandType extends InteractableCommand>(
-    command: CommandType,
-    player: Player,
-  ): InteractableCommandReturnType<CommandType> {
-    if (command.type === 'EquipVehicle') {
-      const equipVehicle = command as EquipVehicleCommand;
-      this.equipVehicle(player, equipVehicle.vehicle);
-      return {} as InteractableCommandReturnType<CommandType>;
-    }
-    if (command.type === 'UnequipVehicle') {
-      this.unequipVehicle(player);
-    }
-
-    throw new InvalidParametersError('Unknown command type');
   }
 
   /**
@@ -100,5 +52,11 @@ export default class VehicleRackArea extends InteractableArea {
       rect,
       broadcastEmitter,
     );
+  }
+
+  public handleCommand<
+    CommandType extends InteractableCommand,
+  >(): InteractableCommandReturnType<CommandType> {
+    throw new InvalidParametersError('Unknown command type');
   }
 }
