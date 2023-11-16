@@ -77,6 +77,28 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     };
   }, [townController, gameAreaController, toast]);
 
+  const handleClick = async () => {
+    if (townController.ourPlayer.vehicle) {
+      setStartingGame(true);
+      try {
+        await gameAreaController.joinGame();
+      } catch (err) {
+        toast({
+          title: 'Error joining game',
+          description: (err as Error).toString(),
+          status: 'error',
+        });
+      }
+      setStartingGame(false);
+    } else {
+      toast({
+        title: 'Unable to Start Game',
+        description: 'Player must have vehicle equipped to start game!',
+        status: 'error',
+      });
+    }
+  };
+
   if (gameStatus === 'IN_PROGRESS') {
     return <VehicleTrick gameAreaController={gameAreaController} />;
   } else {
@@ -115,23 +137,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
           </AccordionItem>
         </Accordion>
         <Center>
-          <Button
-            mt={4}
-            onClick={async () => {
-              setStartingGame(true);
-              try {
-                await gameAreaController.joinGame();
-              } catch (err) {
-                toast({
-                  title: 'Error joining game',
-                  description: (err as Error).toString(),
-                  status: 'error',
-                });
-              }
-              setStartingGame(false);
-            }}
-            isLoading={startingGame}
-            disabled={startingGame}>
+          <Button mt={4} onClick={handleClick} isLoading={startingGame} disabled={startingGame}>
             Start Game
           </Button>
         </Center>
