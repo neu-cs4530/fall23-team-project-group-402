@@ -8,6 +8,7 @@ import {
   ModalHeader,
   ModalOverlay,
   useToast,
+  Image,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import VehicleRackAreaController from '../../../classes/interactable/VehicleRackAreaController';
@@ -30,9 +31,9 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   const toast = useToast();
 
   const vehicles = [
-    { type: 'skateboard', label: 'Skateboard', imageSrc: '' },
-    { type: 'bike', label: 'Bike', imageSrc: '' },
-    { type: 'horse', label: 'Horse', imageSrc: '' },
+    { type: 'skateboard', label: 'Skateboard', imageSrc: '', speed: 1.5 },
+    { type: 'bike', label: 'Bike', imageSrc: '', speed: 2 },
+    { type: 'horse', label: 'Horse', imageSrc: '', speed: 3 },
   ];
 
   /**
@@ -58,10 +59,12 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
 
   const closeModal = useCallback(() => {
     if (newRack) {
+      vehicleRackAreaController.vehicle = undefined;
+      console.log('rest of function working');
       coveyTownController.interactEnd(newRack);
       coveyTownController.unPause();
     }
-  }, [coveyTownController, newRack]);
+  }, [coveyTownController, newRack, vehicleRackAreaController]);
 
   function handleSelectVehicle(vehicleType: VehicleType) {
     setSelectedVehicle(() => {
@@ -70,11 +73,23 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     });
   }
 
-  function handleRemoveVehicle() {
-    setSelectedVehicle(() => {
-      vehicleRackAreaController.vehicle = undefined;
-      return undefined;
-    });
+  function handleUnequipVehicle() {
+    try {
+      const vehicle = vehicleRackAreaController.unequipVehicle();
+      coveyTownController.emitVehicleChange(vehicle);
+      toast({
+        title: `Success`,
+        description: `Unequipped Vehicle`,
+        status: 'info',
+      });
+    } catch (error) {
+      toast({
+        title: `Error unequipping vehicle`,
+        description: (error as Error).toString,
+        status: 'error',
+      });
+    }
+    closeModal();
   }
 
   function handleEquipVehicle() {
@@ -83,10 +98,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
       coveyTownController.emitVehicleChange(vehicle);
       toast({
         title: `Success`,
-        description:
-          coveyTownController.ourPlayer.vehicle?.vehicleType !== undefined
-            ? `Equipped: ${toTitleCase(coveyTownController.ourPlayer.vehicle?.vehicleType)}`
-            : `Unequipped Vehicle`,
+        description: `Equipped: ${selectedVehicle}`,
         status: 'info',
       });
     } catch (error) {
@@ -118,25 +130,29 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
                 backgroundColor: selectedVehicle === vehicleEnum.type ? 'lightBlue' : 'transparent',
                 borderColor: selectedVehicle === vehicleEnum.type ? 'darkBlue' : 'transparent',
               }}
-              onClick={() => handleSelectVehicle(vehicleEnum.type as VehicleType)}>
+              onClick={() => handleSelectVehicle(vehicleEnum.type as VehicleType)}
+              mr={10}>
               {vehicleEnum.label}
+              <Image src='https://bit.ly/dan-abramov' width={50} height={50}></Image>
             </Button>
           ))}
-          <Button
-            key={'undefined'}
-            style={{
-              backgroundColor: selectedVehicle === undefined ? 'lightBlue' : 'transparent',
-              borderColor: selectedVehicle === undefined ? 'darkBlue' : 'transparent',
-            }}
-            onClick={handleRemoveVehicle}>
-            Unequip
-          </Button>
         </ModalBody>
         <ModalFooter>
-          <Button colorScheme='blue' mr={3} onClick={handleEquipVehicle}>
+          <Button
+            colorScheme='blue'
+            mr={3}
+            onClick={handleEquipVehicle}
+            disabled={
+              !selectedVehicle ||
+              selectedVehicle === coveyTownController.ourPlayer.vehicle?.vehicleType
+            }>
             Equip
           </Button>
-          <Button onClick={closeModal}>Cancel</Button>
+          <Button
+            onClick={handleUnequipVehicle}
+            disabled={coveyTownController.ourPlayer.vehicle?.vehicleType === undefined}>
+            Unequip
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>

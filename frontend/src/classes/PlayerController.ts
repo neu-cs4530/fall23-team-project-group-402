@@ -98,6 +98,11 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     return this._vehicle;
   }
 
+  public unequipVehicle(): undefined {
+    this._vehicle = undefined;
+    return this._vehicle;
+  }
+
   toPlayerModel(): PlayerModel {
     return { id: this.id, userName: this.userName, location: this.location, vehicle: this.vehicle };
   }
