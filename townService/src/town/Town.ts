@@ -16,12 +16,14 @@ import {
   PlayerLocation,
   ServerToClientEvents,
   SocketData,
+  Vehicle,
   ViewingArea as ViewingAreaModel,
 } from '../types/CoveyTownSocket';
 import { logError } from '../Utils';
 import ConversationArea from './ConversationArea';
 import GameAreaFactory from './games/GameAreaFactory';
 import InteractableArea from './InteractableArea';
+import VehicleRackArea from './VehicleRackArea';
 import ViewingArea from './ViewingArea';
 
 /**
@@ -144,6 +146,14 @@ export default class Town {
       this._updatePlayerLocation(newPlayer, movementData);
     });
 
+    /**
+     * Register an event listener for the client socket: if the
+     * client updates their vehicle, inform the CoveyTownController
+     */
+    socket.on('playerVehicleChange', (vehicleData: Vehicle | undefined) => {
+      this._updatePlayerVehicle(newPlayer, vehicleData);
+    });
+
     // Set up a listener to process updates to interactables.
     // Currently only knows how to process updates for ViewingArea's, and
     // ignores any other updates for any other kind of interactable.
@@ -254,6 +264,19 @@ export default class Town {
     player.location = location;
 
     this._broadcastEmitter.emit('playerMoved', player.toPlayerModel());
+  }
+
+  /**
+   * Updates the vehicle of a player within the town
+   *
+   *
+   * @param player Player to update location for
+   * @param vehicle New location for this player
+   */
+  private _updatePlayerVehicle(player: Player, vehicle: Vehicle | undefined): void {
+    player.vehicle = vehicle;
+
+    this._broadcastEmitter.emit('playerVehicleChanged', player.toPlayerModel());
   }
 
   /**
@@ -393,6 +416,11 @@ export default class Town {
       .map(eachViewingAreaObject =>
         ViewingArea.fromMapObject(eachViewingAreaObject, this._broadcastEmitter),
       );
+    const vehicleRackAreas = objectLayer.objects
+      .filter(eachObject => eachObject.type === 'VehicleRackArea')
+      .map(eachViewingAreaObject =>
+        VehicleRackArea.fromMapObject(eachViewingAreaObject, this._broadcastEmitter),
+      );
 
     const conversationAreas = objectLayer.objects
       .filter(eachObject => eachObject.type === 'ConversationArea')
@@ -407,6 +435,7 @@ export default class Town {
     this._interactables = this._interactables
       .concat(viewingAreas)
       .concat(conversationAreas)
+      .concat(vehicleRackAreas)
       .concat(gameAreas);
     this._validateInteractables();
   }

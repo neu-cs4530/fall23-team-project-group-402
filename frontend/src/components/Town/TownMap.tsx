@@ -6,6 +6,7 @@ import SocialSidebar from '../SocialSidebar/SocialSidebar';
 import NewConversationModal from './interactables/NewCoversationModal';
 import TownGameScene from './TownGameScene';
 import TicTacToeAreaWrapper from './interactables/TicTacToe/TicTacToeArea';
+import VehicleRackAreaWrapper from './interactables/SelectVehicleRack';
 import VehicleTrickAreaWrapper from './interactables/VehicleTrick/VehicleTrickArea';
 
 export default function TownMap(): JSX.Element {
@@ -51,6 +52,7 @@ export default function TownMap(): JSX.Element {
     <div id='app-container'>
       <NewConversationModal />
       <TicTacToeAreaWrapper />
+      <VehicleRackAreaWrapper />
       <VehicleTrickAreaWrapper />
 
       <div id='map-container' />

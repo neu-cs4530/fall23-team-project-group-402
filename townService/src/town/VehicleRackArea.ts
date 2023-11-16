@@ -76,9 +76,7 @@ export default class VehicleRackArea extends InteractableArea {
 
   /**
    * Creates a new VehicleRackArea object that will represent a Vehicle Rack Area object in the town map.
-   * @param mapObject An ITiledMapObject that represents a rectangle in which this rack area exists
-   * @param broadcastEmitter An emitter that can be used by this rack area to broadcast updates
-   * @returns
+   * @returns VehicleRackAreaModel object representing a Vehicle Rack Area object
    */
   public toModel(): VehicleRackAreaModel {
     return {

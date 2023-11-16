@@ -1,10 +1,16 @@
 import EventEmitter from 'events';
 import TypedEmitter from 'typed-emitter';
-import { Player as PlayerModel, PlayerLocation, Vehicle } from '../types/CoveyTownSocket';
+import {
+  Player as PlayerModel,
+  PlayerLocation,
+  Vehicle,
+  VehicleType,
+} from '../types/CoveyTownSocket';
 import SpeedUtils from './SpeedUtils';
 
 export type PlayerEvents = {
   movement: (newLocation: PlayerLocation) => void;
+  vehicleChange: (newVehicle: Vehicle | undefined) => void;
 };
 
 export type PlayerGameObjects = {
@@ -62,6 +68,36 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
     return this._vehicle;
   }
 
+  public equipVehicle(vehicleType: VehicleType | undefined): Vehicle | undefined {
+    let speedMultiplier: number;
+    switch (vehicleType) {
+      case 'bike':
+        speedMultiplier = 2;
+        break;
+      case 'skateboard':
+        speedMultiplier = 1.5;
+        break;
+      case 'horse':
+        speedMultiplier = 3;
+        break;
+      default:
+        speedMultiplier = 1;
+        break;
+    }
+    if (this._vehicle?.vehicleType !== vehicleType) {
+      this.emit('vehicleChange', this._vehicle);
+    }
+    if (vehicleType) {
+      this._vehicle = {
+        speedMultiplier: speedMultiplier,
+        vehicleType: vehicleType,
+      };
+    } else {
+      this._vehicle = undefined;
+    }
+    return this._vehicle;
+  }
+
   toPlayerModel(): PlayerModel {
     return { id: this.id, userName: this.userName, location: this.location, vehicle: this.vehicle };
   }
@@ -90,7 +126,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
             sprite.body.setVelocity(-movementSpeed, 0);
             break;
         }
-        sprite.body.velocity.normalize().scale(175);
+        sprite.body.velocity.normalize().scale(movementSpeed);
       } else {
         sprite.body.setVelocity(0, 0);
         sprite.anims.stop();

@@ -37,7 +37,7 @@ export type VehicleType = 'skateboard' | 'bike' | 'horse'
 
 export interface Vehicle {
   speedMultiplier: number;
-  vehicleType: VehicleType;
+  vehicleType: VehicleType | undefined;
 };
 
 export interface Player {
@@ -237,6 +237,7 @@ export type InteractableCommandResponse<MessageType> = {
 }
 
 export interface ServerToClientEvents {
+  playerVehicleChanged: (movedPlayer: Player) => void;
   playerMoved: (movedPlayer: Player) => void;
   playerDisconnect: (disconnectedPlayer: Player) => void;
   playerJoined: (newPlayer: Player) => void;
@@ -253,4 +254,5 @@ export interface ClientToServerEvents {
   playerMovement: (movementData: PlayerLocation) => void;
   interactableUpdate: (update: Interactable) => void;
   interactableCommand: (command: InteractableCommand & InteractableCommandBase) => void;
+  playerVehicleChange: (vehicleData: Vehicle | undefined) => void;
 }

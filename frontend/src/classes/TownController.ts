@@ -24,11 +24,13 @@ import {
   PlayerID,
   PlayerLocation,
   TownSettingsUpdate,
+  Vehicle,
   ViewingArea as ViewingAreaModel,
 } from '../types/CoveyTownSocket';
 import {
   isConversationArea,
   isTicTacToeArea,
+  isVehicleRackArea,
   isViewingArea,
   isVehicleTrickArea,
 } from '../types/TypeUtils';
@@ -38,6 +40,7 @@ import InteractableAreaController, {
   BaseInteractableEventMap,
 } from './interactable/InteractableAreaController';
 import TicTacToeAreaController from './interactable/TicTacToeAreaController';
+import VehicleRackAreaController from './interactable/VehicleRackAreaController';
 import VehicleTrickAreaController from './interactable/VehicleTrickAreaController';
 import ViewingAreaController from './interactable/ViewingAreaController';
 import PlayerController from './PlayerController';
@@ -80,6 +83,13 @@ export type TownEvents = {
    * the new location can be found on the PlayerController.
    */
   playerMoved: (movedPlayer: PlayerController) => void;
+
+  /**
+   * An event that indicates that a player has changed their vehicle. This event is dispatched after updating the player's vehicle -
+   * the new vehicle can be found on the PlayerController.
+   */
+
+  playerVehicleChanged: (changedPlayer: PlayerController) => void;
 
   /**
    * An event that indicates that the set of active interactable areas has changed. This event is dispatched
@@ -311,6 +321,10 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     return ret;
   }
 
+  public get interactableAreas() {
+    return this._interactableControllers;
+  }
+
   public get conversationAreas(): ConversationAreaController[] {
     const ret = this._interactableControllers.filter(
       eachInteractable => eachInteractable instanceof ConversationAreaController,
@@ -393,6 +407,7 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
       const newPlayerObj = PlayerController.fromPlayerModel(newPlayer);
       this._players = this.players.concat([newPlayerObj]);
       this.emit('playerMoved', newPlayerObj);
+      this.emit('playerVehicleChanged', newPlayerObj);
     });
     /**
      * When a player disconnects from the town, update local state
@@ -418,6 +433,17 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
           playerToUpdate.location = movedPlayer.location;
         }
         this.emit('playerMoved', playerToUpdate);
+      }
+    });
+
+    /**
+     * When a player changes vehicle, update local state and emit an event to the controller's event listeners
+     */
+    this._socket.on('playerVehicleChanged', vehiclePlayer => {
+      const playerToUpdate = this.players.find(eachPlayer => eachPlayer.id === vehiclePlayer.id);
+      if (playerToUpdate) {
+        playerToUpdate.vehicle = vehiclePlayer.vehicle;
+        this.emit('playerVehicleChanged', playerToUpdate);
       }
     });
 
@@ -463,6 +489,21 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
     assert(ourPlayer);
     ourPlayer.location = newLocation;
     this.emit('playerMoved', ourPlayer);
+  }
+
+  /**
+   * Emit a vehicle change event for the current player, updating the state locally and
+   * also notifying the townService that our player changed vehicles.
+   *
+   *
+   * @param newVehicle
+   */
+  public emitVehicleChange(newVehicle: Vehicle | undefined) {
+    this._socket.emit('playerVehicleChange', newVehicle);
+    const ourPlayer = this._ourPlayer;
+    assert(ourPlayer);
+    ourPlayer.vehicle = newVehicle;
+    this.emit('playerVehicleChanged', ourPlayer);
   }
 
   /**
@@ -607,6 +648,10 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
             );
           } else if (isViewingArea(eachInteractable)) {
             this._interactableControllers.push(new ViewingAreaController(eachInteractable));
+          } else if (isVehicleRackArea(eachInteractable)) {
+            this._interactableControllers.push(
+              new VehicleRackAreaController(eachInteractable.id, this),
+            );
           } else if (isTicTacToeArea(eachInteractable)) {
             this._interactableControllers.push(
               new TicTacToeAreaController(eachInteractable.id, eachInteractable, this),
@@ -757,7 +802,7 @@ export function useTownSettings() {
  */
 export function useInteractableAreaController<T>(interactableAreaID: string): T {
   const townController = useTownController();
-  const interactableAreaController = townController.gameAreas.find(
+  const interactableAreaController = townController.interactableAreas.find(
     eachArea => eachArea.id == interactableAreaID,
   );
   if (!interactableAreaController) {

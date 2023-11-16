@@ -3,12 +3,9 @@ import {
   Player as PlayerModel,
   PlayerLocation,
   TownEmitter,
+  Vehicle,
   VehicleType,
 } from '../types/CoveyTownSocket';
-import Vehicle from '../town/vehicles/Vehicle';
-import BikeVehicle from '../town/vehicles/BikeVehicle';
-import HorseVehicle from '../town/vehicles/HorseVehicle';
-import SkateboardVehicle from '../town/vehicles/SkateboardVehicle';
 
 /**
  * Each user who is connected to a town is represented by a Player object
@@ -32,7 +29,7 @@ export default class Player {
   /** A special town emitter that will emit events to the entire town BUT NOT to this player */
   public readonly townEmitter: TownEmitter;
 
-  private _vehicle: Vehicle | undefined;
+  public vehicle: Vehicle | undefined;
 
   constructor(userName: string, townEmitter: TownEmitter) {
     this.location = {
@@ -45,7 +42,7 @@ export default class Player {
     this._id = nanoid();
     this._sessionToken = nanoid();
     this.townEmitter = townEmitter;
-    this._vehicle = undefined;
+    this.vehicle = undefined;
   }
 
   get userName(): string {
@@ -68,21 +65,26 @@ export default class Player {
     return this._sessionToken;
   }
 
-  get vehicle(): Vehicle | undefined {
-    return this._vehicle;
-  }
-
   /**
    * Equips a new vehicle to the player.
    * @param type The vehicle type that the player is trying to equip
    */
   public equipVehicle(type: VehicleType): void {
     if (type === 'bike') {
-      this._vehicle = new BikeVehicle();
+      this.vehicle = {
+        vehicleType: type,
+        speedMultiplier: 2,
+      };
     } else if (type === 'horse') {
-      this._vehicle = new HorseVehicle();
+      this.vehicle = {
+        vehicleType: type,
+        speedMultiplier: 3,
+      };
     } else if (type === 'skateboard') {
-      this._vehicle = new SkateboardVehicle();
+      this.vehicle = {
+        vehicleType: type,
+        speedMultiplier: 1.5,
+      };
     }
   }
 
@@ -90,7 +92,7 @@ export default class Player {
    * Unequips the player's current vehicle (if they have one equipped).
    */
   public unEquipVehicle(): void {
-    this._vehicle = undefined;
+    this.vehicle = undefined;
   }
 
   toPlayerModel(): PlayerModel {
@@ -98,7 +100,7 @@ export default class Player {
       id: this._id,
       location: this.location,
       userName: this._userName,
-      vehicle: this._vehicle?.toVehicleModel(),
+      vehicle: this.vehicle,
     };
   }
 }
