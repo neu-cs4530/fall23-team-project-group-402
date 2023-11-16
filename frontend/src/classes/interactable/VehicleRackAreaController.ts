@@ -56,7 +56,6 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
     const ourPlayer = this.occupants.find(
       occupant => occupant.id === this._townController.ourPlayer.id,
     );
-    console.log('ourPlayer', ourPlayer);
     return ourPlayer?.equipVehicle(this._vehicle);
   }
 

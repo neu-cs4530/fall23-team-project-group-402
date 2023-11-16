@@ -66,7 +66,6 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   function handleSelectVehicle(vehicleType: VehicleType) {
     setSelectedVehicle(() => {
       vehicleRackAreaController.vehicle = vehicleType;
-      console.log(vehicleRackAreaController.vehicle);
       return vehicleType; // Return the new state value
     });
   }
@@ -74,7 +73,6 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   function handleRemoveVehicle() {
     setSelectedVehicle(() => {
       vehicleRackAreaController.vehicle = undefined;
-      console.log(vehicleRackAreaController.vehicle);
       return undefined;
     });
   }
