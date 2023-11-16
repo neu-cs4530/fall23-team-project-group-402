@@ -50,7 +50,6 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [startingGame, setStartingGame] = useState(false);
-  const [player, setPlayer] = useState<PlayerController | undefined>(gameAreaController.player);
   const toast = useToast();
 
   useEffect(() => {
@@ -59,7 +58,6 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
       // setHistory(gameAreaController.history);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
       setObservers(gameAreaController.observers);
-      setPlayer(gameAreaController.player);
     };
     gameAreaController.addListener('gameUpdated', updateGameState);
     // Remove game end toast later
@@ -76,28 +74,6 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
       gameAreaController.removeListener('gameUpdated', updateGameState);
     };
   }, [townController, gameAreaController, toast]);
-
-  const handleClick = async () => {
-    if (townController.ourPlayer.vehicle) {
-      setStartingGame(true);
-      try {
-        await gameAreaController.joinGame();
-      } catch (err) {
-        toast({
-          title: 'Error joining game',
-          description: (err as Error).toString(),
-          status: 'error',
-        });
-      }
-      setStartingGame(false);
-    } else {
-      toast({
-        title: 'Unable to Start Game',
-        description: 'Player must have vehicle equipped to start game!',
-        status: 'error',
-      });
-    }
-  };
 
   if (gameStatus === 'IN_PROGRESS') {
     return <VehicleTrick gameAreaController={gameAreaController} />;
@@ -137,7 +113,31 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
           </AccordionItem>
         </Accordion>
         <Center>
-          <Button mt={4} onClick={handleClick} isLoading={startingGame} disabled={startingGame}>
+          <Button
+            mt={4}
+            onClick={async () => {
+              if (townController.ourPlayer.vehicle) {
+                setStartingGame(true);
+                try {
+                  await gameAreaController.joinGame();
+                } catch (err) {
+                  toast({
+                    title: 'Error joining game',
+                    description: (err as Error).toString(),
+                    status: 'error',
+                  });
+                }
+                setStartingGame(false);
+              } else {
+                toast({
+                  title: 'Unable to Start Game',
+                  description: 'Player must have vehicle equipped to start game!',
+                  status: 'error',
+                });
+              }
+            }}
+            isLoading={startingGame}
+            disabled={startingGame}>
             Start Game
           </Button>
         </Center>
