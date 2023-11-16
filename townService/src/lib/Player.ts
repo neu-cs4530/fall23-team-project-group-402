@@ -4,7 +4,6 @@ import {
   PlayerLocation,
   TownEmitter,
   Vehicle,
-  VehicleType,
 } from '../types/CoveyTownSocket';
 
 /**
