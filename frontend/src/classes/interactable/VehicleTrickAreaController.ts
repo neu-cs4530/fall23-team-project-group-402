@@ -120,7 +120,7 @@ export default class VehicleTrickAreaController extends GameAreaController<
   }
 
   /**
-   *
+   * Plays a random trick animation for the player.
    */
   private async _playTrickAnimation() {
     const player = this.player;
