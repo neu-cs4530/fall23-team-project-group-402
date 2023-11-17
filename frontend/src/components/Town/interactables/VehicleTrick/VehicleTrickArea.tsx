@@ -86,7 +86,20 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
             <Heading as='h3'>
               <AccordionButton>
                 <Box as='span' flex='1' textAlign='left'>
-                  Leaderboard
+                  All-Time Leaderboard
+                  <AccordionIcon />
+                </Box>
+              </AccordionButton>
+            </Heading>
+            <AccordionPanel>
+              {/* This is where we will display the leaderboard connnected to persistent storage */}
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <Heading as='h3'>
+              <AccordionButton>
+                <Box as='span' flex='1' textAlign='left'>
+                  Local Leaderboard
                   <AccordionIcon />
                 </Box>
               </AccordionButton>
