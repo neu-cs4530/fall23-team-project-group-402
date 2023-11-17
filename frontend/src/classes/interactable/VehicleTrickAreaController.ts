@@ -116,9 +116,10 @@ export default class VehicleTrickAreaController extends GameAreaController<
     });
   }
 
-  public async gameEnded() {
+  public async gameEnded(userInitials: string) {
     await this._townController.sendInteractableCommand(this.id, {
       type: 'GameEnded',
+      playerInitials: userInitials,
     });
   }
 }

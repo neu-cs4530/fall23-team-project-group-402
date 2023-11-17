@@ -222,6 +222,7 @@ export interface UnequipVehicleCommand {
 }
 export interface GameEndedCommand {
   type: 'GameEnded';
+  playerInitials: string;
 }
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:

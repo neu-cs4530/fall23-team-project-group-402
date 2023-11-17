@@ -44,8 +44,8 @@ export default function VehicleTrickLeaderboard({
         {rows.map(record => {
           return (
             <Tr key={record.player}>
-              <Td>{record.player}</Td>
-              <Td>{record.highScore}</Td>
+              <Td textAlign={'center'}>{record.player}</Td>
+              <Td textAlign={'center'}>{record.highScore}</Td>
             </Tr>
           );
         })}

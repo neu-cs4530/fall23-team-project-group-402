@@ -81,7 +81,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   function handleClick(event: { preventDefault: () => void }) {
     event.preventDefault();
 
-    gameAreaController.gameEnded();
+    gameAreaController.gameEnded(userInitials);
   }
 
   if (!activeInput) {
