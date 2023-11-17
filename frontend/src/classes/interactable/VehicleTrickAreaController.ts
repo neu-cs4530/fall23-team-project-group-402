@@ -87,6 +87,7 @@ export default class VehicleTrickAreaController extends GameAreaController<
       const newWord = newState.state.targetWord;
       if (this._currentScore !== newScore) {
         this._currentScore = newScore;
+        this._playTrickAnimation();
         this.emit('scoreChanged', newScore);
       }
       if (this._currentWord !== newWord) {
@@ -114,5 +115,16 @@ export default class VehicleTrickAreaController extends GameAreaController<
         word,
       },
     });
+  }
+
+  /**
+   *
+   */
+  private _playTrickAnimation() {
+    const player = this.player;
+    if (player && player.gameObjects) {
+      const { sprite } = player.gameObjects;
+      sprite.anims.play(`walk-wack-move`, true);
+    }
   }
 }
