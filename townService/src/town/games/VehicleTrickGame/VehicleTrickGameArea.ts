@@ -21,8 +21,35 @@ import VehicleTrickGame from './VehicleTrickGame';
  * @see GameArea
  */
 export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
+  private _timerIntervalId?: NodeJS.Timer;
+
+  private _gameStartEpoch?: number;
+
+  private _trickTimeAllowed = 15;
+
   protected getType(): InteractableType {
     return 'VehicleTrickArea';
+  }
+
+  private _moveTimeValid(epochMilliOfMove: number): boolean {
+    if (!this._gameStartEpoch) {
+      return false;
+    }
+
+    if (epochMilliOfMove < this._gameStartEpoch) {
+      return false;
+    }
+
+    return (epochMilliOfMove - this._gameStartEpoch) / 1000 < this._trickTimeAllowed;
+  }
+
+  private _endGameIfTimeElapsed() {
+    if (!this._moveTimeValid(Date.now())) {
+      const game = this._game;
+      if (game) {
+        this._stateUpdated(game.toModel());
+      }
+    }
   }
 
   private _stateUpdated(updatedState: GameInstance<VehicleTrickGameState>) {
@@ -87,6 +114,10 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
       }
       game.join(player);
       this._stateUpdated(game.toModel());
+      this._gameStartEpoch = Date.now();
+      this._timerIntervalId = setInterval(() => {
+        this._endGameIfTimeElapsed();
+      }, 500);
       return { gameID: game.id } as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'LeaveGame') {
