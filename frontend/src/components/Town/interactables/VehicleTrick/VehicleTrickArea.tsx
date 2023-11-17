@@ -50,7 +50,6 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [startingGame, setStartingGame] = useState(false);
-  const [player, setPlayer] = useState<PlayerController | undefined>(gameAreaController.player);
   const toast = useToast();
 
   useEffect(() => {
@@ -59,7 +58,6 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
       // setHistory(gameAreaController.history);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
       setObservers(gameAreaController.observers);
-      setPlayer(gameAreaController.player);
     };
     gameAreaController.addListener('gameUpdated', updateGameState);
     // Remove game end toast later
@@ -118,17 +116,25 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
           <Button
             mt={4}
             onClick={async () => {
-              setStartingGame(true);
-              try {
-                await gameAreaController.joinGame();
-              } catch (err) {
+              if (townController.ourPlayer.vehicle) {
+                setStartingGame(true);
+                try {
+                  await gameAreaController.joinGame();
+                } catch (err) {
+                  toast({
+                    title: 'Error joining game',
+                    description: (err as Error).toString(),
+                    status: 'error',
+                  });
+                }
+                setStartingGame(false);
+              } else {
                 toast({
-                  title: 'Error joining game',
-                  description: (err as Error).toString(),
+                  title: 'Unable to Start Game',
+                  description: 'Player must have vehicle equipped to start game!',
                   status: 'error',
                 });
               }
-              setStartingGame(false);
             }}
             isLoading={startingGame}
             disabled={startingGame}>
