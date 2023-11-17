@@ -195,7 +195,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand | EquipVehicleCommand | UnequipVehicleCommand | GameMoveCommand<VehicleTrickMove>;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand | EquipVehicleCommand | UnequipVehicleCommand | GameMoveCommand<VehicleTrickMove> | GameEndedCommand;
 
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
@@ -219,6 +219,9 @@ export interface EquipVehicleCommand {
 }
 export interface UnequipVehicleCommand {
 	type: 'UnequipVehicle';
+}
+export interface GameEndedCommand {
+  type: 'GameEnded';
 }
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:

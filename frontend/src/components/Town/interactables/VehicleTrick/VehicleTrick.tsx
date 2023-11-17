@@ -79,13 +79,9 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   };
 
   function handleClick(event: { preventDefault: () => void }) {
-    event.preventDefault(); // magic, sorry.
+    event.preventDefault();
 
-    toast({
-      title: 'Acknowledgement',
-      description: 'User Initials have been acknowledged',
-      status: 'success',
-    });
+    gameAreaController.gameEnded();
   }
 
   if (!activeInput) {

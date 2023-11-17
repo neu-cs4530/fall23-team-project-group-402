@@ -101,6 +101,13 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
       this._stateUpdated(game.toModel());
       return undefined as InteractableCommandReturnType<CommandType>;
     }
+    if (command.type === 'GameEnded') {
+      const game = this._game;
+      if (!game) {
+        throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+      }
+      this._stateUpdated(game.toModel());
+    }
     throw new InvalidParametersError(INVALID_COMMAND_MESSAGE);
   }
 }
