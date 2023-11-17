@@ -21,47 +21,23 @@ export default function VehicleTrickLeaderboard({
   const highScoreByPlayer: Record<string, { player: string; highScore: number }> = {};
   results.forEach(result => {
     const player = Object.keys(result.scores)[0];
-    if (winner) {
-      winsLossesTiesByPlayer[winner] = {
-        player: winner,
-        wins: (winsLossesTiesByPlayer[winner]?.wins || 0) + 1,
-        losses: winsLossesTiesByPlayer[winner]?.losses || 0,
-        ties: winsLossesTiesByPlayer[winner]?.ties || 0,
-      };
-    }
-    if (loser) {
-      winsLossesTiesByPlayer[loser] = {
-        player: loser,
-        wins: winsLossesTiesByPlayer[loser]?.wins || 0,
-        losses: (winsLossesTiesByPlayer[loser]?.losses || 0) + 1,
-        ties: winsLossesTiesByPlayer[loser]?.ties || 0,
-      };
-    }
-    if (!winner && !loser) {
-      winsLossesTiesByPlayer[p1] = {
-        player: p1,
-        wins: winsLossesTiesByPlayer[p1]?.wins || 0,
-        losses: winsLossesTiesByPlayer[p1]?.losses || 0,
-        ties: (winsLossesTiesByPlayer[p1]?.ties || 0) + 1,
-      };
-      winsLossesTiesByPlayer[p2] = {
-        player: p2,
-        wins: winsLossesTiesByPlayer[p2]?.wins || 0,
-        losses: winsLossesTiesByPlayer[p2]?.losses || 0,
-        ties: (winsLossesTiesByPlayer[p2]?.ties || 0) + 1,
-      };
-    }
+    const playerCurrentScore = Object.values(result.scores)[0];
+    const playerHighestScore = highScoreByPlayer[player]?.highScore || 0;
+
+    highScoreByPlayer[player] = {
+      player: player,
+      highScore: playerCurrentScore > playerHighestScore ? playerCurrentScore : playerHighestScore,
+    };
   });
-  const rows = Object.keys(winsLossesTiesByPlayer).map(player => winsLossesTiesByPlayer[player]);
-  rows.sort((a, b) => b.wins - a.wins);
+
+  const rows = Object.keys(highScoreByPlayer).map(player => highScoreByPlayer[player]);
+  rows.sort((a, b) => b.highScore - a.highScore);
   return (
     <Table>
       <Thead>
         <Tr>
           <th>Player</th>
-          <th>Wins</th>
-          <th>Losses</th>
-          <th>Ties</th>
+          <th>HighScore</th>
         </Tr>
       </Thead>
       <Tbody>
@@ -69,9 +45,7 @@ export default function VehicleTrickLeaderboard({
           return (
             <Tr key={record.player}>
               <Td>{record.player}</Td>
-              <Td>{record.wins}</Td>
-              <Td>{record.losses}</Td>
-              <Td>{record.ties}</Td>
+              <Td>{record.highScore}</Td>
             </Tr>
           );
         })}
