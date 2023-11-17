@@ -120,11 +120,12 @@ export default class VehicleTrickAreaController extends GameAreaController<
   /**
    *
    */
-  private _playTrickAnimation() {
+  private async _playTrickAnimation() {
     const player = this.player;
     if (player && player.gameObjects) {
       const { sprite } = player.gameObjects;
-      sprite.anims.play(`walk-wack-move`, true);
+      const randomNumber: number = Math.floor(Math.random() * 3) + 1;
+      sprite.anims.play(`skateboard-trick-${randomNumber}`, true);
     }
   }
 }

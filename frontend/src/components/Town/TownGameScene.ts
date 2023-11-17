@@ -477,12 +477,13 @@ export default class TownGameScene extends Phaser.Scene {
     this._collidingLayers.push(onTheWallsLayer);
     this._collidingLayers.forEach(layer => this.physics.add.collider(sprite, layer));
 
-    // Create the player's walking animations from the texture atlas. These are stored in the global
+    // Create the player's animations from the texture atlas. These are stored in the global
     // animation manager so any sprite can access them.
-    this.createAnimations('walk', 3, 3);
-    this.createAnimations('bike', 3, 3);
-    this.createAnimations('skateboard', 3, 3);
-    this.createAnimations('horse', 4, 3);
+    this.createMovementAnimations('walk', 3, 3);
+    this.createMovementAnimations('bike', 3, 3);
+    this.createMovementAnimations('skateboard', 3, 3);
+    this.createMovementAnimations('horse', 4, 3);
+    this.createTrickAnimations();
 
     const camera = this.cameras.main;
     camera.startFollow(this.coveyTownController.ourPlayer.gameObjects.sprite);
@@ -510,7 +511,7 @@ export default class TownGameScene extends Phaser.Scene {
     this.coveyTownController.addListener('playersChanged', players => this.updatePlayers(players));
   }
 
-  createAnimations(vehicleType: string, xFrames: number, yFrames: number) {
+  createMovementAnimations(vehicleType: string, xFrames: number, yFrames: number) {
     const { anims } = this;
     anims.create({
       key: `${vehicleType}-left-move`,
@@ -556,6 +557,23 @@ export default class TownGameScene extends Phaser.Scene {
       frameRate: 10,
       repeat: -1,
     });
+  }
+
+  createTrickAnimations() {
+    const { anims } = this;
+    for (let i = 1; i <= 3; i++) {
+      anims.create({
+        key: `skateboard-trick-${i}`,
+        frames: anims.generateFrameNames(`skateboard-atlas`, {
+          prefix: `skateboard-trick-${i}.`,
+          start: 0,
+          end: 9,
+          zeroPad: 3,
+        }),
+        frameRate: 10,
+        repeat: 0,
+      });
+    }
   }
 
   createPlayerSprites(player: PlayerController) {
