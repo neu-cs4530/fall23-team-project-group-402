@@ -41,17 +41,36 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
       if (gameID && !this._history.find(eachResult => eachResult.gameID === gameID)) {
         const { player, currentScore } = updatedState.state;
         if (player) {
-          let playerName =
-            this._occupants.find(eachPlayer => eachPlayer.id === player)?.userName || player;
           if (playerInitials !== null) {
-            playerName = playerInitials;
+            const playerID =
+              this._occupants.find(eachPlayer => eachPlayer.id === player)?.id || player;
+            const playerName = playerInitials;
+
+            // Store two copies of the game history: one with the 3 letter username as the identifier,
+            // and the other with the player ID as the identifier. This allows us to display the
+            // "High Score This Session:" value accurately for each player.
+            this._history.push({
+              gameID,
+              scores: {
+                [playerName]: currentScore,
+              },
+            });
+            this._history.push({
+              gameID,
+              scores: {
+                [playerID]: currentScore,
+              },
+            });
+          } else {
+            const playerName =
+              this._occupants.find(eachPlayer => eachPlayer.id === player)?.userName || player;
+            this._history.push({
+              gameID,
+              scores: {
+                [playerName]: currentScore,
+              },
+            });
           }
-          this._history.push({
-            gameID,
-            scores: {
-              [playerName]: currentScore,
-            },
-          });
         }
       }
     }

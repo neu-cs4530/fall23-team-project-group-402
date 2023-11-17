@@ -1,5 +1,5 @@
-import { Table, Tbody, Td, Thead, Tr } from '@chakra-ui/react';
-import React from 'react';
+import { Box, Container, Divider, Table, Tbody, Td, Thead, Tr } from '@chakra-ui/react';
+import React, { useState } from 'react';
 import { GameResult } from '../../../../types/CoveyTownSocket';
 
 /**
@@ -15,41 +15,58 @@ import { GameResult } from '../../../../types/CoveyTownSocket';
  */
 export default function VehicleTrickLeaderboard({
   results,
+  playerID,
 }: {
   results: GameResult[];
+  playerID: string;
 }): JSX.Element {
+  const [currentUserHighScore, setCurrentUserHighScore] = useState(0);
+
   const highScoreByPlayer: Record<string, { player: string; highScore: number }> = {};
   results.forEach(result => {
     const player = Object.keys(result.scores)[0];
     const playerCurrentScore = Object.values(result.scores)[0];
     const playerHighestScore = highScoreByPlayer[player]?.highScore || 0;
-
-    highScoreByPlayer[player] = {
-      player: player,
-      highScore: playerCurrentScore > playerHighestScore ? playerCurrentScore : playerHighestScore,
-    };
+    const maxScore =
+      playerCurrentScore > playerHighestScore ? playerCurrentScore : playerHighestScore;
+    // Only display 3 letter usernames and not user ID values
+    if (player.length === 3) {
+      highScoreByPlayer[player] = {
+        player: player,
+        highScore: maxScore,
+      };
+    } else if (player === playerID) {
+      setCurrentUserHighScore(playerHighestScore);
+    }
+    // Add logic to update currentuserhighscore
   });
 
   const rows = Object.keys(highScoreByPlayer).map(player => highScoreByPlayer[player]);
   rows.sort((a, b) => b.highScore - a.highScore);
   return (
-    <Table>
-      <Thead>
-        <Tr>
-          <th>Player</th>
-          <th>HighScore</th>
-        </Tr>
-      </Thead>
-      <Tbody>
-        {rows.map(record => {
-          return (
-            <Tr key={record.player}>
-              <Td textAlign={'center'}>{record.player}</Td>
-              <Td textAlign={'center'}>{record.highScore}</Td>
-            </Tr>
-          );
-        })}
-      </Tbody>
-    </Table>
+    <Container>
+      <Table>
+        <Thead>
+          <Tr>
+            <th>Player</th>
+            <th>HighScore</th>
+          </Tr>
+        </Thead>
+        <Tbody>
+          {rows.map(record => {
+            return (
+              <Tr key={record.player}>
+                <Td textAlign={'center'}>{record.player}</Td>
+                <Td textAlign={'center'}>{record.highScore}</Td>
+              </Tr>
+            );
+          })}
+        </Tbody>
+      </Table>
+      <Divider my={4} />
+      <Box>
+        <b>High Score This Session: {currentUserHighScore}</b>
+      </Box>
+    </Container>
   );
 }

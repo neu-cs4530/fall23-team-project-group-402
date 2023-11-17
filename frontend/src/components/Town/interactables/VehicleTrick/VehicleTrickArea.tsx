@@ -52,6 +52,8 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [startingGame, setStartingGame] = useState(false);
   const toast = useToast();
+  // THIS VALUE IS CAUSING TON OF RERENDERS?
+  const ourPlayerID: string = townController.ourPlayer.id;
 
   useEffect(() => {
     townController.pause();
@@ -92,7 +94,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
               </AccordionButton>
             </Heading>
             <AccordionPanel>
-              <VehicleTrickLeaderboard results={history} />
+              <VehicleTrickLeaderboard results={history} playerID={ourPlayerID} />
             </AccordionPanel>
           </AccordionItem>
           <AccordionItem>
