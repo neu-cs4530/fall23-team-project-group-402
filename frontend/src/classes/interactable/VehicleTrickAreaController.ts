@@ -87,7 +87,9 @@ export default class VehicleTrickAreaController extends GameAreaController<
       const newWord = newState.state.targetWord;
       if (this._currentScore !== newScore) {
         this._currentScore = newScore;
-        this._playTrickAnimation();
+        if (newScore > 0) {
+          this._playTrickAnimation();
+        }
         this.emit('scoreChanged', newScore);
       }
       if (this._currentWord !== newWord) {
