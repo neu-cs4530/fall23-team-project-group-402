@@ -1,0 +1,1023 @@
+{
+  "frames": {
+    "skateboard-trick-1.003": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 28,
+        "h": 51
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 28,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-1.007": {
+      "frame": {
+        "x": 1,
+        "y": 54,
+        "w": 28,
+        "h": 51
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 28,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-2.003": {
+      "frame": {
+        "x": 1,
+        "y": 107,
+        "w": 28,
+        "h": 51
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 28,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-2.007": {
+      "frame": {
+        "x": 1,
+        "y": 160,
+        "w": 28,
+        "h": 51
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 28,
+        "h": 51
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-2.006": {
+      "frame": {
+        "x": 1,
+        "y": 213,
+        "w": 28,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 28,
+        "h": 49
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-3.003": {
+      "frame": {
+        "x": 1,
+        "y": 264,
+        "w": 28,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 28,
+        "h": 49
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-3.007": {
+      "frame": {
+        "x": 1,
+        "y": 315,
+        "w": 28,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 28,
+        "h": 49
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-back-move-1": {
+      "frame": {
+        "x": 1,
+        "y": 366,
+        "w": 32,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 32,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 34,
+        "h": 50
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-1.002": {
+      "frame": {
+        "x": 31,
+        "y": 1,
+        "w": 28,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 7,
+        "w": 28,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-1.004": {
+      "frame": {
+        "x": 31,
+        "y": 51,
+        "w": 28,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 28,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-1.006": {
+      "frame": {
+        "x": 31,
+        "y": 101,
+        "w": 28,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 28,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-1.008": {
+      "frame": {
+        "x": 31,
+        "y": 151,
+        "w": 28,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 7,
+        "w": 28,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-2.004": {
+      "frame": {
+        "x": 31,
+        "y": 201,
+        "w": 28,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 28,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-front-move-2": {
+      "frame": {
+        "x": 31,
+        "y": 251,
+        "w": 28,
+        "h": 47
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 28,
+        "h": 47
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 49
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-2.005": {
+      "frame": {
+        "x": 31,
+        "y": 300,
+        "w": 28,
+        "h": 47
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 28,
+        "h": 47
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-2.008": {
+      "frame": {
+        "x": 1,
+        "y": 416,
+        "w": 28,
+        "h": 47
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 7,
+        "w": 28,
+        "h": 47
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-back": {
+      "frame": {
+        "x": 1,
+        "y": 465,
+        "w": 32,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 32,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 34,
+        "h": 50
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-left": {
+      "frame": {
+        "x": 31,
+        "y": 416,
+        "w": 30,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-right": {
+      "frame": {
+        "x": 35,
+        "y": 349,
+        "w": 30,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 30,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-front": {
+      "frame": {
+        "x": 63,
+        "y": 1,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 49
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-1.000": {
+      "frame": {
+        "x": 63,
+        "y": 49,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 8,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-1.005": {
+      "frame": {
+        "x": 61,
+        "y": 97,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-3.004": {
+      "frame": {
+        "x": 61,
+        "y": 145,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-3.005": {
+      "frame": {
+        "x": 61,
+        "y": 193,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-3.006": {
+      "frame": {
+        "x": 61,
+        "y": 241,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-back-move-2": {
+      "frame": {
+        "x": 61,
+        "y": 289,
+        "w": 32,
+        "h": 45
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 32,
+        "h": 45
+      },
+      "sourceSize": {
+        "w": 34,
+        "h": 50
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-left-move-1": {
+      "frame": {
+        "x": 91,
+        "y": 97,
+        "w": 30,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 30,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-right-move-1": {
+      "frame": {
+        "x": 95,
+        "y": 1,
+        "w": 30,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 30,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-left-move-2": {
+      "frame": {
+        "x": 95,
+        "y": 47,
+        "w": 29,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 3,
+        "w": 29,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-right-move-2": {
+      "frame": {
+        "x": 91,
+        "y": 143,
+        "w": 29,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 2,
+        "y": 3,
+        "w": 29,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 32,
+        "h": 48
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-front-move-1": {
+      "frame": {
+        "x": 91,
+        "y": 189,
+        "w": 28,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 4,
+        "w": 28,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 49
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-1.001": {
+      "frame": {
+        "x": 91,
+        "y": 235,
+        "w": 28,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 10,
+        "w": 28,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-2.000": {
+      "frame": {
+        "x": 63,
+        "y": 49,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 8,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-3.000": {
+      "frame": {
+        "x": 63,
+        "y": 49,
+        "w": 28,
+        "h": 46
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 8,
+        "w": 28,
+        "h": 46
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-1.009": {
+      "frame": {
+        "x": 91,
+        "y": 235,
+        "w": 28,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 10,
+        "w": 28,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-2.001": {
+      "frame": {
+        "x": 91,
+        "y": 235,
+        "w": 28,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 10,
+        "w": 28,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-2.009": {
+      "frame": {
+        "x": 91,
+        "y": 235,
+        "w": 28,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 10,
+        "w": 28,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-3.001": {
+      "frame": {
+        "x": 91,
+        "y": 235,
+        "w": 28,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 10,
+        "w": 28,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-3.009": {
+      "frame": {
+        "x": 91,
+        "y": 235,
+        "w": 28,
+        "h": 44
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 10,
+        "w": 28,
+        "h": 44
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-2.002": {
+      "frame": {
+        "x": 31,
+        "y": 1,
+        "w": 28,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 7,
+        "w": 28,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-3.002": {
+      "frame": {
+        "x": 31,
+        "y": 1,
+        "w": 28,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 7,
+        "w": 28,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "skateboard-trick-3.008": {
+      "frame": {
+        "x": 31,
+        "y": 1,
+        "w": 28,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 7,
+        "w": 28,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 30,
+        "h": 56
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    }
+  },
+  "meta": {
+    "app": "http://free-tex-packer.com",
+    "version": "0.6.7",
+    "image": "skateboard-atlas2.png",
+    "format": "RGBA8888",
+    "size": {
+      "w": 126,
+      "h": 512
+    },
+    "scale": 1
+  }
+}
