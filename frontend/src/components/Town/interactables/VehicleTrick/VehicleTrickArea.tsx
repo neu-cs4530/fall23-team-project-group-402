@@ -130,7 +130,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
           <Button
             mt={4}
             onClick={async () => {
-              if (townController.ourPlayer.vehicle) {
+              if (townController.ourPlayer.vehicle?.vehicleType === 'skateboard') {
                 setStartingGame(true);
                 try {
                   await gameAreaController.joinGame();
@@ -145,7 +145,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
               } else {
                 toast({
                   title: 'Unable to Start Game',
-                  description: 'Player must have vehicle equipped to start game!',
+                  description: 'Player must have skateboard equipped to start game!',
                   status: 'error',
                 });
               }
