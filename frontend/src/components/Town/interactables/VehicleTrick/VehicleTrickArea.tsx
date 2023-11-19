@@ -130,7 +130,10 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
           <Button
             mt={4}
             onClick={async () => {
-              if (townController.ourPlayer.vehicle?.vehicleType === 'skateboard') {
+              if (
+                townController.ourPlayer.vehicle &&
+                townController.ourPlayer.vehicle.vehicleType === 'skateboard'
+              ) {
                 setStartingGame(true);
                 try {
                   await gameAreaController.joinGame();

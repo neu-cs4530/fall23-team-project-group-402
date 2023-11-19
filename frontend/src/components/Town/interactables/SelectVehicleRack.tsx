@@ -7,6 +7,7 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Tooltip,
   useToast,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -34,6 +35,9 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     { type: 'bike', label: 'Bike', imageSrc: '' },
     { type: 'horse', label: 'Horse', imageSrc: '' },
   ];
+
+  const tooltipText =
+    'Select a vehicle to move around town faster. You will also become eligible to play the typing minigame!';
 
   /**
    * Function found on internet that title cases a given string
@@ -108,7 +112,12 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
       }}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Select a vehicle </ModalHeader>
+        <ModalHeader>
+          <Tooltip label={tooltipText} placement='bottom-start'>
+            ⓘ
+          </Tooltip>
+          <span style={{ marginLeft: '8px' }}>Select a vehicle</span>
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           {vehicles.map(vehicleEnum => (
