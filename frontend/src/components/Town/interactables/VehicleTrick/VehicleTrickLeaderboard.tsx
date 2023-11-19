@@ -1,4 +1,4 @@
-import { Table, Tbody, Td, Thead, Tr } from '@chakra-ui/react';
+import { Table, Tbody, Td, Thead, Tooltip, Tr } from '@chakra-ui/react';
 import React from 'react';
 import { GameResult } from '../../../../types/CoveyTownSocket';
 
@@ -18,6 +18,12 @@ export default function VehicleTrickLeaderboard({
 }: {
   results: GameResult[];
 }): JSX.Element {
+  const localLeaderboardTooltip = 'This leaderboard consolidates duplicate username entries';
+  // ETHAN: Use this for persistent leaderboard
+  //
+  // const persistentLeaderboardTooltip =
+  //   'This leaderboard does not consolidate duplicate username entries';
+
   const highScoreByPlayer: Record<string, { player: string; highScore: number }> = {};
   results.forEach(result => {
     const player = Object.keys(result.scores)[0];
@@ -36,8 +42,13 @@ export default function VehicleTrickLeaderboard({
     <Table>
       <Thead>
         <Tr>
-          <th>Player</th>
-          <th>HighScore</th>
+          <th>
+            <span style={{ marginRight: '5px' }}>Player</span>
+            <Tooltip label={localLeaderboardTooltip} placement='bottom-start'>
+              ⓘ
+            </Tooltip>
+          </th>
+          <th>High Score</th>
         </Tr>
       </Thead>
       <Tbody>
