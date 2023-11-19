@@ -127,6 +127,7 @@ export default class VehicleTrickAreaController extends GameAreaController<
       type: 'GameEnded',
       playerInitials: userInitials,
     });
+  }
 
   /**
    * Plays a random trick animation for the player.
