@@ -120,6 +120,16 @@ export default class VehicleTrickAreaController extends GameAreaController<
   }
 
   /**
+   * Sends gameEnded interactable when game ends
+   */
+  public async gameEnded(userInitials: string) {
+    await this._townController.sendInteractableCommand(this.id, {
+      type: 'GameEnded',
+      playerInitials: userInitials,
+    });
+  }
+
+  /**
    * Plays a random trick animation for the player.
    */
   private async _playTrickAnimation() {

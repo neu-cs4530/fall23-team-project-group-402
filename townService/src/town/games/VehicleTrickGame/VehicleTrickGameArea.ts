@@ -25,7 +25,10 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
     return 'VehicleTrickArea';
   }
 
-  private _stateUpdated(updatedState: GameInstance<VehicleTrickGameState>) {
+  private _stateUpdated(
+    updatedState: GameInstance<VehicleTrickGameState>,
+    playerInitials: string | null = null,
+  ) {
     if (updatedState.state.status === 'OVER') {
       /* TODO: Abhay, this history is just the current game instance's history.
         For persistent storage, we will need to make a network request here if the user's
@@ -38,8 +41,11 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
       if (gameID && !this._history.find(eachResult => eachResult.gameID === gameID)) {
         const { player, currentScore } = updatedState.state;
         if (player) {
-          const playerName =
+          let playerName =
             this._occupants.find(eachPlayer => eachPlayer.id === player)?.userName || player;
+          if (playerInitials !== null) {
+            playerName = playerInitials;
+          }
           this._history.push({
             gameID,
             scores: {
@@ -100,6 +106,13 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
       game.leave(player);
       this._stateUpdated(game.toModel());
       return undefined as InteractableCommandReturnType<CommandType>;
+    }
+    if (command.type === 'GameEnded') {
+      const game = this._game;
+      if (!game) {
+        throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+      }
+      this._stateUpdated(game.toModel(), command.playerInitials);
     }
     throw new InvalidParametersError(INVALID_COMMAND_MESSAGE);
   }

@@ -22,10 +22,11 @@ import React, { useCallback, useEffect, useState } from 'react';
 import PlayerController from '../../../../classes/PlayerController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
-import { GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
+import { GameResult, GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
 import VehicleTrick from './VehicleTrick';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
+import VehicleTrickLeaderboard from './VehicleTrickLeaderboard';
 
 /**
  * The VehicleTrickArea component renders the VehicleTrick game area.
@@ -46,7 +47,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     useInteractableAreaController<VehicleTrickAreaController>(interactableID);
   const townController = useTownController();
 
-  // const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
+  const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [startingGame, setStartingGame] = useState(false);
@@ -55,7 +56,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   useEffect(() => {
     townController.pause();
     const updateGameState = () => {
-      // setHistory(gameAreaController.history);
+      setHistory(gameAreaController.history);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
       setObservers(gameAreaController.observers);
     };
@@ -85,13 +86,26 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
             <Heading as='h3'>
               <AccordionButton>
                 <Box as='span' flex='1' textAlign='left'>
-                  Leaderboard
+                  All-Time Leaderboard
                   <AccordionIcon />
                 </Box>
               </AccordionButton>
             </Heading>
             <AccordionPanel>
-              <>To-Do</>
+              {/* This is where we will display the leaderboard connnected to persistent storage */}
+            </AccordionPanel>
+          </AccordionItem>
+          <AccordionItem>
+            <Heading as='h3'>
+              <AccordionButton>
+                <Box as='span' flex='1' textAlign='left'>
+                  Local Leaderboard
+                  <AccordionIcon />
+                </Box>
+              </AccordionButton>
+            </Heading>
+            <AccordionPanel>
+              <VehicleTrickLeaderboard results={history} />
             </AccordionPanel>
           </AccordionItem>
           <AccordionItem>

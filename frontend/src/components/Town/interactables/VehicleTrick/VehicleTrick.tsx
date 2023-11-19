@@ -47,11 +47,6 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   useEffect(() => {
     // Exit the useEffect if the timer reaches 0
     if (seconds === 0) {
-      toast({
-        title: 'Game over',
-        description: 'Time has concluded',
-        status: 'success',
-      });
       setInput('');
       setActiveInput(true);
       return;
@@ -79,13 +74,16 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   };
 
   function handleClick(event: { preventDefault: () => void }) {
-    event.preventDefault(); // magic, sorry.
-
-    toast({
-      title: 'Acknowledgement',
-      description: 'User Initials have been acknowledged',
-      status: 'success',
-    });
+    event.preventDefault();
+    if (userInitials.length === 3) {
+      gameAreaController.gameEnded(userInitials);
+    } else {
+      toast({
+        title: 'Invalid Username',
+        description: 'Username must be 3 characters long',
+        status: 'error',
+      });
+    }
   }
 
   if (!activeInput) {
