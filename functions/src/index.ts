@@ -1,80 +1,84 @@
-/**
- * Import function triggers from their respective submodules:
- *
- * import {onCall} from "firebase-functions/v2/https";
- * import {onDocumentWritten} from "firebase-functions/v2/firestore";
- *
- * See a full list of supported triggers at https://firebase.google.com/docs/functions
- */
-
-// import {onRequest} from "firebase-functions/v2/https";
-// import * as functions from 'firebase-functions'
-// import * as logger from "firebase-functions/logger";
-
 import * as functions from "firebase-functions";
-// import * as express from "express";
 import * as admin from "firebase-admin";
 
 admin.initializeApp();
 
-export const getScores = functions.https.onRequest(async (req, res) => {
+/**
+ * Endpoint: /topScores
+ * Methods: GET, POST
+ *
+ * GET:
+ *   - Retrieves the top 10 Vehicle Trick game stores from the database.
+ *   - Response is a list of { "initials": string, "score": number } objects.
+ * POST:
+ *   - Attempts to add a new score to the database. The new score is represented
+ *     in the request body as JSON: { "initials": string, "score": number }.
+ *     The new score will only be added to the database if it would be in the
+ *     top 10.
+ *   - Response is a list of { "initials": string, "score": number } objects
+ *     containing the top 10 scores, possibly including the score in the request
+ *     body.
+ *
+ * ERRORS:
+ *   - 404 if the top_scores Firestore document cannot be found
+ *   - 405 if an HTTP method not in [GET, POST] is used
+ *   - 500 if the top_scores document is formatted incorrectly or any other
+ *     server error occurrs
+ *
+ * Invariants: The leaderboard will contain at most 10 scores at any time.
+ *             Any time a new score is added, the database will be filtered
+ *             to only contain the top 10 scores. Additionally, the scores
+ *             in the database will always be sorted in descreasing order
+ *             of score.
+ */
+export const topScores = functions.https.onRequest(async (req, res) => {
   try {
-    const db = admin.firestore();
+    if (req.method === "GET" || req.method === "POST") {
+      // Retrieve the scores from the top_scores Firestore document
+      const db = admin.firestore();
+      const docRef = db.collection("tricks").doc("top_scores");
+      const docSnapshot = await docRef.get();
 
-    // Reference to the top_scores document
-    const docRef = db.collection("tricks").doc("top_scores");
+      if (!docSnapshot.exists) {
+        res.status(404).send("Document not found");
+        return;
+      }
 
-    // Get the document snapshot
-    const docSnapshot = await docRef.get();
+      const data = docSnapshot.data();
+      if (!data || !data.scores || !Array.isArray(data.scores)) {
+        res.status(500).send("Invalid data structure in document");
+        return;
+      }
 
-    if (!docSnapshot.exists) {
-      res.status(404).send("Document not found");
-      return;
+      const scoresArray = data.scores.map((entry:
+        { initials: string; score: number }) => ({
+        initials: entry.initials,
+        score: entry.score,
+      }));
+
+      if (req.method === "POST") {
+        // Check if there is any score less than the new score
+        const newScore = req.body;
+
+        if (scoresArray.length < 10) {
+          scoresArray.push(newScore);
+        } else {
+          // Since the list is always sorted we can just check the last score
+          if (scoresArray[9].score < newScore.score) {
+            scoresArray.pop();
+            scoresArray.push(newScore);
+          }
+        }
+        scoresArray.sort((entry1, entry2) => entry2.score - entry1.score);
+        await docRef.update({"scores": scoresArray});
+      }
+
+      res.status(200).json(scoresArray);
+    } else {
+      res.status(405).send("Method not allowed");
     }
-
-    const data = docSnapshot.data();
-    if (!data || !data.scores || !Array.isArray(data.scores)) {
-      res.status(500).send("Invalid data structure in document");
-      return;
-    }
-
-    // Extract scores from the document and return as an array
-    const scoresArray = data.scores.map((score:
-      { initials: string; score: number }) => ({
-      initials: score.initials,
-      score: score.score,
-    }));
-
-    res.status(200).json(scoresArray);
   } catch (error) {
     console.error("Error fetching scores:", error);
     res.status(500).send("Error fetching scores");
   }
 });
-
-// Create an Express app
-// const app = express();
-
-// // Define a route
-// // app.get("*", (req, res) => {
-// //   return res.status(200).send("Test");
-// // });
-
-// // HTTP function using Express app
-// // export const helloWorld = functions.https.onRequest(app);
-// // exports.helloWorld = functions.https.onRequest(app);
-
-// app.get("/hello", async (req, res) => {
-//   return res.status(200).json({message: "Test"});
-// });
-
-// exports.hello = functions.https.onRequest(app);
-
-
-// Start writing functions
-// https://firebase.google.com/docs/functions/typescript
-
-// export const helloWorld = onRequest((request, response) => {
-//   logger.info("Hello logs!", {structuredData: true});
-//   response.send("Hello from Firebase!");
-// });
