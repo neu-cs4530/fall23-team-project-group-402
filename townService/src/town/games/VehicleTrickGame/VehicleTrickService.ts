@@ -10,13 +10,13 @@ const SERVER_URL = 'https://us-central1-covey402.cloudfunctions.net';
  * Class used to send HTTP requests to Firebase for score
  * persistance in the vehicle trick game.
  */
-class VehicleTrickService {
+export default class VehicleTrickService {
   /**
    * Retrieves the top vehicle trick scores from the database.
    * Errors are propagated to the caller.
    * @returns The fetched top vehicle trick scores
    */
-  async getTopScores(): Promise<[VehicleTrickScore]> {
+  async getTopScores(): Promise<VehicleTrickScore[]> {
     const response = await axios.get(`${SERVER_URL}/topScores`);
     return response.data;
   }
@@ -28,7 +28,7 @@ class VehicleTrickService {
    * @param scoreToAdd The score acheived in the vehicle trick game
    * @returns The updated top list of scores
    */
-  async addScore(scoreToAdd: VehicleTrickScore): Promise<[VehicleTrickScore]> {
+  async addScore(scoreToAdd: VehicleTrickScore): Promise<VehicleTrickScore[]> {
     const response = await axios.post(`${SERVER_URL}/topScores`, scoreToAdd);
     return response.data;
   }

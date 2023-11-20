@@ -19,6 +19,8 @@ export default abstract class GameArea<
 
   protected _history: GameResult[] = [];
 
+  protected _allTimeHistory: GameResult[] = [];
+
   public get game(): GameType | undefined {
     return this._game;
   }
@@ -27,11 +29,16 @@ export default abstract class GameArea<
     return this._history;
   }
 
+  public get allTimeHistory(): GameResult[] {
+    return this._allTimeHistory;
+  }
+
   public toModel(): GameAreaModel<GameType['state']> {
     return {
       id: this.id,
       game: this._game?.toModel(),
       history: this._history,
+      allTimeHistory: this._allTimeHistory,
       occupants: this.occupantsByID,
       type: this.getType(),
     };

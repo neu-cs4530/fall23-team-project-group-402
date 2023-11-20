@@ -120,7 +120,8 @@ export default class VehicleTrickAreaController extends GameAreaController<
   }
 
   /**
-   * Sends gameEnded interactable when game ends
+   * Ends the vehicle trick game after the user enters their initials.
+   * @param userInitials The user's entered initials
    */
   public async gameEnded(userInitials: string) {
     await this._townController.sendInteractableCommand(this.id, {

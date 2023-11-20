@@ -3,7 +3,10 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 
 export type VehicleTrickGameProps = {
-  gameAreaController: VehicleTrickAreaController;
+  // gameAreaController: VehicleTrickAreaController;
+  score: number,
+  targetWord: string,
+  isPlayer: boolean
 };
 
 /**
@@ -21,7 +24,7 @@ export type VehicleTrickGameProps = {
  *
  * @param gameAreaController the controller for the VehicleTrick game
  */
-export default function VehicleTrick({ gameAreaController }: VehicleTrickGameProps): JSX.Element {
+export default function VehicleTrick({ score, targetWord, isPlayer }: VehicleTrickGameProps): JSX.Element {
   const [input, setInput] = useState<string>('');
   const [seconds, setSeconds] = useState(15);
   const [score, setScore] = useState(0);
@@ -84,6 +87,10 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
         status: 'error',
       });
     }
+  }
+
+  function gameContent() {
+    if game
   }
 
   if (!activeInput) {

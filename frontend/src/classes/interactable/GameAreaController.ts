@@ -56,6 +56,10 @@ export default abstract class GameAreaController<
     return this._players;
   }
 
+  get allTimeHistory(): GameResult[] {
+    return this._model.allTimeHistory;
+  }
+
   public get observers(): PlayerController[] {
     return this.occupants.filter(eachOccupant => !this._players.includes(eachOccupant));
   }

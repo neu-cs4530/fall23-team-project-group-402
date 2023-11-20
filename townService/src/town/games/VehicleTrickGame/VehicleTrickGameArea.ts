@@ -11,9 +11,14 @@ import {
   VehicleTrickMove,
   GameInstance,
   VehicleTrickGameState,
+  BoundingBox,
+  TownEmitter,
+  VehicleTrickScore,
+  GameResult,
 } from '../../../types/CoveyTownSocket';
 import GameArea from '../GameArea';
 import VehicleTrickGame from './VehicleTrickGame';
+import VehicleTrickService from './VehicleTrickService';
 
 /**
  * A VehicleTrickGameArea is a GameArea that hosts a VehicleTrickGame.
@@ -21,8 +26,31 @@ import VehicleTrickGame from './VehicleTrickGame';
  * @see GameArea
  */
 export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
+  private _vehicleTrickService: VehicleTrickService;
+
+  constructor(
+    id: string,
+    rect: BoundingBox,
+    townEmitter: TownEmitter,
+    vehicleTrickService: VehicleTrickService = new VehicleTrickService(),
+  ) {
+    super(id, rect, townEmitter);
+    this._vehicleTrickService = vehicleTrickService;
+    this._loadAllTimeHistory();
+  }
+
   protected getType(): InteractableType {
     return 'VehicleTrickArea';
+  }
+
+  /**
+   * Loads the all-time history for the vehicle trick game.
+   */
+  private _loadAllTimeHistory(): void {
+    this._vehicleTrickService.getTopScores().then(scores => {
+      this._allTimeHistory = this._trickScoresToGameResult(scores, '');
+      this._emitAreaChanged();
+    });
   }
 
   private _stateUpdated(
@@ -30,12 +58,6 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
     playerInitials: string | null = null,
   ) {
     if (updatedState.state.status === 'OVER') {
-      /* TODO: Abhay, this history is just the current game instance's history.
-        For persistent storage, we will need to make a network request here if the user's
-        score is in the top 10. Maybe we show two leaderboard in the component: one for
-        the current session leaderboard (like in TicTacToe) and one for the top 10 all time.
-      */
-
       // If we haven't yet recorded the outcome, do so now.
       const gameID = this._game?.id;
       if (gameID && !this._history.find(eachResult => eachResult.gameID === gameID)) {
@@ -45,7 +67,16 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
             this._occupants.find(eachPlayer => eachPlayer.id === player)?.userName || player;
           if (playerInitials !== null) {
             playerName = playerInitials;
+
+            // Update the all-time history
+            const score: VehicleTrickScore = { initials: playerName, score: currentScore };
+            this._vehicleTrickService.addScore(score).then(scores => {
+              this._allTimeHistory = this._trickScoresToGameResult(scores, gameID);
+              this._emitAreaChanged();
+            });
           }
+
+          // Add to the current session's history
           this._history.push({
             gameID,
             scores: {
@@ -56,6 +87,15 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
       }
     }
     this._emitAreaChanged();
+  }
+
+  private _trickScoresToGameResult(scores: VehicleTrickScore[], gameID: string): GameResult[] {
+    return scores.map(score => ({
+      gameID,
+      scores: {
+        [score.initials]: score.score,
+      },
+    }));
   }
 
   /**
