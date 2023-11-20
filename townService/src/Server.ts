@@ -23,7 +23,7 @@ const firebaseConfig = {
   appId: '1:1026260182595:web:2ec9d4de1cab7e414396f6',
 };
 
-const firebaseApp = initializeApp(firebaseConfig);
+initializeApp(firebaseConfig);
 
 // Create the server instances
 const app = Express();
