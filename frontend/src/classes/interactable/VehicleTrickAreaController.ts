@@ -87,6 +87,9 @@ export default class VehicleTrickAreaController extends GameAreaController<
       const newWord = newState.state.targetWord;
       if (this._currentScore !== newScore) {
         this._currentScore = newScore;
+        if (newScore > 0) {
+          this._playTrickAnimation();
+        }
         this.emit('scoreChanged', newScore);
       }
       if (this._currentWord !== newWord) {
@@ -114,5 +117,27 @@ export default class VehicleTrickAreaController extends GameAreaController<
         word,
       },
     });
+  }
+
+  /**
+   * Sends gameEnded interactable when game ends
+   */
+  public async gameEnded(userInitials: string) {
+    await this._townController.sendInteractableCommand(this.id, {
+      type: 'GameEnded',
+      playerInitials: userInitials,
+    });
+  }
+
+  /**
+   * Plays a random trick animation for the player.
+   */
+  private async _playTrickAnimation() {
+    const player = this.player;
+    if (player && player.gameObjects) {
+      const { sprite } = player.gameObjects;
+      const randomNumber: number = Math.floor(Math.random() * 3) + 1;
+      sprite.anims.play(`skateboard-trick-${randomNumber}`, true);
+    }
   }
 }
