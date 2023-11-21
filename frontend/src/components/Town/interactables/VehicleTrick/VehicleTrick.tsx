@@ -26,7 +26,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   const [seconds, setSeconds] = useState(15);
   const [score, setScore] = useState(0);
   const [isPlayer, setIsPlayer] = useState(gameAreaController.isPlayer);
-  const [targetWord, setTargetWord] = useState('');
+  const [targetWord, setTargetWord] = useState(gameAreaController.currentWord);
   const [activeInput, setActiveInput] = useState(false);
   const [userInitials, setUserInitials] = useState('');
   const toast = useToast();
