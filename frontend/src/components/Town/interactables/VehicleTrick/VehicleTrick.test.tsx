@@ -116,6 +116,7 @@ describe('VehicleTrick', () => {
   const gameAreaController = new MockVehicleTrickAreaController();
   beforeEach(() => {
     gameAreaController.mockReset();
+    mockToast.mockReset();
   });
   async function checkWordInputField({
     interactable,
