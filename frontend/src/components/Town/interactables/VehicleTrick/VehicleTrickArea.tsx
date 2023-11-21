@@ -53,6 +53,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   );
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
+  const [canPlay, setCanPlay] = useState<boolean>(gameAreaController.canPlay);
   const [startingGame, setStartingGame] = useState(false);
   const toast = useToast();
 
@@ -63,6 +64,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
       setObservers(gameAreaController.observers);
       setAllTimeHistory(gameAreaController.allTimeHistory);
+      setCanPlay(gameAreaController.canPlay);
     };
     gameAreaController.addListener('gameUpdated', updateGameState);
     // Remove game end toast later
@@ -134,10 +136,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
           <Button
             mt={4}
             onClick={async () => {
-              if (
-                townController.ourPlayer.vehicle &&
-                townController.ourPlayer.vehicle.vehicleType === 'skateboard'
-              ) {
+              if (canPlay) {
                 setStartingGame(true);
                 try {
                   await gameAreaController.joinGame();

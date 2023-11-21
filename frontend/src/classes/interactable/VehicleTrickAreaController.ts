@@ -63,14 +63,12 @@ export default class VehicleTrickAreaController extends GameAreaController<
   }
 
   /**
-   * Returns the player playing the game if there is one, or undefined otherwise
+   * Determines if ourPlayer can play the vehicle trick game.
+   * Right now, they can only play if they have a skateboard vehicle equipped.
    */
-  get player(): PlayerController | undefined {
-    const player = this._model.game?.state.player;
-    if (player) {
-      return this.occupants.find(eachOccupant => eachOccupant.id === player);
-    }
-    return undefined;
+  get canPlay(): boolean {
+    const ourVehicle = this._townController.ourPlayer.vehicle;
+    return (ourVehicle && ourVehicle.vehicleType === 'skateboard') || false;
   }
 
   /**
@@ -134,11 +132,22 @@ export default class VehicleTrickAreaController extends GameAreaController<
    * Plays a random trick animation for the player.
    */
   private async _playTrickAnimation() {
-    const player = this.player;
+    const player = this._player;
     if (player && player.gameObjects) {
       const { sprite } = player.gameObjects;
       const randomNumber: number = Math.floor(Math.random() * 3) + 1;
       sprite.anims.play(`skateboard-trick-${randomNumber}`, true);
     }
+  }
+
+  /**
+   * Returns the player playing the game if there is one, or undefined otherwise
+   */
+  private get _player(): PlayerController | undefined {
+    const player = this._model.game?.state.player;
+    if (player) {
+      return this.occupants.find(eachOccupant => eachOccupant.id === player);
+    }
+    return undefined;
   }
 }
