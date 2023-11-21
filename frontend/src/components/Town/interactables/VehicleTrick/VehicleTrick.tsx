@@ -25,7 +25,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   const [input, setInput] = useState<string>('');
   const [seconds, setSeconds] = useState(15);
   const [score, setScore] = useState(0);
-  const [targetWord, setTargetWord] = useState('');
+  const [targetWord, setTargetWord] = useState(gameAreaController.currentWord);
   const [activeInput, setActiveInput] = useState(false);
   const [userInitials, setUserInitials] = useState('');
   const toast = useToast();
@@ -92,10 +92,10 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
         <Box>
           <b>Time Left:</b> {seconds} seconds
         </Box>
-        <Box mt={1}>
+        <Box mt={1} aria-label='score'>
           <b>Score: </b> {score}
         </Box>
-        <Box mt={4} textAlign='center'>
+        <Box mt={4} textAlign='center' aria-label='target-word'>
           {targetWord}
         </Box>
         <Input
@@ -119,7 +119,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   } else {
     return (
       <Container>
-        <Box textAlign='center'>
+        <Box textAlign='center' aria-label='highscore'>
           <b>Your Score: </b> {score}
         </Box>
         <Box textAlign='center' mt={4}>
@@ -137,7 +137,13 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
               onChange={handleInitialsChange}
             />
           </Box>
-          <Button mt={4} bg='lightblue' type='submit' onClick={handleClick} width={100}>
+          <Button
+            mt={4}
+            bg='lightblue'
+            type='submit'
+            onClick={handleClick}
+            width={100}
+            aria-label='submit'>
             Submit
           </Button>
         </Box>
