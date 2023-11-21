@@ -1,4 +1,4 @@
-import { mock, mockClear, mockReset } from 'jest-mock-extended';
+import { mock, mockClear } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
 import VehicleTrickGameArea from './VehicleTrickGameArea';
 import { createPlayerForTesting } from '../../../TestUtils';
@@ -60,7 +60,6 @@ describe('VehicleTrickGameArea', () => {
   let trickService: VehicleTrickService;
   let getTopScoresSpy: jest.SpyInstance;
   let addScoreSpy: jest.SpyInstance;
-  // let areaChangedPromise: Promise<void>;
   const mockScoreData: VehicleTrickScore[] = [
     { initials: 'ABC', score: 400 },
     { initials: 'DEF', score: 300 },
@@ -106,7 +105,7 @@ describe('VehicleTrickGameArea', () => {
 
       mockClear(getTopScoresSpy);
       mockClear(addScoreSpy);
-      mockReset(interactableUpdateSpy);
+      mockClear(interactableUpdateSpy);
       done();
     }, 100);
   });
