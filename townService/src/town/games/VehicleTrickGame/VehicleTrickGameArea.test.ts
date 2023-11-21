@@ -209,9 +209,9 @@ describe('VehicleTrickGameArea', () => {
 
           expect(game.state.status).toEqual('OVER');
           expect(game.state.currentScore).toEqual(500);
-          expect(gameArea.history.length).toEqual(1);
+          expect(gameArea.localHistory.length).toEqual(1);
           expect(addScoreSpy).not.toHaveBeenCalled();
-          expect(gameArea.history[0]).toEqual({
+          expect(gameArea.localHistory[0]).toEqual({
             gameID: game.id,
             scores: {
               [player.userName]: 500,
@@ -279,8 +279,8 @@ describe('VehicleTrickGameArea', () => {
           game.setScore(200);
           gameArea.handleCommand({ type: 'LeaveGame', gameID }, player);
           expect(game.state.status).toEqual('OVER');
-          expect(gameArea.history.length).toEqual(1);
-          expect(gameArea.history[0]).toEqual({
+          expect(gameArea.localHistory.length).toEqual(1);
+          expect(gameArea.localHistory[0]).toEqual({
             gameID: game.id,
             scores: {
               [player.userName]: 200,
@@ -305,17 +305,17 @@ describe('VehicleTrickGameArea', () => {
         });
         game.setScore(200);
 
-        expect(gameArea.history.length).toEqual(0);
+        expect(gameArea.localHistory.length).toEqual(0);
         expect(interactableUpdateSpy).not.toHaveBeenCalled();
         expect(addScoreSpy).not.toHaveBeenCalled();
 
         gameArea.handleCommand({ type: 'GameEnded', playerInitials: 'ABC' }, player);
 
         expect(game.state.status).toEqual('OVER');
-        expect(gameArea.history.length).toEqual(1);
+        expect(gameArea.localHistory.length).toEqual(1);
         expect(interactableUpdateSpy).toHaveBeenCalled();
         expect(addScoreSpy).toHaveBeenCalled();
-        expect(gameArea.history[0]).toEqual({
+        expect(gameArea.localHistory[0]).toEqual({
           gameID: game.id,
           scores: {
             ABC: 200,

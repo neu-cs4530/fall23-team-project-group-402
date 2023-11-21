@@ -36,7 +36,7 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
   ) {
     super(id, rect, townEmitter);
     this._vehicleTrickService = vehicleTrickService;
-    this._loadAllTimeHistory();
+    this._loadPersistentHistory();
   }
 
   protected getType(): InteractableType {
@@ -44,11 +44,11 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
   }
 
   /**
-   * Loads the all-time history for the vehicle trick game.
+   * Loads the persistent history for the vehicle trick game.
    */
-  private _loadAllTimeHistory(): void {
+  private _loadPersistentHistory(): void {
     this._vehicleTrickService.getTopScores().then(scores => {
-      this._allTimeHistory = this._trickScoresToGameResult(scores, '');
+      this._persistentHistory = this._trickScoresToGameResult(scores, '');
       this._emitAreaChanged();
     });
   }
@@ -60,7 +60,7 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
     if (updatedState.state.status === 'OVER') {
       // If we haven't yet recorded the outcome, do so now.
       const gameID = this._game?.id;
-      if (gameID && !this._history.find(eachResult => eachResult.gameID === gameID)) {
+      if (gameID && !this._localHistory.find(eachResult => eachResult.gameID === gameID)) {
         const { player, currentScore } = updatedState.state;
         if (player) {
           let playerName =
@@ -71,13 +71,13 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
             // Update the all-time history
             const score: VehicleTrickScore = { initials: playerName, score: currentScore };
             this._vehicleTrickService.addScore(score).then(scores => {
-              this._allTimeHistory = this._trickScoresToGameResult(scores, gameID);
+              this._persistentHistory = this._trickScoresToGameResult(scores, gameID);
               this._emitAreaChanged();
             });
           }
 
           // Add to the current session's history
-          this._history.push({
+          this._localHistory.push({
             gameID,
             scores: {
               [playerName]: currentScore,
