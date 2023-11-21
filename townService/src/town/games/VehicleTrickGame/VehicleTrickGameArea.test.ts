@@ -1,4 +1,4 @@
-import { mock } from 'jest-mock-extended';
+import { mock, mockClear, mockReset } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
 import VehicleTrickGameArea from './VehicleTrickGameArea';
 import { createPlayerForTesting } from '../../../TestUtils';
@@ -12,10 +12,12 @@ import {
   GameInstanceID,
   VehicleTrickGameState,
   VehicleTrickMove,
+  VehicleTrickScore,
 } from '../../../types/CoveyTownSocket';
 import * as VehicleTrickGameModule from './VehicleTrickGame';
 import Player from '../../../lib/Player';
 import Game from '../Game';
+import VehicleTrickService from './VehicleTrickService';
 
 class TestingGame extends Game<VehicleTrickGameState, VehicleTrickMove> {
   public constructor() {
@@ -55,7 +57,16 @@ describe('VehicleTrickGameArea', () => {
   let player: Player;
   let interactableUpdateSpy: jest.SpyInstance;
   let game: TestingGame;
-  beforeEach(() => {
+  let trickService: VehicleTrickService;
+  let getTopScoresSpy: jest.SpyInstance;
+  let addScoreSpy: jest.SpyInstance;
+  const mockScoreData: VehicleTrickScore[] = [
+    { initials: 'ABC', score: 400 },
+    { initials: 'DEF', score: 300 },
+    { initials: 'GHI', score: 200 },
+  ];
+
+  beforeEach(done => {
     const gameConstructorSpy = jest.spyOn(VehicleTrickGameModule, 'default');
     game = new TestingGame();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -63,15 +74,57 @@ describe('VehicleTrickGameArea', () => {
     gameConstructorSpy.mockReturnValue(game);
 
     player = createPlayerForTesting();
+
+    trickService = new VehicleTrickService();
+
+    getTopScoresSpy = jest.spyOn(trickService, 'getTopScores');
+    getTopScoresSpy.mockResolvedValue(mockScoreData);
+
+    addScoreSpy = jest.spyOn(trickService, 'addScore');
+    addScoreSpy.mockResolvedValue(mockScoreData);
+
     gameArea = new VehicleTrickGameArea(
       nanoid(),
       { x: 0, y: 0, width: 100, height: 100 },
       mock<TownEmitter>(),
+      trickService,
     );
+
     gameArea.add(player);
+
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore (Test requires access to protected method)
     interactableUpdateSpy = jest.spyOn(gameArea, '_emitAreaChanged');
+
+    // Set a small timeout to ensure the gameArea contructor finished
+    setTimeout(() => {
+      mockClear(getTopScoresSpy);
+      mockClear(addScoreSpy);
+      mockReset(interactableUpdateSpy);
+      done();
+    }, 100);
+  });
+
+  describe('constructor', () => {
+    it('loads the top scores from the service and emits an area changed event', done => {
+      expect(interactableUpdateSpy).not.toHaveBeenCalled();
+      expect(getTopScoresSpy).not.toHaveBeenCalled();
+      expect(addScoreSpy).not.toHaveBeenCalled();
+
+      gameArea = new VehicleTrickGameArea(
+        nanoid(),
+        { x: 0, y: 0, width: 100, height: 100 },
+        mock<TownEmitter>(),
+        trickService,
+      );
+
+      // setTimeout(() => {
+      expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+      expect(getTopScoresSpy).toHaveBeenCalledTimes(1);
+      expect(addScoreSpy).not.toHaveBeenCalled();
+      //   done();
+      // }, 100);
+    });
   });
   describe('handleCommand', () => {
     describe('when given a JoinGame command', () => {
