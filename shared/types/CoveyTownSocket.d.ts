@@ -175,8 +175,8 @@ export interface GameInstance<T extends GameState> {
  */
 export interface GameArea<T extends GameState> extends Interactable {
   game: GameInstance<T> | undefined;
-  history: GameResult[]; // Game history for the current session
-  allTimeHistory: GameResult[]; // All-time game history (persistent)
+  localHistory: GameResult[]; // Game history for the current session
+  persistentHistory: GameResult[]; // All-time game history (persistent)
 }
 
 export type CommandID = string;

@@ -24,10 +24,10 @@ type LeaderboardRow = {
  */
 export default function VehicleTrickLeaderboard({
   results,
-  isAllTime,
+  isPersistent,
 }: {
   results: GameResult[];
-  isAllTime: boolean;
+  isPersistent: boolean;
 }): JSX.Element {
   const localLeaderboardTooltip = 'This leaderboard consolidates duplicate username entries';
   const persistentLeaderboardTooltip =
@@ -47,7 +47,7 @@ export default function VehicleTrickLeaderboard({
       const player = Object.keys(resultScores)[0]; // Only 1 player per result
       const playerScore = resultScores[player];
 
-      if (!isAllTime) {
+      if (!isPersistent) {
         const existingScoreIndex = leaderboardList.findIndex(row => row.initials === player);
 
         if (existingScoreIndex !== -1) {
@@ -63,7 +63,7 @@ export default function VehicleTrickLeaderboard({
       }
     }
 
-    if (!isAllTime) {
+    if (!isPersistent) {
       // The persistent leaderboard should already be sorted from the API call
       leaderboardList.sort((score1, score2) => {
         return score2.score - score1.score;
@@ -80,7 +80,7 @@ export default function VehicleTrickLeaderboard({
           <th>
             <span style={{ marginRight: '5px' }}>Player</span>
             <Tooltip
-              label={isAllTime ? persistentLeaderboardTooltip : localLeaderboardTooltip}
+              label={isPersistent ? persistentLeaderboardTooltip : localLeaderboardTooltip}
               placement='bottom-start'>
               ⓘ
             </Tooltip>

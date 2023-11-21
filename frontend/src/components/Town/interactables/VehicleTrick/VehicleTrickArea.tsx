@@ -47,9 +47,9 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     useInteractableAreaController<VehicleTrickAreaController>(interactableID);
   const townController = useTownController();
 
-  const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
-  const [allTimeHistory, setAllTimeHistory] = useState<GameResult[]>(
-    gameAreaController.allTimeHistory,
+  const [localHistory, setLocalHistory] = useState<GameResult[]>(gameAreaController.localHistory);
+  const [persistentHistory, setPersistentHistory] = useState<GameResult[]>(
+    gameAreaController.persistentHistory,
   );
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
@@ -60,10 +60,10 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   useEffect(() => {
     townController.pause();
     const updateGameState = () => {
-      setHistory(gameAreaController.history);
+      setLocalHistory(gameAreaController.localHistory);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
       setObservers(gameAreaController.observers);
-      setAllTimeHistory(gameAreaController.allTimeHistory);
+      setPersistentHistory(gameAreaController.persistentHistory);
       setCanPlay(gameAreaController.canPlay);
     };
     gameAreaController.addListener('gameUpdated', updateGameState);
@@ -98,7 +98,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
               </AccordionButton>
             </Heading>
             <AccordionPanel>
-              <VehicleTrickLeaderboard results={allTimeHistory} isAllTime={true} />
+              <VehicleTrickLeaderboard results={persistentHistory} isPersistent={true} />
             </AccordionPanel>
           </AccordionItem>
           <AccordionItem>
@@ -111,7 +111,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
               </AccordionButton>
             </Heading>
             <AccordionPanel>
-              <VehicleTrickLeaderboard results={history} isAllTime={false} />
+              <VehicleTrickLeaderboard results={localHistory} isPersistent={false} />
             </AccordionPanel>
           </AccordionItem>
           <AccordionItem>

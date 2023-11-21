@@ -54,15 +54,15 @@ describe('VehicleTrickAreaController', () => {
 
   function vehicleTrickAreaControllerWithProp({
     _id,
-    history,
-    allTimeHistory,
+    localHistory,
+    persistentHistory,
     playerID,
     undefinedGame,
     status,
   }: {
     _id?: string;
-    history?: GameResult[];
-    allTimeHistory?: GameResult[];
+    localHistory?: GameResult[];
+    persistentHistory?: GameResult[];
     playerID?: string;
     undefinedGame?: boolean;
     status?: GameStatus;
@@ -75,8 +75,8 @@ describe('VehicleTrickAreaController', () => {
       {
         id,
         occupants: players,
-        history: history || [],
-        allTimeHistory: allTimeHistory || [],
+        localHistory: localHistory || [],
+        persistentHistory: persistentHistory || [],
         type: 'VehicleTrickArea',
         game: undefinedGame
           ? undefined

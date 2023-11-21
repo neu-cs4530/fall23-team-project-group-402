@@ -48,16 +48,16 @@ export default abstract class GameAreaController<
       this._players = game.players.map(playerID => this._townController.getPlayer(playerID));
   }
 
-  get history(): GameResult[] {
-    return this._model.history;
+  get localHistory(): GameResult[] {
+    return this._model.localHistory;
   }
 
   get players(): PlayerController[] {
     return this._players;
   }
 
-  get allTimeHistory(): GameResult[] {
-    return this._model.allTimeHistory;
+  get persistentHistory(): GameResult[] {
+    return this._model.persistentHistory;
   }
 
   public get observers(): PlayerController[] {
