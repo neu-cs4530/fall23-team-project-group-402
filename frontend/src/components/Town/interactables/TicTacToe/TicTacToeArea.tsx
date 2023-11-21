@@ -63,7 +63,7 @@ function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): 
   const gameAreaController = useInteractableAreaController<TicTacToeAreaController>(interactableID);
   const townController = useTownController();
 
-  const [history, setHistory] = useState<GameResult[]>(gameAreaController.history);
+  const [history, setHistory] = useState<GameResult[]>(gameAreaController.localHistory);
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
   const [moveCount, setMoveCount] = useState<number>(gameAreaController.moveCount);
   const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
@@ -74,7 +74,7 @@ function TicTacToeArea({ interactableID }: { interactableID: InteractableID }): 
 
   useEffect(() => {
     const updateGameState = () => {
-      setHistory(gameAreaController.history);
+      setHistory(gameAreaController.localHistory);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
       setMoveCount(gameAreaController.moveCount || 0);
       setObservers(gameAreaController.observers);

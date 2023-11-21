@@ -1,6 +1,15 @@
 import { Table, Tbody, Td, Thead, Tooltip, Tr } from '@chakra-ui/react';
 import React from 'react';
 import { GameResult } from '../../../../types/CoveyTownSocket';
+import { nanoid } from 'nanoid';
+
+/**
+ * Represents a row in the leaderboard.
+ */
+type LeaderboardRow = {
+  initials: string;
+  score: number;
+};
 
 /**
  * A component that renders a list of GameResult's as a leaderboard, formatted as a table with the following columns:
@@ -15,36 +24,64 @@ import { GameResult } from '../../../../types/CoveyTownSocket';
  */
 export default function VehicleTrickLeaderboard({
   results,
+  isPersistent,
 }: {
   results: GameResult[];
+  isPersistent: boolean;
 }): JSX.Element {
   const localLeaderboardTooltip = 'This leaderboard consolidates duplicate username entries';
-  // ETHAN: Use this for persistent leaderboard
-  //
-  // const persistentLeaderboardTooltip =
-  //   'This leaderboard does not consolidate duplicate username entries';
+  const persistentLeaderboardTooltip =
+    'This leaderboard does not consolidate duplicate username entries';
 
-  const highScoreByPlayer: Record<string, { player: string; highScore: number }> = {};
-  results.forEach(result => {
-    const player = Object.keys(result.scores)[0];
-    const playerCurrentScore = Object.values(result.scores)[0];
-    const playerHighestScore = highScoreByPlayer[player]?.highScore || 0;
+  /**
+   * Creates the leaderboard rows to render given the game's history.
+   * Note, for the current session leaderboard, only the highest score for each initial
+   * is kept. For the persistent leaderboard, no filtering is done.
+   * @returns The list of leaderboard rows to render
+   */
+  function leaderboardRows(): LeaderboardRow[] {
+    const leaderboardList: LeaderboardRow[] = [];
 
-    highScoreByPlayer[player] = {
-      player: player,
-      highScore: playerCurrentScore > playerHighestScore ? playerCurrentScore : playerHighestScore,
-    };
-  });
+    for (const result of results) {
+      const resultScores = result.scores;
+      const player = Object.keys(resultScores)[0]; // Only 1 player per result
+      const playerScore = resultScores[player];
 
-  const rows = Object.keys(highScoreByPlayer).map(player => highScoreByPlayer[player]);
-  rows.sort((a, b) => b.highScore - a.highScore);
+      if (!isPersistent) {
+        const existingScoreIndex = leaderboardList.findIndex(row => row.initials === player);
+
+        if (existingScoreIndex !== -1) {
+          if (leaderboardList[existingScoreIndex].score < playerScore) {
+            leaderboardList.splice(existingScoreIndex, 1);
+            leaderboardList.push({ initials: player, score: playerScore });
+          }
+        } else {
+          leaderboardList.push({ initials: player, score: playerScore });
+        }
+      } else {
+        leaderboardList.push({ initials: player, score: playerScore });
+      }
+    }
+
+    if (!isPersistent) {
+      // The persistent leaderboard should already be sorted from the API call
+      leaderboardList.sort((score1, score2) => {
+        return score2.score - score1.score;
+      });
+    }
+
+    return leaderboardList;
+  }
+
   return (
     <Table>
       <Thead>
         <Tr>
           <th>
             <span style={{ marginRight: '5px' }}>Player</span>
-            <Tooltip label={localLeaderboardTooltip} placement='bottom-start'>
+            <Tooltip
+              label={isPersistent ? persistentLeaderboardTooltip : localLeaderboardTooltip}
+              placement='bottom-start'>
               ⓘ
             </Tooltip>
           </th>
@@ -52,11 +89,11 @@ export default function VehicleTrickLeaderboard({
         </Tr>
       </Thead>
       <Tbody>
-        {rows.map(record => {
+        {leaderboardRows().map(record => {
           return (
-            <Tr key={record.player}>
-              <Td textAlign={'center'}>{record.player}</Td>
-              <Td textAlign={'center'}>{record.highScore}</Td>
+            <Tr key={nanoid()}>
+              <Td textAlign={'center'}>{record.initials}</Td>
+              <Td textAlign={'center'}>{record.score}</Td>
             </Tr>
           );
         })}

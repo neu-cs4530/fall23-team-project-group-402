@@ -25,6 +25,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   const [input, setInput] = useState<string>('');
   const [seconds, setSeconds] = useState(15);
   const [score, setScore] = useState(0);
+  const [isPlayer, setIsPlayer] = useState(gameAreaController.isPlayer);
   const [targetWord, setTargetWord] = useState('');
   const [activeInput, setActiveInput] = useState(false);
   const [userInitials, setUserInitials] = useState('');
@@ -36,11 +37,18 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
       setInput('');
     };
 
+    const updateIsPlayer = () => {
+      setIsPlayer(gameAreaController.isPlayer);
+    };
+
     gameAreaController.addListener('scoreChanged', setScore);
     gameAreaController.addListener('targetWordChanged', updateTargetWord);
+    gameAreaController.addListener('gameUpdated', updateIsPlayer);
+
     return () => {
       gameAreaController.removeListener('scoreChanged', setScore);
       gameAreaController.removeListener('targetWordChanged', updateTargetWord);
+      gameAreaController.removeListener('gameUpdated', updateIsPlayer);
     };
   }, [gameAreaController]);
 
@@ -86,18 +94,23 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
     }
   }
 
-  if (!activeInput) {
+  /**
+   * View shown for what an observer sees while a game is being played.
+   */
+  function pleaseWait() {
     return (
-      <Container>
-        <Box>
-          <b>Time Left:</b> {seconds} seconds
-        </Box>
-        <Box mt={1}>
-          <b>Score: </b> {score}
-        </Box>
-        <Box mt={4} textAlign='center'>
-          {targetWord}
-        </Box>
+      <Box textAlign='center'>
+        <b>Please wait, someone else is currently playing!</b>
+      </Box>
+    );
+  }
+
+  /**
+   * View shown while the game is being played.
+   */
+  function gameContent() {
+    if (isPlayer) {
+      return (
         <Input
           mt={4}
           textAlign='center'
@@ -114,34 +127,57 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
             gameAreaController.enterWord(targetValue);
           }}
         />
+      );
+    } else {
+      return pleaseWait();
+    }
+  }
+
+  if (!activeInput) {
+    return (
+      <Container>
+        <Box>
+          <b>Time Left:</b> {seconds} seconds
+        </Box>
+        <Box mt={1}>
+          <b>Score: </b> {score}
+        </Box>
+        <Box mt={4} textAlign='center'>
+          {targetWord}
+        </Box>
+        {gameContent()}
       </Container>
     );
   } else {
-    return (
-      <Container>
-        <Box textAlign='center'>
-          <b>Your Score: </b> {score}
-        </Box>
-        <Box textAlign='center' mt={4}>
-          <Box>
-            <b>Enter Your Three-Letter Initials:</b>
+    if (isPlayer) {
+      return (
+        <Container>
+          <Box textAlign='center'>
+            <b>Your Score: </b> {score}
           </Box>
-          <Box>
-            <Input
-              mt={4}
-              textAlign='center'
-              name='initials'
-              placeholder='initials'
-              value={userInitials}
-              width={100}
-              onChange={handleInitialsChange}
-            />
+          <Box textAlign='center' mt={4}>
+            <Box>
+              <b>Enter Your Three-Letter Initials:</b>
+            </Box>
+            <Box>
+              <Input
+                mt={4}
+                textAlign='center'
+                name='initials'
+                placeholder='initials'
+                value={userInitials}
+                width={100}
+                onChange={handleInitialsChange}
+              />
+            </Box>
+            <Button mt={4} bg='lightblue' type='submit' onClick={handleClick} width={100}>
+              Submit
+            </Button>
           </Box>
-          <Button mt={4} bg='lightblue' type='submit' onClick={handleClick} width={100}>
-            Submit
-          </Button>
-        </Box>
-      </Container>
-    );
+        </Container>
+      );
+    } else {
+      return pleaseWait();
+    }
   }
 }
