@@ -152,7 +152,9 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
       if (!game) {
         throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
       }
+      game.leave(player);
       this._stateUpdated(game.toModel(), command.playerInitials);
+      return undefined as InteractableCommandReturnType<CommandType>;
     }
     throw new InvalidParametersError(INVALID_COMMAND_MESSAGE);
   }

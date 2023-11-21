@@ -60,6 +60,7 @@ describe('VehicleTrickGameArea', () => {
   let trickService: VehicleTrickService;
   let getTopScoresSpy: jest.SpyInstance;
   let addScoreSpy: jest.SpyInstance;
+  // let areaChangedPromise: Promise<void>;
   const mockScoreData: VehicleTrickScore[] = [
     { initials: 'ABC', score: 400 },
     { initials: 'DEF', score: 300 },
@@ -98,6 +99,11 @@ describe('VehicleTrickGameArea', () => {
 
     // Set a small timeout to ensure the gameArea contructor finished
     setTimeout(() => {
+      // Tests the constructor
+      expect(getTopScoresSpy).toHaveBeenCalledTimes(1);
+      expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+      expect(addScoreSpy).not.toHaveBeenCalled();
+
       mockClear(getTopScoresSpy);
       mockClear(addScoreSpy);
       mockReset(interactableUpdateSpy);
@@ -105,41 +111,6 @@ describe('VehicleTrickGameArea', () => {
     }, 100);
   });
 
-  describe('constructor', () => {
-    it('loads the top scores from the service and emits an area changed event', async () => {
-      expect(interactableUpdateSpy).not.toHaveBeenCalled();
-      expect(getTopScoresSpy).not.toHaveBeenCalled();
-      expect(addScoreSpy).not.toHaveBeenCalled();
-
-      // await Promise.resolve();
-
-      // setTimeout(() => {
-      //   expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
-      //   expect(getTopScoresSpy).toHaveBeenCalledTimes(1);
-      //   expect(addScoreSpy).not.toHaveBeenCalled();
-      // }, 200);
-
-      /*
-      // Mock VehicleTrickService and control the resolved value of getTopScores
-    const getTopScoresMock = jest.fn().mockResolvedValue(mockTopScores);
-    jest.doMock('./VehicleTrickService', () => {
-      return jest.fn().mockImplementation(() => ({
-        getTopScores: getTopScoresMock,
-      }));
-    });
-
-    // Create an instance of VehicleTrickGameArea
-    const area = new VehicleTrickGameArea(/* provide constructor arguments );
-
-    // Wait for the promise to resolve
-    await Promise.resolve();
-
-    // Expect _emitAreaChanged to have been called after the promise is resolved
-    expect(getTopScoresMock).toHaveBeenCalled();
-    expect(area['_emitAreaChanged']).toHaveBeenCalled();
-    */
-    });
-  });
   describe('handleCommand', () => {
     describe('when given a JoinGame command', () => {
       describe('when there is no game in progress', () => {
@@ -151,6 +122,7 @@ describe('VehicleTrickGameArea', () => {
           }
           expect(gameID).toEqual(game.id);
           expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+          expect(addScoreSpy).not.toHaveBeenCalled();
         });
       });
       describe('when there is a game in progress', () => {
@@ -169,6 +141,7 @@ describe('VehicleTrickGameArea', () => {
           );
           expect(joinSpy).toHaveBeenCalledWith(player);
           expect(interactableUpdateSpy).not.toHaveBeenCalled();
+          expect(addScoreSpy).not.toHaveBeenCalled();
         });
       });
     });
@@ -207,6 +180,7 @@ describe('VehicleTrickGameArea', () => {
             },
           });
           expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+          expect(addScoreSpy).not.toHaveBeenCalled();
         });
         it('should not call _emitAreaChanged if the game throws an error', () => {
           const move: VehicleTrickMove = { word: 'testing' };
@@ -224,6 +198,7 @@ describe('VehicleTrickGameArea', () => {
             },
           });
           expect(interactableUpdateSpy).not.toHaveBeenCalled();
+          expect(addScoreSpy).not.toHaveBeenCalled();
         });
         test('when the game is over, it records a new row in the history and calls _emitAreaChanged', () => {
           const move: VehicleTrickMove = { word: 'testing' };
@@ -236,6 +211,7 @@ describe('VehicleTrickGameArea', () => {
           expect(game.state.status).toEqual('OVER');
           expect(game.state.currentScore).toEqual(500);
           expect(gameArea.history.length).toEqual(1);
+          expect(addScoreSpy).not.toHaveBeenCalled();
           expect(gameArea.history[0]).toEqual({
             gameID: game.id,
             scores: {
@@ -243,6 +219,7 @@ describe('VehicleTrickGameArea', () => {
             },
           });
           expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+          expect(addScoreSpy).not.toHaveBeenCalled();
         });
       });
     });
@@ -253,6 +230,7 @@ describe('VehicleTrickGameArea', () => {
             gameArea.handleCommand({ type: 'LeaveGame', gameID: nanoid() }, player),
           ).toThrowError(GAME_NOT_IN_PROGRESS_MESSAGE);
           expect(interactableUpdateSpy).not.toHaveBeenCalled();
+          expect(addScoreSpy).not.toHaveBeenCalled();
         });
       });
       describe('when there is a game in progress', () => {
@@ -263,6 +241,7 @@ describe('VehicleTrickGameArea', () => {
             gameArea.handleCommand({ type: 'LeaveGame', gameID: nanoid() }, player),
           ).toThrowError(GAME_ID_MISSMATCH_MESSAGE);
           expect(interactableUpdateSpy).not.toHaveBeenCalled();
+          expect(addScoreSpy).not.toHaveBeenCalled();
         });
         it('should dispatch the leave command to the game and call _emitAreaChanged', () => {
           const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player);
@@ -274,6 +253,7 @@ describe('VehicleTrickGameArea', () => {
           gameArea.handleCommand({ type: 'LeaveGame', gameID }, player);
           expect(leaveSpy).toHaveBeenCalledWith(player);
           expect(interactableUpdateSpy).toHaveBeenCalledTimes(2);
+          expect(addScoreSpy).not.toHaveBeenCalled();
         });
         it('should not call _emitAreaChanged if the game throws an error', () => {
           gameArea.handleCommand({ type: 'JoinGame' }, player);
@@ -289,6 +269,7 @@ describe('VehicleTrickGameArea', () => {
           ).toThrowError('Test Error');
           expect(leaveSpy).toHaveBeenCalledWith(player);
           expect(interactableUpdateSpy).not.toHaveBeenCalled();
+          expect(addScoreSpy).not.toHaveBeenCalled();
         });
         it('should update the history if the game is over', () => {
           const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player);
@@ -307,6 +288,39 @@ describe('VehicleTrickGameArea', () => {
             },
           });
           expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
+          expect(addScoreSpy).not.toHaveBeenCalled();
+        });
+      });
+    });
+    describe('when given a GameEnded command', () => {
+      it('should throw an error if a game is not in progress', () => {
+        expect(() => {
+          gameArea.handleCommand({ type: 'GameEnded', playerInitials: 'ABC' }, player);
+        }).toThrowError(GAME_NOT_IN_PROGRESS_MESSAGE);
+      });
+      it('should add to the local history and call addScore', () => {
+        gameArea.handleCommand({ type: 'JoinGame' }, player);
+        interactableUpdateSpy.mockClear();
+        jest.spyOn(game, 'leave').mockImplementationOnce(() => {
+          game.endGame();
+        });
+        game.setScore(200);
+
+        expect(gameArea.history.length).toEqual(0);
+        expect(interactableUpdateSpy).not.toHaveBeenCalled();
+        expect(addScoreSpy).not.toHaveBeenCalled();
+
+        gameArea.handleCommand({ type: 'GameEnded', playerInitials: 'ABC' }, player);
+
+        expect(game.state.status).toEqual('OVER');
+        expect(gameArea.history.length).toEqual(1);
+        expect(interactableUpdateSpy).toHaveBeenCalled();
+        expect(addScoreSpy).toHaveBeenCalled();
+        expect(gameArea.history[0]).toEqual({
+          gameID: game.id,
+          scores: {
+            ABC: 200,
+          },
         });
       });
     });
@@ -318,6 +332,7 @@ describe('VehicleTrickGameArea', () => {
           INVALID_COMMAND_MESSAGE,
         );
         expect(interactableUpdateSpy).not.toHaveBeenCalled();
+        expect(addScoreSpy).not.toHaveBeenCalled();
       });
     });
   });
