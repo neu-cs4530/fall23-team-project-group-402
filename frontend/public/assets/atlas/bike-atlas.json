@@ -480,102 +480,6 @@
         "y": 0.5
       }
     },
-    "bike-trick-1.005": {
-      "frame": {
-        "x": 1,
-        "y": 1,
-        "w": 50,
-        "h": 47
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 6,
-        "y": 10,
-        "w": 50,
-        "h": 47
-      },
-      "sourceSize": {
-        "w": 70,
-        "h": 70
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bike-trick-1.004": {
-      "frame": {
-        "x": 53,
-        "y": 1,
-        "w": 48,
-        "h": 48
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 6,
-        "y": 9,
-        "w": 48,
-        "h": 48
-      },
-      "sourceSize": {
-        "w": 70,
-        "h": 70
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bike-trick-1.003": {
-      "frame": {
-        "x": 1,
-        "y": 50,
-        "w": 43,
-        "h": 49
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 11,
-        "y": 7,
-        "w": 43,
-        "h": 49
-      },
-      "sourceSize": {
-        "w": 70,
-        "h": 70
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
-    "bike-trick-1.002": {
-      "frame": {
-        "x": 1,
-        "y": 101,
-        "w": 40,
-        "h": 49
-      },
-      "rotated": false,
-      "trimmed": true,
-      "spriteSourceSize": {
-        "x": 12,
-        "y": 8,
-        "w": 40,
-        "h": 49
-      },
-      "sourceSize": {
-        "w": 70,
-        "h": 70
-      },
-      "pivot": {
-        "x": 0.5,
-        "y": 0.5
-      }
-    },
     "bike-trick-1.000": {
       "frame": {
         "x": 1,
@@ -624,7 +528,7 @@
         "y": 0.5
       }
     },
-    "bike-trick-1.009": {
+    "bike-trick-1.002": {
       "frame": {
         "x": 1,
         "y": 101,
@@ -648,7 +552,7 @@
         "y": 0.5
       }
     },
-    "bike-trick-1.008": {
+    "bike-trick-1.003": {
       "frame": {
         "x": 1,
         "y": 50,
@@ -662,6 +566,54 @@
         "y": 7,
         "w": 43,
         "h": 49
+      },
+      "sourceSize": {
+        "w": 70,
+        "h": 70
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "bike-trick-1.004": {
+      "frame": {
+        "x": 53,
+        "y": 1,
+        "w": 48,
+        "h": 48
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 9,
+        "w": 48,
+        "h": 48
+      },
+      "sourceSize": {
+        "w": 70,
+        "h": 70
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "bike-trick-1.005": {
+      "frame": {
+        "x": 1,
+        "y": 1,
+        "w": 50,
+        "h": 47
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 6,
+        "y": 10,
+        "w": 50,
+        "h": 47
       },
       "sourceSize": {
         "w": 70,
@@ -710,6 +662,78 @@
         "y": 10,
         "w": 50,
         "h": 47
+      },
+      "sourceSize": {
+        "w": 70,
+        "h": 70
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "bike-trick-1.008": {
+      "frame": {
+        "x": 1,
+        "y": 50,
+        "w": 43,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 11,
+        "y": 7,
+        "w": 43,
+        "h": 49
+      },
+      "sourceSize": {
+        "w": 70,
+        "h": 70
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "bike-trick-1.009": {
+      "frame": {
+        "x": 1,
+        "y": 101,
+        "w": 40,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 12,
+        "y": 8,
+        "w": 40,
+        "h": 49
+      },
+      "sourceSize": {
+        "w": 70,
+        "h": 70
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "bike-trick-1.010": {
+      "frame": {
+        "x": 1,
+        "y": 254,
+        "w": 35,
+        "h": 49
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 17,
+        "y": 10,
+        "w": 35,
+        "h": 49
       },
       "sourceSize": {
         "w": 70,

@@ -483,7 +483,8 @@ export default class TownGameScene extends Phaser.Scene {
     this.createMovementAnimations('bike', 3, 3);
     this.createMovementAnimations('skateboard', 3, 3);
     this.createMovementAnimations('horse', 4, 3);
-    this.createTrickAnimations();
+    this.createTrickAnimations('skateboard', 3, 9);
+    this.createTrickAnimations('bike', 1, 10);
 
     const camera = this.cameras.main;
     camera.startFollow(this.coveyTownController.ourPlayer.gameObjects.sprite);
@@ -559,15 +560,15 @@ export default class TownGameScene extends Phaser.Scene {
     });
   }
 
-  createTrickAnimations() {
+  createTrickAnimations(vehicleType: string, numTricks: number, numFrames: number) {
     const { anims } = this;
-    for (let i = 1; i <= 3; i++) {
+    for (let i = 1; i <= numTricks; i++) {
       anims.create({
-        key: `skateboard-trick-${i}`,
-        frames: anims.generateFrameNames(`skateboard-atlas`, {
-          prefix: `skateboard-trick-${i}.`,
+        key: `${vehicleType}-trick-${i}`,
+        frames: anims.generateFrameNames(`${vehicleType}-atlas`, {
+          prefix: `${vehicleType}-trick-${i}.`,
           start: 0,
-          end: 9,
+          end: numFrames,
           zeroPad: 3,
         }),
         frameRate: 10,
