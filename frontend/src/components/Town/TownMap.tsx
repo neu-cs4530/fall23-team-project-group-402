@@ -6,7 +6,7 @@ import SocialSidebar from '../SocialSidebar/SocialSidebar';
 import NewConversationModal from './interactables/NewCoversationModal';
 import TownGameScene from './TownGameScene';
 import TicTacToeAreaWrapper from './interactables/TicTacToe/TicTacToeArea';
-import VehicleRackAreaWrapper from './interactables/SelectVehicleRack';
+import VehicleRackAreaWrapper from './interactables/VehicleRack/SelectVehicleRack';
 import VehicleTrickAreaWrapper from './interactables/VehicleTrick/VehicleTrickArea';
 
 export default function TownMap(): JSX.Element {
