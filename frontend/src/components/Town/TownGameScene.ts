@@ -485,6 +485,7 @@ export default class TownGameScene extends Phaser.Scene {
     this.createMovementAnimations('horse', 4, 3);
     this.createTrickAnimations('skateboard', 3, 9);
     this.createTrickAnimations('bike', 1, 10);
+    this.createTrickAnimations('horse', 1, 10);
 
     const camera = this.cameras.main;
     camera.startFollow(this.coveyTownController.ourPlayer.gameObjects.sprite);
