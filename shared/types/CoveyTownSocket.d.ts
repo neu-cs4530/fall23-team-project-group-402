@@ -112,6 +112,11 @@ export interface VehicleTrickMove {
   word: string
 }
 
+export interface VehicleTrickScore {
+  initials: string;
+  score: number;
+}
+
 export interface VehicleTrickGameState extends GameState {
   targetWord: string
   currentScore: number
@@ -170,7 +175,8 @@ export interface GameInstance<T extends GameState> {
  */
 export interface GameArea<T extends GameState> extends Interactable {
   game: GameInstance<T> | undefined;
-  history: GameResult[];
+  localHistory: GameResult[]; // Game history for the current session
+  persistentHistory: GameResult[]; // All-time game history (persistent)
 }
 
 export type CommandID = string;
@@ -195,7 +201,7 @@ interface InteractableCommandBase {
   type: string;
 }
 
-export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand | EquipVehicleCommand | UnequipVehicleCommand | GameMoveCommand<VehicleTrickMove>;
+export type InteractableCommand =  ViewingAreaUpdateCommand | JoinGameCommand | GameMoveCommand<TicTacToeMove> | LeaveGameCommand | EquipVehicleCommand | UnequipVehicleCommand | GameMoveCommand<VehicleTrickMove> | GameEndedCommand;
 
 export interface ViewingAreaUpdateCommand  {
   type: 'ViewingAreaUpdate';
@@ -219,6 +225,10 @@ export interface EquipVehicleCommand {
 }
 export interface UnequipVehicleCommand {
 	type: 'UnequipVehicle';
+}
+export interface GameEndedCommand {
+  type: 'GameEnded';
+  playerInitials: string;
 }
 export type InteractableCommandReturnType<CommandType extends InteractableCommand> = 
   CommandType extends JoinGameCommand ? { gameID: string}:

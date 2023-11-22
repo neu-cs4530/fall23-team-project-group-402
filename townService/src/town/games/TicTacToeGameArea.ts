@@ -29,12 +29,12 @@ export default class TicTacToeGameArea extends GameArea<TicTacToeGame> {
     if (updatedState.state.status === 'OVER') {
       // If we haven't yet recorded the outcome, do so now.
       const gameID = this._game?.id;
-      if (gameID && !this._history.find(eachResult => eachResult.gameID === gameID)) {
+      if (gameID && !this._localHistory.find(eachResult => eachResult.gameID === gameID)) {
         const { x, o } = updatedState.state;
         if (x && o) {
           const xName = this._occupants.find(eachPlayer => eachPlayer.id === x)?.userName || x;
           const oName = this._occupants.find(eachPlayer => eachPlayer.id === o)?.userName || o;
-          this._history.push({
+          this._localHistory.push({
             gameID,
             scores: {
               [xName]: updatedState.state.winner === x ? 1 : 0,

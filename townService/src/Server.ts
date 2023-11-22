@@ -6,11 +6,24 @@ import swaggerUi from 'swagger-ui-express';
 import { ValidateError } from 'tsoa';
 import fs from 'fs/promises';
 import { Server as SocketServer } from 'socket.io';
+import { initializeApp } from 'firebase/app';
 import { RegisterRoutes } from '../generated/routes';
 import TownsStore from './lib/TownsStore';
 import { ClientToServerEvents, ServerToClientEvents } from './types/CoveyTownSocket';
 import { TownsController } from './town/TownsController';
 import { logError } from './Utils';
+
+// Initialize firebase app
+const firebaseConfig = {
+  apiKey: 'AIzaSyDoSMnH693U_-d_beqK3E-jjsYHEayhfzo',
+  authDomain: 'covey402.firebaseapp.com',
+  projectId: 'covey402',
+  storageBucket: 'covey402.appspot.com',
+  messagingSenderId: '1026260182595',
+  appId: '1:1026260182595:web:2ec9d4de1cab7e414396f6',
+};
+
+initializeApp(firebaseConfig);
 
 // Create the server instances
 const app = Express();

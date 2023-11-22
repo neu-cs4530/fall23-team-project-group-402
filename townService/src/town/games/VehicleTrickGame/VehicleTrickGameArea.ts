@@ -11,9 +11,14 @@ import {
   VehicleTrickMove,
   GameInstance,
   VehicleTrickGameState,
+  BoundingBox,
+  TownEmitter,
+  VehicleTrickScore,
+  GameResult,
 } from '../../../types/CoveyTownSocket';
 import GameArea from '../GameArea';
 import VehicleTrickGame from './VehicleTrickGame';
+import VehicleTrickService from './VehicleTrickService';
 
 /**
  * A VehicleTrickGameArea is a GameArea that hosts a VehicleTrickGame.
@@ -21,26 +26,58 @@ import VehicleTrickGame from './VehicleTrickGame';
  * @see GameArea
  */
 export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
+  private _vehicleTrickService: VehicleTrickService;
+
+  constructor(
+    id: string,
+    rect: BoundingBox,
+    townEmitter: TownEmitter,
+    vehicleTrickService: VehicleTrickService = new VehicleTrickService(),
+  ) {
+    super(id, rect, townEmitter);
+    this._vehicleTrickService = vehicleTrickService;
+    this._loadPersistentHistory();
+  }
+
   protected getType(): InteractableType {
     return 'VehicleTrickArea';
   }
 
-  private _stateUpdated(updatedState: GameInstance<VehicleTrickGameState>) {
-    if (updatedState.state.status === 'OVER') {
-      /* TODO: Abhay, this history is just the current game instance's history.
-        For persistent storage, we will need to make a network request here if the user's
-        score is in the top 10. Maybe we show two leaderboard in the component: one for
-        the current session leaderboard (like in TicTacToe) and one for the top 10 all time.
-      */
+  /**
+   * Loads the persistent history for the vehicle trick game.
+   */
+  private _loadPersistentHistory(): void {
+    this._vehicleTrickService.getTopScores().then(scores => {
+      this._persistentHistory = this._trickScoresToGameResult(scores, '');
+      this._emitAreaChanged();
+    });
+  }
 
+  private _stateUpdated(
+    updatedState: GameInstance<VehicleTrickGameState>,
+    playerInitials: string | null = null,
+  ) {
+    if (updatedState.state.status === 'OVER') {
       // If we haven't yet recorded the outcome, do so now.
       const gameID = this._game?.id;
-      if (gameID && !this._history.find(eachResult => eachResult.gameID === gameID)) {
+      if (gameID && !this._localHistory.find(eachResult => eachResult.gameID === gameID)) {
         const { player, currentScore } = updatedState.state;
         if (player) {
-          const playerName =
+          let playerName =
             this._occupants.find(eachPlayer => eachPlayer.id === player)?.userName || player;
-          this._history.push({
+          if (playerInitials !== null) {
+            playerName = playerInitials;
+
+            // Update the all-time history
+            const score: VehicleTrickScore = { initials: playerName, score: currentScore };
+            this._vehicleTrickService.addScore(score).then(scores => {
+              this._persistentHistory = this._trickScoresToGameResult(scores, gameID);
+              this._emitAreaChanged();
+            });
+          }
+
+          // Add to the current session's history
+          this._localHistory.push({
             gameID,
             scores: {
               [playerName]: currentScore,
@@ -50,6 +87,15 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
       }
     }
     this._emitAreaChanged();
+  }
+
+  private _trickScoresToGameResult(scores: VehicleTrickScore[], gameID: string): GameResult[] {
+    return scores.map(score => ({
+      gameID,
+      scores: {
+        [score.initials]: score.score,
+      },
+    }));
   }
 
   /**
@@ -99,6 +145,15 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
       }
       game.leave(player);
       this._stateUpdated(game.toModel());
+      return undefined as InteractableCommandReturnType<CommandType>;
+    }
+    if (command.type === 'GameEnded') {
+      const game = this._game;
+      if (!game) {
+        throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+      }
+      game.leave(player);
+      this._stateUpdated(game.toModel(), command.playerInitials);
       return undefined as InteractableCommandReturnType<CommandType>;
     }
     throw new InvalidParametersError(INVALID_COMMAND_MESSAGE);

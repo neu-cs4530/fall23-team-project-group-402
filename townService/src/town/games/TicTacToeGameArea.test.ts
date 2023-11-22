@@ -181,8 +181,8 @@ describe('TicTacToeGameArea', () => {
             });
             gameArea.handleCommand({ type: 'GameMove', move, gameID }, player1);
             expect(game.state.status).toEqual('OVER');
-            expect(gameArea.history.length).toEqual(1);
-            expect(gameArea.history[0]).toEqual({
+            expect(gameArea.localHistory.length).toEqual(1);
+            expect(gameArea.localHistory[0]).toEqual({
               gameID: game.id,
               scores: {
                 [player1.userName]: 1,
@@ -198,8 +198,8 @@ describe('TicTacToeGameArea', () => {
             });
             gameArea.handleCommand({ type: 'GameMove', move, gameID }, player2);
             expect(game.state.status).toEqual('OVER');
-            expect(gameArea.history.length).toEqual(1);
-            expect(gameArea.history[0]).toEqual({
+            expect(gameArea.localHistory.length).toEqual(1);
+            expect(gameArea.localHistory[0]).toEqual({
               gameID: game.id,
               scores: {
                 [player1.userName]: 0,
@@ -215,8 +215,8 @@ describe('TicTacToeGameArea', () => {
             });
             gameArea.handleCommand({ type: 'GameMove', move, gameID }, player1);
             expect(game.state.status).toEqual('OVER');
-            expect(gameArea.history.length).toEqual(1);
-            expect(gameArea.history[0]).toEqual({
+            expect(gameArea.localHistory.length).toEqual(1);
+            expect(gameArea.localHistory[0]).toEqual({
               gameID: game.id,
               scores: {
                 [player1.userName]: 0,
@@ -281,8 +281,8 @@ describe('TicTacToeGameArea', () => {
           });
           gameArea.handleCommand({ type: 'LeaveGame', gameID }, player1);
           expect(game.state.status).toEqual('OVER');
-          expect(gameArea.history.length).toEqual(1);
-          expect(gameArea.history[0]).toEqual({
+          expect(gameArea.localHistory.length).toEqual(1);
+          expect(gameArea.localHistory[0]).toEqual({
             gameID: game.id,
             scores: {
               [player1.userName]: 1,

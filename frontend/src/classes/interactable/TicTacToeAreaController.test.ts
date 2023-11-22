@@ -56,7 +56,8 @@ describe('[T1] TicTacToeAreaController', () => {
 
   function ticTacToeAreaControllerWithProp({
     _id,
-    history,
+    localHistory,
+    persistentHistory,
     x,
     o,
     undefinedGame,
@@ -65,7 +66,8 @@ describe('[T1] TicTacToeAreaController', () => {
     winner,
   }: {
     _id?: string;
-    history?: GameResult[];
+    localHistory?: GameResult[];
+    persistentHistory?: GameResult[];
     x?: string;
     o?: string;
     undefinedGame?: boolean;
@@ -82,7 +84,8 @@ describe('[T1] TicTacToeAreaController', () => {
       {
         id,
         occupants: players,
-        history: history || [],
+        localHistory: localHistory || [],
+        persistentHistory: persistentHistory || [],
         type: 'TicTacToeArea',
         game: undefinedGame
           ? undefined

@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import PlayerController from '../PlayerController';
 import assert from 'assert';
-import { mock } from 'jest-mock-extended';
+import { mock, mockClear } from 'jest-mock-extended';
 import {
   GameResult,
   GameStatus,
@@ -54,13 +54,15 @@ describe('VehicleTrickAreaController', () => {
 
   function vehicleTrickAreaControllerWithProp({
     _id,
-    history,
+    localHistory,
+    persistentHistory,
     playerID,
     undefinedGame,
     status,
   }: {
     _id?: string;
-    history?: GameResult[];
+    localHistory?: GameResult[];
+    persistentHistory?: GameResult[];
     playerID?: string;
     undefinedGame?: boolean;
     status?: GameStatus;
@@ -68,12 +70,13 @@ describe('VehicleTrickAreaController', () => {
     const id = _id || nanoid();
     const players = [];
     if (playerID) players.push(playerID);
-    const ret = new VehicleTrickAreaController(
+    const ret: VehicleTrickAreaController = new VehicleTrickAreaController(
       id,
       {
         id,
         occupants: players,
-        history: history || [],
+        localHistory: localHistory || [],
+        persistentHistory: persistentHistory || [],
         type: 'VehicleTrickArea',
         game: undefinedGame
           ? undefined
@@ -153,21 +156,6 @@ describe('VehicleTrickAreaController', () => {
       expect(controller.status).toBe('WAITING_TO_START');
     });
   });
-  describe('player', () => {
-    it('should return the player if there is one', () => {
-      const controller = vehicleTrickAreaControllerWithProp({
-        status: 'IN_PROGRESS',
-        playerID: ourPlayer.id,
-      });
-      expect(controller.player).toBe(ourPlayer);
-    });
-    it('should return undefined if there is no player and the game is waiting to start', () => {
-      const controller = vehicleTrickAreaControllerWithProp({
-        status: 'WAITING_TO_START',
-      });
-      expect(controller.player).toBe(undefined);
-    });
-  });
   describe('enterWord', () => {
     it('should throw an error if the game is not in progress', async () => {
       const controller = vehicleTrickAreaControllerWithProp({});
@@ -188,6 +176,7 @@ describe('VehicleTrickAreaController', () => {
       await controller.joinGame();
       mockTownController.sendInteractableCommand.mockReset();
       await controller.enterWord('testing');
+
       expect(mockTownController.sendInteractableCommand).toHaveBeenCalledWith(controller.id, {
         type: 'GameMove',
         gameID: instanceID,
@@ -195,6 +184,49 @@ describe('VehicleTrickAreaController', () => {
           word: 'testing',
         },
       });
+    });
+  });
+  describe('gameEnded', () => {
+    it('should call townController.sendInteractableCommand', async () => {
+      const controller = vehicleTrickAreaControllerWithProp({
+        status: 'IN_PROGRESS',
+        playerID: ourPlayer.id,
+      });
+      // Simulate joining the game for real
+      const instanceID = nanoid();
+      mockTownController.sendInteractableCommand.mockImplementationOnce(async () => {
+        return { gameID: instanceID };
+      });
+      await controller.joinGame();
+      mockTownController.sendInteractableCommand.mockReset();
+      await controller.gameEnded('ABC');
+
+      expect(mockTownController.sendInteractableCommand).toHaveBeenCalledWith(controller.id, {
+        type: 'GameEnded',
+        playerInitials: 'ABC',
+      });
+    });
+  });
+  describe('canPlay', () => {
+    it('should return false if our player has no vehicle', () => {
+      ourPlayer.vehicle = undefined;
+      const controller = vehicleTrickAreaControllerWithProp({});
+      expect(controller.canPlay).toBe(false);
+    });
+    it('should return false if our player has a bike', () => {
+      ourPlayer.vehicle = { vehicleType: 'bike', speedMultiplier: 2 };
+      const controller = vehicleTrickAreaControllerWithProp({});
+      expect(controller.canPlay).toBe(false);
+    });
+    it('should return false if our player has a horse', () => {
+      ourPlayer.vehicle = { vehicleType: 'horse', speedMultiplier: 3 };
+      const controller = vehicleTrickAreaControllerWithProp({});
+      expect(controller.canPlay).toBe(false);
+    });
+    it('should return true if our player has a skateboard', () => {
+      ourPlayer.vehicle = { vehicleType: 'skateboard', speedMultiplier: 1.5 };
+      const controller = vehicleTrickAreaControllerWithProp({});
+      expect(controller.canPlay).toBe(true);
     });
   });
   describe('_updateFrom', () => {
@@ -206,25 +238,72 @@ describe('VehicleTrickAreaController', () => {
           playerID: ourPlayer.id,
         });
       });
-      it('should emit a scoreChanged event with the new score', () => {
-        const model = controller.toInteractableAreaModel();
-        const newScore = 600;
-        assert(model.game);
-        const newModel: GameArea<VehicleTrickGameState> = {
-          ...model,
-          game: {
-            ...model.game,
-            state: {
-              ...model.game?.state,
-              currentScore: newScore,
+      describe('when the score changes', () => {
+        let playTrickSpy: jest.SpyInstance;
+
+        beforeEach(() => {
+          playTrickSpy = jest.spyOn(
+            VehicleTrickAreaController.prototype,
+            //eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            //@ts-ignore - we are testing spying on a private method
+            '_playTrickAnimation',
+          );
+          mockClear(playTrickSpy);
+        });
+        it('should emit a scoreChanged event with the new score', () => {
+          const model = controller.toInteractableAreaModel();
+          const newScore = 600;
+          assert(model.game);
+          const newModel: GameArea<VehicleTrickGameState> = {
+            ...model,
+            game: {
+              ...model.game,
+              state: {
+                ...model.game?.state,
+                currentScore: newScore,
+              },
             },
-          },
-        };
-        const emitSpy = jest.spyOn(controller, 'emit');
-        controller.updateFrom(newModel, otherPlayers.concat(ourPlayer));
-        const scoreChangedCall = emitSpy.mock.calls.find(call => call[0] === 'scoreChanged');
-        expect(scoreChangedCall).toBeDefined();
-        if (scoreChangedCall) expect(scoreChangedCall[1]).toEqual(newScore);
+          };
+          const emitSpy = jest.spyOn(controller, 'emit');
+          controller.updateFrom(newModel, otherPlayers.concat(ourPlayer));
+          const scoreChangedCall = emitSpy.mock.calls.find(call => call[0] === 'scoreChanged');
+          expect(scoreChangedCall).toBeDefined();
+          if (scoreChangedCall) expect(scoreChangedCall[1]).toEqual(newScore);
+        });
+        it('should play the trick animation if the new score is greater than 0', () => {
+          const model = controller.toInteractableAreaModel();
+          const newScore = 600;
+          assert(model.game);
+          const newModel: GameArea<VehicleTrickGameState> = {
+            ...model,
+            game: {
+              ...model.game,
+              state: {
+                ...model.game?.state,
+                currentScore: newScore,
+              },
+            },
+          };
+          controller.updateFrom(newModel, otherPlayers.concat(ourPlayer));
+          expect(playTrickSpy).toHaveBeenCalled();
+        });
+        it('should not play the trick animation if the new score is not greater than 0', () => {
+          const model = controller.toInteractableAreaModel();
+          const newScore = 0;
+          assert(model.game);
+          const newModel: GameArea<VehicleTrickGameState> = {
+            ...model,
+            game: {
+              ...model.game,
+              state: {
+                ...model.game?.state,
+                currentScore: newScore,
+              },
+            },
+          };
+          controller.updateFrom(newModel, otherPlayers.concat(ourPlayer));
+          expect(playTrickSpy).not.toHaveBeenCalled();
+        });
       });
       it('should not emit a scoreChanged event if the score has not changed', () => {
         const model = controller.toInteractableAreaModel();
