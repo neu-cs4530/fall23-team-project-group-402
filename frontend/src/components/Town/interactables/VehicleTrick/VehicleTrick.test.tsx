@@ -8,7 +8,6 @@ import { GameArea, GameStatus, VehicleTrickGameState } from '../../../../types/C
 import TownController from '../../../../classes/TownController';
 import PlayerController from '../../../../classes/PlayerController';
 import { act } from 'react-dom/test-utils';
-import { timeStamp } from 'console';
 
 const mockToast = jest.fn();
 jest.mock('@chakra-ui/react', () => {
@@ -114,6 +113,7 @@ describe('VehicleTrick', () => {
   });
 
   const gameAreaController = new MockVehicleTrickAreaController();
+  const observerText = 'Please wait, someone else is currently playing!';
   beforeEach(() => {
     gameAreaController.mockReset();
     mockToast.mockReset();
@@ -127,8 +127,8 @@ describe('VehicleTrick', () => {
     checkWord?: string;
     checkInvalidChar?: string;
   }) {
-    const inputField = screen.getByPlaceholderText('type word here');
     if (interactable) {
+      const inputField = screen.getByPlaceholderText('type word here');
       // Should be one interactable field if player is active
       expect(inputField).toBeEnabled();
       gameAreaController.enterWord.mockReset();
@@ -143,7 +143,10 @@ describe('VehicleTrick', () => {
       }
     } else {
       // There should not be an input field if player is observer
-      expect(inputField).toBeUndefined();
+      const inputField = screen.queryByPlaceholderText('type word here');
+      expect(inputField).toBeNull();
+      const observerTextComponent = screen.getByLabelText('observer-text');
+      expect(observerTextComponent).toHaveTextContent(observerText);
     }
   }
   async function checkInitialsInputField({
@@ -157,9 +160,9 @@ describe('VehicleTrick', () => {
     checkShortInitials?: string;
     checkInvalidInitials?: string;
   }) {
-    const inputField = screen.getByPlaceholderText('initials');
-    const submitButton = screen.getByLabelText('submit');
     if (interactable) {
+      const inputField = screen.getByPlaceholderText('initials');
+      const submitButton = screen.getByLabelText('submit');
       // Should be one interactable field if player is active
       expect(inputField).toBeEnabled();
       mockToast.mockClear();
@@ -191,74 +194,89 @@ describe('VehicleTrick', () => {
         expect(inputField).toHaveValue('');
       }
     } else {
-      // There should not be an input field if player is observer
-      expect(inputField).toBeUndefined();
+      const inputField = screen.queryByPlaceholderText('initials');
+      const submitButton = screen.queryByLabelText('submit');
+      expect(inputField).toBeNull();
+      expect(submitButton).toBeNull();
+      const observerTextComponent = screen.getByLabelText('observer-text');
+      expect(observerTextComponent).toHaveTextContent(observerText);
     }
   }
-  // describe('[T3.1] When observing the game', () => {
-  //   beforeEach(() => {
-  //     gameAreaController.mockIsPlayer = false;
-  //   });
-  //   it('renders the board with the correct number of cells', async () => {
-  //     render(<TicTacToeBoard gameAreaController={gameAreaController} />);
-  //     const cells = screen.getAllByRole('button');
-  //     // There should be exactly 9 buttons: one per-cell (and no other buttons in this component)
-  //     expect(cells).toHaveLength(9);
-  //     // Each cell should have the correct aria-label
-  //     for (let i = 0; i < 9; i++) {
-  //       expect(cells[i]).toHaveAttribute('aria-label', `Cell ${Math.floor(i / 3)},${i % 3}`);
-  //     }
-  //     // Each cell should have the correct text content
-  //     expect(cells[0]).toHaveTextContent('X');
-  //     expect(cells[1]).toHaveTextContent('O');
-  //     expect(cells[2]).toHaveTextContent('');
-  //     expect(cells[3]).toHaveTextContent('');
-  //     expect(cells[4]).toHaveTextContent('X');
-  //     expect(cells[5]).toHaveTextContent('');
-  //     expect(cells[6]).toHaveTextContent('');
-  //     expect(cells[7]).toHaveTextContent('');
-  //     expect(cells[8]).toHaveTextContent('O');
-  //   });
-  //   it('does not make a move when a cell is clicked, and cell is disabled', async () => {
-  //     render(<TicTacToeBoard gameAreaController={gameAreaController} />);
-  //     const cells = screen.getAllByRole('button');
-  //     for (let i = 0; i < 9; i++) {
-  //       expect(cells[i]).toBeDisabled();
-  //       fireEvent.click(cells[i]);
-  //       expect(gameAreaController.makeMove).not.toHaveBeenCalled();
-  //       expect(mockToast).not.toHaveBeenCalled();
-  //     }
-  //   });
-  //   it('updates the board displayed in response to boardChanged events', async () => {
-  //     render(<TicTacToeBoard gameAreaController={gameAreaController} />);
-  //     gameAreaController.mockBoard = [
-  //       ['O', 'X', 'O'],
-  //       ['X', 'O', 'X'],
-  //       ['O', 'X', 'O'],
-  //     ];
-  //     act(() => {
-  //       gameAreaController.emit('boardChanged', gameAreaController.mockBoard);
-  //     });
-  //     await checkBoard({});
-  //     gameAreaController.mockBoard = [
-  //       ['X', 'O', 'X'],
-  //       [undefined, undefined, 'X'],
-  //       ['O', 'X', undefined],
-  //     ];
-  //     act(() => {
-  //       gameAreaController.emit('boardChanged', gameAreaController.mockBoard);
-  //     });
-  //     await checkBoard({});
-  //   });
-  // });
+  describe('[T3.1] When observing the game', () => {
+    beforeEach(() => {
+      gameAreaController.mockIsPlayer = false;
+    });
+    it('displays a timer, score and current word when the player starts game', async () => {
+      render(<VehicleTrick gameAreaController={gameAreaController} />);
+      const timer = screen.getByLabelText('timer');
+      expect(timer).toHaveTextContent('15');
+      const currentWord = screen.getByLabelText('target-word');
+      expect(currentWord).toHaveTextContent('cookies');
+      const currentScore = screen.getByLabelText('score');
+      expect(currentScore).toHaveTextContent('0');
+      await checkWordInputField({ interactable: false });
+    });
+    it('displays observer message in place of initials screen when timer runs out', async () => {
+      jest.useFakeTimers();
+      render(<VehicleTrick gameAreaController={gameAreaController} />);
+      jest.advanceTimersByTime(16000);
+      await checkInitialsInputField({ interactable: false });
+    });
+    it('increments the timer', async () => {
+      jest.useFakeTimers();
+      render(<VehicleTrick gameAreaController={gameAreaController} />);
+      const timer = screen.getByLabelText('timer');
+      expect(timer).toHaveTextContent('15');
+      jest.advanceTimersByTime(5000);
+      expect(timer).toHaveTextContent('10');
+    });
+    it('updates the targetWord in response to targetWordChanged events', async () => {
+      render(<VehicleTrick gameAreaController={gameAreaController} />);
+      await checkWordInputField({ interactable: true });
+      const targetWord = screen.getByLabelText('target-word');
+      expect(targetWord).toHaveTextContent('cookies');
+      gameAreaController.mockWord = 'donuts';
+      act(() => {
+        gameAreaController.emit('targetWordChanged', gameAreaController.mockWord);
+      });
+      await checkWordInputField({ interactable: true });
+      expect(targetWord).toHaveTextContent('donuts');
+    });
+    it('updates the score in response to scoreChanged events', async () => {
+      render(<VehicleTrick gameAreaController={gameAreaController} />);
+      await checkWordInputField({ interactable: true });
+      const score = screen.getByLabelText('score');
+      expect(score).toHaveTextContent('0');
+      gameAreaController.mockScore = 100;
+      act(() => {
+        gameAreaController.emit('scoreChanged', gameAreaController.mockScore);
+      });
+      await checkWordInputField({ interactable: true });
+      expect(score).toHaveTextContent('100');
+    });
+  });
   describe('[T3.2] When playing the game', () => {
     beforeEach(() => {
       gameAreaController.mockIsPlayer = true;
     });
     describe('Gameplay screen', () => {
-      it('displays a field when the player starts game', async () => {
+      it('displays an input field, timer, score and current word when the player starts game', async () => {
         render(<VehicleTrick gameAreaController={gameAreaController} />);
+        const timer = screen.getByLabelText('timer');
+        expect(timer).toHaveTextContent('15');
+        const currentWord = screen.getByLabelText('target-word');
+        expect(currentWord).toHaveTextContent('cookies');
+        const currentScore = screen.getByLabelText('score');
+        expect(currentScore).toHaveTextContent('0');
         await checkWordInputField({ interactable: true });
+      });
+      it('increments the timer', async () => {
+        jest.useFakeTimers();
+        render(<VehicleTrick gameAreaController={gameAreaController} />);
+        const timer = screen.getByLabelText('timer');
+        expect(timer).toHaveTextContent('15');
+        jest.advanceTimersByTime(5000);
+        expect(timer).toHaveTextContent('10');
       });
       it('makes a move when word is typed', async () => {
         render(<VehicleTrick gameAreaController={gameAreaController} />);
