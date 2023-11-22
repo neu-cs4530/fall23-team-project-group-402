@@ -113,7 +113,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
       <ModalOverlay />
       <ModalContent>
         <ModalHeader>
-          <Tooltip label={tooltipText} placement='bottom-start'>
+          <Tooltip label={tooltipText} placement='bottom-start' defaultIsOpen={false}>
             ⓘ
           </Tooltip>
           <span style={{ marginLeft: '8px' }}>Select a vehicle</span>

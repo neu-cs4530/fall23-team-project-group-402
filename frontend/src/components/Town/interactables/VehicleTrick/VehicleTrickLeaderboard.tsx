@@ -81,7 +81,8 @@ export default function VehicleTrickLeaderboard({
             <span style={{ marginRight: '5px' }}>Player</span>
             <Tooltip
               label={isPersistent ? persistentLeaderboardTooltip : localLeaderboardTooltip}
-              placement='bottom-start'>
+              placement='bottom-start'
+              defaultIsOpen={false}>
               ⓘ
             </Tooltip>
           </th>
