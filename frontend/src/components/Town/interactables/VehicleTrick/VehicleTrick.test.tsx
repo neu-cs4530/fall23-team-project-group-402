@@ -202,18 +202,47 @@ describe('VehicleTrick', () => {
       expect(observerTextComponent).toHaveTextContent(observerText);
     }
   }
+  async function checkForGameComponents() {
+    const timer = screen.getByLabelText('timer');
+    expect(timer).toHaveTextContent('15');
+    const currentWord = screen.getByLabelText('target-word');
+    expect(currentWord).toHaveTextContent('cookies');
+    const currentScore = screen.getByLabelText('score');
+    expect(currentScore).toHaveTextContent('0');
+  }
+  async function checkForIncrementingTimer() {
+    const timer = screen.getByLabelText('timer');
+    expect(timer).toHaveTextContent('15');
+    jest.advanceTimersByTime(5000);
+    expect(timer).toHaveTextContent('10');
+  }
+  async function checkTargetWordUpdate(interactable: boolean) {
+    const targetWord = screen.getByLabelText('target-word');
+    expect(targetWord).toHaveTextContent('cookies');
+    gameAreaController.mockWord = 'donuts';
+    act(() => {
+      gameAreaController.emit('targetWordChanged', gameAreaController.mockWord);
+    });
+    await checkWordInputField({ interactable });
+    expect(targetWord).toHaveTextContent('donuts');
+  }
+  async function checkScoreUpdate(interactable: boolean) {
+    const score = screen.getByLabelText('score');
+    expect(score).toHaveTextContent('0');
+    gameAreaController.mockScore = 100;
+    act(() => {
+      gameAreaController.emit('scoreChanged', gameAreaController.mockScore);
+    });
+    await checkWordInputField({ interactable });
+    expect(score).toHaveTextContent('100');
+  }
   describe('[T3.1] When observing the game', () => {
     beforeEach(() => {
       gameAreaController.mockIsPlayer = false;
     });
     it('displays a timer, score and current word when the player starts game', async () => {
       render(<VehicleTrick gameAreaController={gameAreaController} />);
-      const timer = screen.getByLabelText('timer');
-      expect(timer).toHaveTextContent('15');
-      const currentWord = screen.getByLabelText('target-word');
-      expect(currentWord).toHaveTextContent('cookies');
-      const currentScore = screen.getByLabelText('score');
-      expect(currentScore).toHaveTextContent('0');
+      checkForGameComponents();
       await checkWordInputField({ interactable: false });
     });
     it('displays observer message in place of initials screen when timer runs out', async () => {
@@ -225,34 +254,18 @@ describe('VehicleTrick', () => {
     it('increments the timer', async () => {
       jest.useFakeTimers();
       render(<VehicleTrick gameAreaController={gameAreaController} />);
-      const timer = screen.getByLabelText('timer');
-      expect(timer).toHaveTextContent('15');
-      jest.advanceTimersByTime(5000);
-      expect(timer).toHaveTextContent('10');
+      await checkWordInputField({ interactable: false });
+      checkForIncrementingTimer();
     });
     it('updates the targetWord in response to targetWordChanged events', async () => {
       render(<VehicleTrick gameAreaController={gameAreaController} />);
-      await checkWordInputField({ interactable: true });
-      const targetWord = screen.getByLabelText('target-word');
-      expect(targetWord).toHaveTextContent('cookies');
-      gameAreaController.mockWord = 'donuts';
-      act(() => {
-        gameAreaController.emit('targetWordChanged', gameAreaController.mockWord);
-      });
-      await checkWordInputField({ interactable: true });
-      expect(targetWord).toHaveTextContent('donuts');
+      await checkWordInputField({ interactable: false });
+      checkTargetWordUpdate(false);
     });
     it('updates the score in response to scoreChanged events', async () => {
       render(<VehicleTrick gameAreaController={gameAreaController} />);
-      await checkWordInputField({ interactable: true });
-      const score = screen.getByLabelText('score');
-      expect(score).toHaveTextContent('0');
-      gameAreaController.mockScore = 100;
-      act(() => {
-        gameAreaController.emit('scoreChanged', gameAreaController.mockScore);
-      });
-      await checkWordInputField({ interactable: true });
-      expect(score).toHaveTextContent('100');
+      await checkWordInputField({ interactable: false });
+      checkScoreUpdate(false);
     });
   });
   describe('[T3.2] When playing the game', () => {
@@ -262,21 +275,13 @@ describe('VehicleTrick', () => {
     describe('Gameplay screen', () => {
       it('displays an input field, timer, score and current word when the player starts game', async () => {
         render(<VehicleTrick gameAreaController={gameAreaController} />);
-        const timer = screen.getByLabelText('timer');
-        expect(timer).toHaveTextContent('15');
-        const currentWord = screen.getByLabelText('target-word');
-        expect(currentWord).toHaveTextContent('cookies');
-        const currentScore = screen.getByLabelText('score');
-        expect(currentScore).toHaveTextContent('0');
+        checkForGameComponents();
         await checkWordInputField({ interactable: true });
       });
       it('increments the timer', async () => {
         jest.useFakeTimers();
         render(<VehicleTrick gameAreaController={gameAreaController} />);
-        const timer = screen.getByLabelText('timer');
-        expect(timer).toHaveTextContent('15');
-        jest.advanceTimersByTime(5000);
-        expect(timer).toHaveTextContent('10');
+        checkForIncrementingTimer();
       });
       it('makes a move when word is typed', async () => {
         render(<VehicleTrick gameAreaController={gameAreaController} />);
@@ -289,26 +294,12 @@ describe('VehicleTrick', () => {
       it('updates the targetWord in response to targetWordChanged events', async () => {
         render(<VehicleTrick gameAreaController={gameAreaController} />);
         await checkWordInputField({ interactable: true });
-        const targetWord = screen.getByLabelText('target-word');
-        expect(targetWord).toHaveTextContent('cookies');
-        gameAreaController.mockWord = 'donuts';
-        act(() => {
-          gameAreaController.emit('targetWordChanged', gameAreaController.mockWord);
-        });
-        await checkWordInputField({ interactable: true });
-        expect(targetWord).toHaveTextContent('donuts');
+        checkTargetWordUpdate(true);
       });
       it('updates the score in response to scoreChanged events', async () => {
         render(<VehicleTrick gameAreaController={gameAreaController} />);
         await checkWordInputField({ interactable: true });
-        const score = screen.getByLabelText('score');
-        expect(score).toHaveTextContent('0');
-        gameAreaController.mockScore = 100;
-        act(() => {
-          gameAreaController.emit('scoreChanged', gameAreaController.mockScore);
-        });
-        await checkWordInputField({ interactable: true });
-        expect(score).toHaveTextContent('100');
+        checkScoreUpdate(true);
       });
     });
     describe('Initials screen', () => {
