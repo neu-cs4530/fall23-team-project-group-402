@@ -18,6 +18,7 @@ import {
   ModalOverlay,
   useToast,
   SimpleGrid,
+  Tooltip,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import VehicleRackAreaController from '../../../../classes/interactable/VehicleRackAreaController';
@@ -76,6 +77,9 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
       return vehicleType; // Return the new state value
     });
   }
+
+  const tooltipText =
+    'Select a vehicle to move around town faster. You will also become eligible to play the typing minigame!';
 
   const VehicleCard = ({
     type,
@@ -223,7 +227,12 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
         bgImg={
           'https://play-lh.googleusercontent.com/09v8anyuuqLYyLDMRxdsXWC5Pkz8wRNBttrElCiZWppNR5Pa2WOc5bt0OIiSYDWcMQ=w526-h296-rw'
         }>
-        <ModalHeader>Select a vehicle </ModalHeader>
+        <ModalHeader>
+          <Tooltip label={tooltipText} placement='bottom-start'>
+            ⓘ
+          </Tooltip>
+          <span style={{ marginLeft: '8px' }}>Select a vehicle</span>{' '}
+        </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
