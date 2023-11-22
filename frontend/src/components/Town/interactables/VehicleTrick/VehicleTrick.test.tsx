@@ -179,15 +179,13 @@ describe('VehicleTrick', () => {
         expect(mockToast).not.toBeCalled();
         mockToast.mockClear();
         submitButton.click();
-        await waitFor(() => {
-          expect(mockToast).toBeCalledWith(
-            expect.objectContaining({
-              description: 'Username must be 3 characters long',
-              status: 'error',
-              title: 'Invalid Username',
-            }),
-          );
-        });
+        expect(mockToast).toBeCalledWith(
+          expect.objectContaining({
+            description: 'Username must be 3 characters long',
+            status: 'error',
+            title: 'Invalid Username',
+          }),
+        );
       }
       if (checkInvalidInitials) {
         fireEvent.change(inputField, { target: { value: checkInvalidInitials } });
