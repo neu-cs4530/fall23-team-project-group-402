@@ -1,4 +1,4 @@
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent } from '@testing-library/react';
 import VehicleTrick from './VehicleTrick';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 import { mock } from 'jest-mock-extended';
