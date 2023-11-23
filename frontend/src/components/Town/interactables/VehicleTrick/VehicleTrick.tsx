@@ -1,4 +1,4 @@
-import { Box, Button, Container, Input, useToast } from '@chakra-ui/react';
+import { Box, Button, Container, Input, Text, Stack, useToast } from '@chakra-ui/react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 
@@ -62,7 +62,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
 
     // Update the timer every second
     const timerInterval = setInterval(() => {
-      setSeconds(prevSeconds => prevSeconds - 1);
+      setSeconds(prevSeconds => prevSeconds - 0);
     }, 1000);
 
     // Clean up the interval on component unmount
@@ -87,7 +87,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
       gameAreaController.gameEnded(userInitials);
     } else {
       toast({
-        title: 'Invalid Username',
+        title: 'Invalid Initials',
         description: 'Username must be 3 characters long',
         status: 'error',
       });
@@ -126,6 +126,8 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
             }
             gameAreaController.enterWord(targetValue);
           }}
+          variant='unstyled'
+          fontFamily={'cursive'}
         />
       );
     } else {
@@ -136,16 +138,28 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   if (!activeInput) {
     return (
       <Container>
-        <Box aria-label='timer'>
-          <b>Time Left:</b> {seconds} seconds
+        <Stack
+          direction={'row'}
+          spacing={20}
+          fontWeight={'bold'}
+          fontFamily={'fantasy'}
+          fontSize={15}
+          justify={'center'}
+          mt={2}>
+          <Stack align={'center'}>
+            <Text>{seconds} Seconds</Text>
+          </Stack>
+          <Stack align={'center'}>
+            <Text>Score: {score} </Text>
+          </Stack>
+        </Stack>
+
+        <Box mt={14} textAlign='center' aria-label='tarsget-word'>
+          <Text fontFamily={'cursive'} fontWeight={'semibold'}>
+            {targetWord}
+          </Text>
+          {gameContent()}
         </Box>
-        <Box mt={1} aria-label='score'>
-          <b>Score: </b> {score}
-        </Box>
-        <Box mt={4} textAlign='center' aria-label='target-word'>
-          {targetWord}
-        </Box>
-        {gameContent()}
       </Container>
     );
   } else {
@@ -168,6 +182,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
                 value={userInitials}
                 width={100}
                 onChange={handleInitialsChange}
+                variant='unstyled'
               />
             </Box>
             <Button
@@ -176,7 +191,8 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
               type='submit'
               onClick={handleClick}
               width={100}
-              aria-label='submit'>
+              aria-label='submit'
+              _hover={{}}>
               Submit
             </Button>
           </Box>
