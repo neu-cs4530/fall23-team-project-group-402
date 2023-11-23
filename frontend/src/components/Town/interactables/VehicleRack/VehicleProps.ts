@@ -1,9 +1,8 @@
 export interface VehicleProps {
   type: string;
   label: string;
-  imageURL: string;
-  animationURL: string;
-  speed: number;
+  imageURL: string[];
+  animationURL: string[];
   imageAlt: string;
-  tricks: number;
+  previewed: boolean;
 }
