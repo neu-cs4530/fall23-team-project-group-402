@@ -132,10 +132,10 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
 
               <Stack direction={'column'} justify={'center'} spacing={1}>
                 <Stack spacing={0} align={'left'}>
-                  <Text fontSize={'xl'} fontWeight={700}>Speed {type === 'skateboard' ? <><SkateboardIcon /><SkateboardHalfIcon /></> : type === 'bike' ? <><BikeIcon /><BikeIcon /></> : <><HorseIcon /><HorseIcon /><HorseIcon /></>}</Text>
+                  <Text fontSize={'xl'} fontWeight={700}>Speed {type === 'skateboard' ? <><SkateboardIcon fontSize={'3xl'}/><SkateboardHalfIcon fontSize={'3xl'}/></> : type === 'bike' ? <><BikeIcon fontSize={'3xl'}/><BikeIcon fontSize={'3xl'}/></> : <><HorseIcon fontSize={'3xl'}/><HorseIcon fontSize={'3xl'}/><HorseIcon fontSize={'3xl'}/></>}</Text>
                 </Stack>
                 <Stack spacing={0} align={'left'}>
-                  <Text fontSize={'xl'}fontWeight={700}>Tricks {type === 'skateboard' ? <><SkateboardIcon /><SkateboardIcon /><SkateboardIcon /></> : type === 'bike' ? <><BikeIcon /></> : <><HorseIcon /></>}</Text>
+                  <Text fontSize={'xl'}fontWeight={700}>Tricks {type === 'skateboard' ? <><SkateboardIcon fontSize={'3xl'}/><SkateboardIcon fontSize={'3xl'}/><SkateboardIcon fontSize={'3xl'}/></> : type === 'bike' ? <><BikeIcon fontSize={'3xl'}/></> : <><HorseIcon fontSize={'3xl'}/></>}</Text>
                 </Stack>
               </Stack>
               <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
