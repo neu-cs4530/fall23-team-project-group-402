@@ -588,15 +588,9 @@
                  "y":904.2207668969
                 },
                 {
-<<<<<<< HEAD
-                 "height":115.485655907657,
-                 "id":55,
-                 "name":"VehicleTrickArea",
-=======
                  "height":55.3072960763271,
                  "id":54,
                  "name":"Trick Area",
->>>>>>> main
                  "properties":[
                         {
                          "name":"type",
