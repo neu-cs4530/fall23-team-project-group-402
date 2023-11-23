@@ -28,6 +28,7 @@ import { BikeIcon } from './BikeIcon';
 import { SkateboardIcon } from './SkateboardIcon';
 import { HorseIcon } from './HorseIcon';
 import { SkateboardHalfIcon } from './SkateboardHalfIcon';
+import { repeat } from 'lodash';
 
 const OVERLAY_COLOR = '#BEC2cB'
 const CARD_COLOR = "#ffffff"
@@ -55,38 +56,80 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   const [skateboardAnim, setSkateboardAnim] = useBoolean()
   const [horseAnim, setHorseAnim] = useBoolean()
 
+const [bikeImage, setBikeImage] = useState('url("./images/bike.png")')
+const [skateboardImage, setSkateboardImage] = useState('url("./images/skateboard.png")')
+const [horseImage, setHorseImage] = useState('url("./images/horse.png")')
+
   const toast = useToast();
 
   const vehicles = [
     {
       type: 'bike',
       label: 'Bike',
-      imageURL: ['./images/bike.png'],
-      animationURL: ['./animations/bike-anim.gif'],
+      image: bikeImage,
+      imageURL: ['url("./images/bike.png")'],
+      animationURL: ['url("./animations/bike-anim.gif")'],
       imageAlt: 'bike',
       previewed: bikeAnim,
     },
     {
       type: 'horse',
       label: 'Horse',
-      imageURL: ['./images/horse.png'],
-      animationURL: ['./animations/horse-anim.gif'],
+      image: horseImage,
+      imageURL: ['url("./images/horse.png")'],
+      animationURL: ['url("./animations/horse-anim.gif")'],
       imageAlt: 'horse',
       previewed: horseAnim,
     },
     {
       type: 'skateboard',
       label: 'Skateboard',
-      imageURL: ['./images/skateboard.png'],
-      animationURL: ['./animations/skateboard-anim1.gif', './animations/skateboard-anim2.gif', './animations/skateboard-anim3.gif'],
+      image: skateboardImage,
+      imageURL: ['url("./images/skateboard.png")'],
+      animationURL: ['url("./animations/skateboard-anim1.gif")', 'url("./animations/skateboard-anim2.gif")', 'url("./animations/skateboard-anim3.gif")'],
       imageAlt: 'skateboard',
       previewed: skateboardAnim,
     },
   ];
 
+  function handleMouseEnter(type: VehicleType, listOfAnimations: string[]) {
+    switch (type) {
+      case 'bike':
+        setBikeImage(listOfAnimations[Math.floor((Math.random()*listOfAnimations.length))])
+        setBikeAnim.toggle
+        break;
+      case 'horse':
+        setHorseImage(listOfAnimations[Math.floor((Math.random()*listOfAnimations.length))])
+        setHorseAnim.toggle
+        break;
+      case 'skateboard':
+        setSkateboardImage(listOfAnimations[Math.floor((Math.random()*listOfAnimations.length))])
+        setSkateboardAnim.toggle
+        break;
+    }
+  }
+
+  function handleMouseLeave(type: VehicleType, listOfImages: string[]) {
+    switch (type) {
+      case 'bike':
+        setBikeImage(listOfImages[Math.floor((Math.random()*listOfImages.length))])
+        setBikeAnim.toggle
+        break;
+      case 'horse':
+        setHorseImage(listOfImages[Math.floor((Math.random()*listOfImages.length))])
+        setHorseAnim.toggle
+        break;
+      case 'skateboard':
+        setSkateboardImage(listOfImages[Math.floor((Math.random()*listOfImages.length))])
+        setSkateboardAnim.toggle
+        break;
+    }
+  }
+
   const VehicleCard = ({
     type,
     label,
+    image,
     imageURL,
     animationURL,
     imageAlt,
@@ -116,9 +159,18 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
               mr={4}
               mt={4}
               mb={-2}
-              bgImage={'./images/bgimage.png'} >
+              bgImage={'./images/bgimage.png'}
+              _hover={{
+                transform: 'translateY(-2px)',
+                boxShadow: 'lg',
+              }}>
               <Center height={'full'}>
-                <Image height={'140'} width={'50'} src={previewed ? animationURL[Math.floor((Math.random()*animationURL.length))] : imageURL[Math.floor((Math.random()*imageURL.length))]} objectFit='cover' alt={imageAlt} />
+                <Image 
+                height={'190'} width={previewed ? '50' : 'full'} 
+                style={{ content: image, width: 'full', height: '140' }}
+                onMouseEnter={() => {handleMouseEnter(type as VehicleType, animationURL)}}
+                onMouseLeave={() => {handleMouseLeave(type as VehicleType, imageURL)}}
+                />
               </Center>
               </Box>
             </Center>
@@ -138,7 +190,6 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
                   <Text fontSize={'xl'}fontWeight={700}>Tricks {type === 'skateboard' ? <><SkateboardIcon fontSize={'3xl'}/><SkateboardIcon fontSize={'3xl'}/><SkateboardIcon fontSize={'3xl'}/></> : type === 'bike' ? <><BikeIcon fontSize={'3xl'}/></> : <><HorseIcon fontSize={'3xl'}/></>}</Text>
                 </Stack>
               </Stack>
-              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
               <Button
                 w={'full'}
                 mt={4}
@@ -152,24 +203,10 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
                   backgroundColor: coveyTownController.ourPlayer.vehicle?.vehicleType === type ? BUTTON_COLOR_EQUIPPED : selectedVehicle === type ? 'blue' : 'darkblue',
                   borderColor: coveyTownController.ourPlayer.vehicle?.vehicleType === type ? 'transparent' : selectedVehicle === type ? 'yellow' : 'blue',
                 }}
-                onClick={() => handleSelectVehicle(type as VehicleType)}>
+                onClick={() => handleSelectVehicle(type as VehicleType)}
+                >
                 {coveyTownController.ourPlayer.vehicle?.vehicleType === type ? 'Unequip' : 'Equip'}
               </Button>
-              <Button
-                w={'full'}
-                mt={4}
-                color={'white'}
-                rounded={'md'}
-                _hover={{
-                  transform: 'translateY(-2px)',
-                  boxShadow: 'lg',
-                }}
-                colorScheme='blue'
-                onClick={type === 'bike' ? setBikeAnim.toggle : type === 'horse' ? setHorseAnim.toggle : setSkateboardAnim.toggle}>
-                  {previewed ? 'Image' : 'Preview'}
-              </Button>
-              </SimpleGrid>
-              
             </Box>
           </Box>
         </Center>
@@ -202,7 +239,6 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   const closeModal = useCallback(() => {
     if (newRack) {
       vehicleRackAreaController.vehicle = undefined;
-      console.log('rest of function working');
       coveyTownController.interactEnd(newRack);
       coveyTownController.unPause();
     }
@@ -273,6 +309,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
                 type={vehicleEnum.type}
                 key={vehicleEnum.type}
                 label={vehicleEnum.label}
+                image={vehicleEnum.image}
                 imageURL={vehicleEnum.imageURL}
                 animationURL={vehicleEnum.animationURL}
                 imageAlt={vehicleEnum.imageAlt}
