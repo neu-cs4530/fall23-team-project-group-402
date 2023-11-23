@@ -151,7 +151,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
               } else {
                 toast({
                   title: 'Unable to Start Game',
-                  description: 'Player must have skateboard equipped to start game!',
+                  description: 'Player must have a vehicle equipped to start a game!',
                   status: 'error',
                 });
               }
