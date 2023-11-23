@@ -90,7 +90,7 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
   }
 }
 
-describe('[T2] TicTacToeArea', () => {
+describe('VehicleTrickArea', () => {
   // Spy on console.error and intercept react key warnings to fail test
   let consoleErrorSpy: jest.SpyInstance<void, [message?: any, ...optionalParms: any[]]>;
   beforeAll(() => {
