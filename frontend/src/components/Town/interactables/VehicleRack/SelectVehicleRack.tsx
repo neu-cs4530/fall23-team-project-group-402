@@ -1,24 +1,21 @@
 import {
   Button,
   Heading,
-  Avatar,
   Box,
   Center,
-  Flex,
   Text,
   Stack,
-  useColorModeValue,
   Image,
   Modal,
   ModalBody,
   ModalCloseButton,
   ModalContent,
-  ModalFooter,
   ModalHeader,
   ModalOverlay,
   useToast,
   SimpleGrid,
   Tooltip,
+  useBoolean
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import VehicleRackAreaController from '../../../../classes/interactable/VehicleRackAreaController';
@@ -27,6 +24,20 @@ import useTownController from '../../../../hooks/useTownController';
 import { VehicleType } from '../../../../types/CoveyTownSocket';
 import VehicleRackArea from '../VehicleRackArea';
 import { VehicleProps } from './VehicleProps';
+import { BikeIcon } from './BikeIcon';
+import { SkateboardIcon } from './SkateboardIcon';
+import { HorseIcon } from './HorseIcon';
+import { SkateboardHalfIcon } from './SkateboardHalfIcon';
+
+const OVERLAY_COLOR = '#BEC2cB'
+const CARD_COLOR = "#ffffff"
+const BORDER_CARD_COLOR = '#000000'
+const BORDER_CARD_COLOR_SELECTED = 'gold'
+const BUTTON_COLOR_SELECTED = "blue"
+const BUTTON_COLOR_UNSELECTED = "blue"
+const BUTTON_COLOR_UNEQUIP = "blue"
+const BUTTON_COLOR_EQUIPPED = "blue"
+const tooltipText = 'Select a vehicle to move around town faster. You will also become eligible to play the typing minigame!';
 
 export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackArea }): JSX.Element {
   const coveyTownController = useTownController();
@@ -39,119 +50,146 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   const [selectedVehicle, setSelectedVehicle] = useState<VehicleType | undefined>(
     vehicleRackAreaController.vehicle,
   );
+
+  const [bikeAnim, setBikeAnim] = useBoolean()
+  const [skateboardAnim, setSkateboardAnim] = useBoolean()
+  const [horseAnim, setHorseAnim] = useBoolean()
+
   const toast = useToast();
 
   const vehicles = [
     {
-      type: 'skateboard',
-      label: 'Skateboard',
-      imageURL: './skate-anim.jpg',
-      animationURL: '',
-      speed: 1.5,
-      imageAlt: 'skateboard',
-      tricks: 1,
-    },
-    {
       type: 'bike',
       label: 'Bike',
-      imageURL: '',
-      animationURL: '',
-      speed: 2,
+      imageURL: ['./images/bike.png'],
+      animationURL: ['./animations/bike-anim.gif'],
       imageAlt: 'bike',
-      tricks: 1,
+      previewed: bikeAnim,
     },
     {
       type: 'horse',
       label: 'Horse',
-      imageURL: '',
-      animationURL: '',
-      speed: 3,
+      imageURL: ['./images/horse.png'],
+      animationURL: ['./animations/horse-anim.gif'],
       imageAlt: 'horse',
-      tricks: 1,
+      previewed: horseAnim,
+    },
+    {
+      type: 'skateboard',
+      label: 'Skateboard',
+      imageURL: ['./images/skateboard.png'],
+      animationURL: ['./animations/skateboard-anim1.gif', './animations/skateboard-anim2.gif', './animations/skateboard-anim3.gif'],
+      imageAlt: 'skateboard',
+      previewed: skateboardAnim,
     },
   ];
-
-  function handleSelectVehicle(vehicleType: VehicleType) {
-    setSelectedVehicle(() => {
-      vehicleRackAreaController.vehicle = vehicleType;
-      return vehicleType; // Return the new state value
-    });
-  }
-
-  const tooltipText =
-    'Select a vehicle to move around town faster. You will also become eligible to play the typing minigame!';
 
   const VehicleCard = ({
     type,
     label,
     imageURL,
     animationURL,
-    speed,
     imageAlt,
-    tricks,
+    previewed,
   }: VehicleProps) => {
     {
       return (
-        <Center py={6}>
+        <Center paddingTop={0} paddingBottom={6}>
           <Box
             maxW={'270px'}
             w={'full'}
-            bg={useColorModeValue('white', 'gray.800')}
-            boxShadow={'2xl'}
+            bgColor={CARD_COLOR}
+            boxShadow={'dark-lg'}
             rounded={'md'}
-            overflow={'hidden'}>
-            <Image height={'120px'} width={'full'} src={imageURL} objectFit='cover' alt='#' />
-            <Flex justify={'center'} mt={-12}>
-              <Avatar
-                size={'xl'}
-                src={imageURL}
-                css={{
-                  border: '2px solid white',
-                }}
-              />
-            </Flex>
+            overflow={'hidden'}
+            borderWidth={3}
+            borderColor={selectedVehicle === type ? BORDER_CARD_COLOR_SELECTED : BORDER_CARD_COLOR}>
+            <Center>
+            <Box
+              borderColor={selectedVehicle === type ? BORDER_CARD_COLOR_SELECTED : BORDER_CARD_COLOR}
+              rounded={'md'}
+              borderWidth={3}
+              alignSelf={'center'}
+              width={'full'}
+              height={'full'}
+              ml={4}
+              mr={4}
+              mt={4}
+              mb={-2}
+              bgImage={'./images/bgimage.png'} >
+              <Center height={'full'}>
+                <Image height={'140'} width={'50'} src={previewed ? animationURL[Math.floor((Math.random()*animationURL.length))] : imageURL[Math.floor((Math.random()*imageURL.length))]} objectFit='cover' alt={imageAlt} />
+              </Center>
+              </Box>
+            </Center>
 
             <Box p={6}>
-              <Stack spacing={0} align={'center'} mb={5}>
-                <Heading fontSize={'2xl'} fontWeight={500} fontFamily={'body'}>
+              <Stack spacing={0} align={'center'} mb={2}>
+                <Heading fontSize={'2xl'} fontWeight={'bold'} fontFamily={'heading'} fontStyle={'serif'}>
                   {label}
                 </Heading>
               </Stack>
 
-              <Stack direction={'row'} justify={'center'} spacing={6}>
-                <Stack spacing={0} align={'center'}>
-                  <Text fontWeight={600}>{speed}</Text>
-                  <Text fontSize={'sm'} color={'gray.500'}>
-                    Speed
-                  </Text>
+              <Stack direction={'column'} justify={'center'} spacing={1}>
+                <Stack spacing={0} align={'left'}>
+                  <Text fontSize={'xl'} fontWeight={700}>Speed {type === 'skateboard' ? <><SkateboardIcon /><SkateboardHalfIcon /></> : type === 'bike' ? <><BikeIcon /><BikeIcon /></> : <><HorseIcon /><HorseIcon /><HorseIcon /></>}</Text>
                 </Stack>
-                <Stack spacing={0} align={'center'}>
-                  <Text fontWeight={600}>{tricks}</Text>
-                  <Text fontSize={'sm'} color={'gray.500'}>
-                    Tricks
-                  </Text>
+                <Stack spacing={0} align={'left'}>
+                  <Text fontSize={'xl'}fontWeight={700}>Tricks {type === 'skateboard' ? <><SkateboardIcon /><SkateboardIcon /><SkateboardIcon /></> : type === 'bike' ? <><BikeIcon /></> : <><HorseIcon /></>}</Text>
                 </Stack>
               </Stack>
-
+              <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
               <Button
                 w={'full'}
-                mt={8}
-                bg='blue.600'
+                mt={4}
                 color={'white'}
                 rounded={'md'}
                 _hover={{
                   transform: 'translateY(-2px)',
                   boxShadow: 'lg',
                 }}
+                style={{
+                  backgroundColor: coveyTownController.ourPlayer.vehicle?.vehicleType === type ? BUTTON_COLOR_EQUIPPED : selectedVehicle === type ? 'blue' : 'darkblue',
+                  borderColor: coveyTownController.ourPlayer.vehicle?.vehicleType === type ? 'transparent' : selectedVehicle === type ? 'yellow' : 'blue',
+                }}
                 onClick={() => handleSelectVehicle(type as VehicleType)}>
-                Equip
+                {coveyTownController.ourPlayer.vehicle?.vehicleType === type ? 'Unequip' : 'Equip'}
               </Button>
+              <Button
+                w={'full'}
+                mt={4}
+                color={'white'}
+                rounded={'md'}
+                _hover={{
+                  transform: 'translateY(-2px)',
+                  boxShadow: 'lg',
+                }}
+                colorScheme='blue'
+                onClick={type === 'bike' ? setBikeAnim.toggle : type === 'horse' ? setHorseAnim.toggle : setSkateboardAnim.toggle}>
+                  {previewed ? 'Image' : 'Preview'}
+              </Button>
+              </SimpleGrid>
+              
             </Box>
           </Box>
         </Center>
       );
     }
   };
+
+  function handleSelectVehicle(vehicleType: VehicleType) {
+    setSelectedVehicle(() => {
+      if (coveyTownController.ourPlayer.vehicle?.vehicleType === vehicleType) {
+        vehicleRackAreaController.vehicle = undefined;
+        handleUnequipVehicle();
+        return undefined;
+      } else {
+        vehicleRackAreaController.vehicle = vehicleType;
+        handleEquipVehicle();
+        return vehicleType; // Return the new state value
+      }
+    });
+  }
 
   useEffect(() => {
     if (newRack) {
@@ -215,27 +253,21 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
         closeModal();
         coveyTownController.unPause();
       }}>
-      <ModalOverlay
-        bgImg={
-          'https://play-lh.googleusercontent.com/09v8anyuuqLYyLDMRxdsXWC5Pkz8wRNBttrElCiZWppNR5Pa2WOc5bt0OIiSYDWcMQ=w526-h296-rw'
-        }
-        bgSize={'cover'}
-      />
+      <ModalOverlay bgSize={'cover'}/>
       <ModalContent
-        minHeight={600}
-        minWidth={1000}
-        bgImg={
-          'https://play-lh.googleusercontent.com/09v8anyuuqLYyLDMRxdsXWC5Pkz8wRNBttrElCiZWppNR5Pa2WOc5bt0OIiSYDWcMQ=w526-h296-rw'
-        }>
-        <ModalHeader>
-          <Tooltip label={tooltipText} placement='bottom-start'>
+        minHeight={200}
+        minWidth={400}
+        maxW="1000px"
+        bgColor={OVERLAY_COLOR}>
+        <ModalHeader ml={5}>
+          <Tooltip defaultIsOpen={false} label={tooltipText} placement='top-start' >
             ⓘ
           </Tooltip>
-          <span style={{ marginLeft: '8px' }}>Select a vehicle</span>{' '}
+          Vehicle Rack
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
-          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={10}>
+          <SimpleGrid columns={{ base: 1, md: 3 }} spacing={2}>
             {vehicles.map(vehicleEnum => (
               <VehicleCard
                 type={vehicleEnum.type}
@@ -243,30 +275,31 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
                 label={vehicleEnum.label}
                 imageURL={vehicleEnum.imageURL}
                 animationURL={vehicleEnum.animationURL}
-                speed={vehicleEnum.speed}
                 imageAlt={vehicleEnum.imageAlt}
-                tricks={vehicleEnum.tricks}
+                previewed={vehicleEnum.previewed}
               />
             ))}
           </SimpleGrid>
+          {/* <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
+            <Button
+              colorScheme={BUTTON_COLOR_EQUIPPED}
+              onClick={handleEquipVehicle}
+              disabled={
+                !selectedVehicle || selectedVehicle === coveyTownController.ourPlayer.vehicle?.vehicleType
+              }
+              marginLeft={5}
+              marginRight={5}>
+              Equip
+            </Button>
+            <Button
+              onClick={handleUnequipVehicle}
+              disabled={coveyTownController.ourPlayer.vehicle?.vehicleType === undefined}
+              marginRight={5}
+              marginLeft={5}>
+              Unequip
+            </Button>
+          </SimpleGrid> */}
         </ModalBody>
-        <ModalFooter>
-          <Button
-            colorScheme='blue'
-            mr={3}
-            onClick={handleEquipVehicle}
-            disabled={
-              !selectedVehicle ||
-              selectedVehicle === coveyTownController.ourPlayer.vehicle?.vehicleType
-            }>
-            Equip
-          </Button>
-          <Button
-            onClick={handleUnequipVehicle}
-            disabled={coveyTownController.ourPlayer.vehicle?.vehicleType === undefined}>
-            Unequip
-          </Button>
-        </ModalFooter>
       </ModalContent>
     </Modal>
   );
