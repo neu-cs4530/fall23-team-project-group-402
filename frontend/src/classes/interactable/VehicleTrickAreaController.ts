@@ -1,9 +1,4 @@
-import {
-  GameArea,
-  GameStatus,
-  VehicleTrickGameState,
-  VehicleType,
-} from '../../types/CoveyTownSocket';
+import { GameArea, GameStatus, VehicleTrickGameState } from '../../types/CoveyTownSocket';
 import PlayerController from '../PlayerController';
 import GameAreaController, {
   GameEventTypes,
@@ -69,10 +64,11 @@ export default class VehicleTrickAreaController extends GameAreaController<
 
   /**
    * Determines if ourPlayer can play the vehicle trick game.
-   * Right now, they can only play if they have a vehicle equipped.
+   * Right now, they can only play if they have a skateboard vehicle equipped.
    */
   get canPlay(): boolean {
-    return this._townController.ourPlayer.vehicle !== undefined || false;
+    const ourVehicle = this._townController.ourPlayer.vehicle;
+    return (ourVehicle && ourVehicle.vehicleType === 'skateboard') || false;
   }
 
   /**
@@ -139,10 +135,8 @@ export default class VehicleTrickAreaController extends GameAreaController<
     const player = this._player;
     if (player && player.gameObjects) {
       const { sprite } = player.gameObjects;
-      const vehicleType: VehicleType | undefined = player.vehicle?.vehicleType;
-      const trickNumber: number =
-        vehicleType === 'skateboard' ? Math.floor(Math.random() * 3) + 1 : 1;
-      sprite.anims.play(`${vehicleType}-trick-${trickNumber}`, true);
+      const randomNumber: number = Math.floor(Math.random() * 3) + 1;
+      sprite.anims.play(`skateboard-trick-${randomNumber}`, true);
     }
   }
 
