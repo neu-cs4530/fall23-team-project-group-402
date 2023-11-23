@@ -1,9 +1,8 @@
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
+import { fireEvent, render, screen, within } from '@testing-library/react';
 import { nanoid } from 'nanoid';
 import React from 'react';
 import { GameResult } from '../../../../types/CoveyTownSocket';
 import VehicleTrickLeaderboard from './VehicleTrickLeaderboard';
-import userEvent from '@testing-library/user-event';
 
 describe('[T4] Leaderboard', () => {
   // Spy on console.error and intercept react key warnings to fail test
@@ -38,31 +37,10 @@ describe('[T4] Leaderboard', () => {
     expect(columns[0]).toHaveTextContent(player);
     expect(columns[1]).toHaveTextContent(high_score.toString());
   }
-
-  it('should render a table with the correct headers', () => {
-    render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
-    const headers = screen.getAllByRole('columnheader');
-    expect(headers).toHaveLength(2);
-    expect(headers[0]).toHaveTextContent('Player');
-    expect(headers[1]).toHaveTextContent('High Score');
-  });
-  it('should have an interactable tooltip next to Player header (non-persistent storage)', async () => {
-    render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
-    try {
-      await screen.findByText('tooltip');
-      throw new Error('Tooltip was found when it should not be present');
-    } catch (error) {
-      if ((error as Error).message !== 'Tooltip was found when it should not be present') {
-        // Test passes because findByText threw an error, meaning the tooltip was not found
-      } else {
-        // Test fails because the tooltip was found
-        throw error;
-      }
-    }
-    fireEvent.mouseOver(screen.getByText('ⓘ'));
-    expect(await screen.findByText('tooltip')).toBeInTheDocument();
-    fireEvent.mouseLeave(screen.getByText('ⓘ'));
-    setTimeout(async () => {
+  async function checkForTooltip(present: boolean) {
+    if (present) {
+      expect(await screen.findByText('tooltip')).toBeInTheDocument();
+    } else {
       try {
         await screen.findByText('tooltip');
         throw new Error('Tooltip was found when it should not be present');
@@ -74,7 +52,47 @@ describe('[T4] Leaderboard', () => {
           throw error;
         }
       }
-    }, 1000);
+    }
+  }
+  async function checkTooltipText(persistentLeaderboard: boolean) {
+    const tooltipText = persistentLeaderboard
+      ? 'leaderboard does not consolidate'
+      : 'leaderboard consolidates';
+
+    const tooltip = await screen.findByText('tooltip');
+    expect(tooltip.parentElement).toHaveTextContent(tooltipText);
+  }
+
+  it('should render a table with the correct headers', () => {
+    render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
+    const headers = screen.getAllByRole('columnheader');
+    expect(headers).toHaveLength(2);
+    expect(headers[0]).toHaveTextContent('Player');
+    expect(headers[1]).toHaveTextContent('High Score');
+  });
+  describe('tooltip behaviors', () => {
+    it('should have an interactable tooltip next to Player header (non-persistent storage)', async () => {
+      render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
+      await checkForTooltip(false);
+      fireEvent.mouseOver(screen.getByText('ⓘ'));
+      await checkForTooltip(true);
+      fireEvent.mouseLeave(screen.getByText('ⓘ'));
+      setTimeout(async () => {
+        await checkForTooltip(false);
+      }, 1000);
+    });
+    it('interactable tooltip should have correct text (non-persistent storage)', async () => {
+      render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
+      fireEvent.mouseOver(screen.getByText('ⓘ'));
+      await checkForTooltip(true);
+      await checkTooltipText(false);
+    });
+    it('interactable tooltip should have correct text (persistent storage)', async () => {
+      render(<VehicleTrickLeaderboard results={results} isPersistent={true} />);
+      fireEvent.mouseOver(screen.getByText('ⓘ'));
+      await checkForTooltip(true);
+      await checkTooltipText(true);
+    });
   });
   it('should render a row for each player and consolidate duplicates if database non-persistent', () => {
     render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
