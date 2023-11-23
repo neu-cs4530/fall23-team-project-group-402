@@ -28,16 +28,13 @@ import { BikeIcon } from './BikeIcon';
 import { SkateboardIcon } from './SkateboardIcon';
 import { HorseIcon } from './HorseIcon';
 import { SkateboardHalfIcon } from './SkateboardHalfIcon';
-import { repeat } from 'lodash';
 
-const OVERLAY_COLOR = '#BEC2cB'
-const CARD_COLOR = "#ffffff"
-const BORDER_CARD_COLOR = '#000000'
+const OVERLAY_COLOR = '#EBF8FF'
+const CARD_COLOR = "#BEE3F8"
+const BORDER_CARD_COLOR = '#1A365D'
 const BORDER_CARD_COLOR_SELECTED = 'gold'
-const BUTTON_COLOR_SELECTED = "blue"
-const BUTTON_COLOR_UNSELECTED = "blue"
-const BUTTON_COLOR_UNEQUIP = "blue"
-const BUTTON_COLOR_EQUIPPED = "blue"
+const BUTTON_COLOR_UNEQUIPPED = "#4299E1"
+const BUTTON_COLOR_EQUIPPED = "#38B2AC"
 const tooltipText = 'Select a vehicle to move around town faster. You will also become eligible to play the typing minigame!';
 
 export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackArea }): JSX.Element {
@@ -166,7 +163,7 @@ const [horseImage, setHorseImage] = useState('url("./images/horse.png")')
               }}>
               <Center height={'full'}>
                 <Image 
-                height={'190'} width={previewed ? '50' : 'full'} 
+                height={'170'} width={previewed ? '50' : 'full'} 
                 style={{ content: image, width: 'full', height: '140' }}
                 onMouseEnter={() => {handleMouseEnter(type as VehicleType, animationURL)}}
                 onMouseLeave={() => {handleMouseLeave(type as VehicleType, imageURL)}}
@@ -200,8 +197,7 @@ const [horseImage, setHorseImage] = useState('url("./images/horse.png")')
                   boxShadow: 'lg',
                 }}
                 style={{
-                  backgroundColor: coveyTownController.ourPlayer.vehicle?.vehicleType === type ? BUTTON_COLOR_EQUIPPED : selectedVehicle === type ? 'blue' : 'darkblue',
-                  borderColor: coveyTownController.ourPlayer.vehicle?.vehicleType === type ? 'transparent' : selectedVehicle === type ? 'yellow' : 'blue',
+                  backgroundColor: coveyTownController.ourPlayer.vehicle?.vehicleType === type ? BUTTON_COLOR_EQUIPPED : BUTTON_COLOR_UNEQUIPPED,
                 }}
                 onClick={() => handleSelectVehicle(type as VehicleType)}
                 >
@@ -296,10 +292,11 @@ const [horseImage, setHorseImage] = useState('url("./images/horse.png")')
         maxW="1000px"
         bgColor={OVERLAY_COLOR}>
         <ModalHeader ml={5}>
-          <Tooltip defaultIsOpen={false} label={tooltipText} placement='top-start' >
+          <Tooltip defaultIsOpen={false} label={tooltipText} placement='top-start' mr={'5'}>
             ⓘ
           </Tooltip>
           Vehicle Rack
+
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
