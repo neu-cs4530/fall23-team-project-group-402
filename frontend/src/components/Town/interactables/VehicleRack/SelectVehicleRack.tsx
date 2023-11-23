@@ -15,7 +15,6 @@ import {
   useToast,
   SimpleGrid,
   Tooltip,
-  useBoolean
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import VehicleRackAreaController from '../../../../classes/interactable/VehicleRackAreaController';
@@ -29,13 +28,14 @@ import { SkateboardIcon } from './SkateboardIcon';
 import { HorseIcon } from './HorseIcon';
 import { SkateboardHalfIcon } from './SkateboardHalfIcon';
 
-const OVERLAY_COLOR = '#EBF8FF'
-const CARD_COLOR = "#BEE3F8"
-const BORDER_CARD_COLOR = '#1A365D'
-const BORDER_CARD_COLOR_SELECTED = 'gold'
-const BUTTON_COLOR_UNEQUIPPED = "#4299E1"
-const BUTTON_COLOR_EQUIPPED = "#38B2AC"
-const tooltipText = 'Select a vehicle to move around town faster. You will also become eligible to play the typing minigame!';
+const OVERLAY_COLOR = '#EBF8FF';
+const CARD_COLOR = '#BEE3F8';
+const BORDER_CARD_COLOR = '#1A365D';
+const BORDER_CARD_COLOR_SELECTED = 'gold';
+const BUTTON_COLOR_UNEQUIPPED = '#4299E1';
+const BUTTON_COLOR_EQUIPPED = '#000000';
+const TOOL_TIP_TEXT =
+  'Select a vehicle to move around town faster. You will also become eligible to play the typing minigame!';
 
 export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackArea }): JSX.Element {
   const coveyTownController = useTownController();
@@ -49,180 +49,11 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     vehicleRackAreaController.vehicle,
   );
 
-  const [bikeAnim, setBikeAnim] = useBoolean()
-  const [skateboardAnim, setSkateboardAnim] = useBoolean()
-  const [horseAnim, setHorseAnim] = useBoolean()
-
-const [bikeImage, setBikeImage] = useState('url("./images/bike.png")')
-const [skateboardImage, setSkateboardImage] = useState('url("./images/skateboard.png")')
-const [horseImage, setHorseImage] = useState('url("./images/horse.png")')
+  const [bikeImage, setBikeImage] = useState('url("./images/bike.png")');
+  const [skateboardImage, setSkateboardImage] = useState('url("./images/skateboard.png")');
+  const [horseImage, setHorseImage] = useState('url("./images/horse.png")');
 
   const toast = useToast();
-
-  const vehicles = [
-    {
-      type: 'bike',
-      label: 'Bike',
-      image: bikeImage,
-      imageURL: ['url("./images/bike.png")'],
-      animationURL: ['url("./animations/bike-anim.gif")'],
-      imageAlt: 'bike',
-      previewed: bikeAnim,
-    },
-    {
-      type: 'horse',
-      label: 'Horse',
-      image: horseImage,
-      imageURL: ['url("./images/horse.png")'],
-      animationURL: ['url("./animations/horse-anim.gif")'],
-      imageAlt: 'horse',
-      previewed: horseAnim,
-    },
-    {
-      type: 'skateboard',
-      label: 'Skateboard',
-      image: skateboardImage,
-      imageURL: ['url("./images/skateboard.png")'],
-      animationURL: ['url("./animations/skateboard-anim1.gif")', 'url("./animations/skateboard-anim2.gif")', 'url("./animations/skateboard-anim3.gif")'],
-      imageAlt: 'skateboard',
-      previewed: skateboardAnim,
-    },
-  ];
-
-  function handleMouseEnter(type: VehicleType, listOfAnimations: string[]) {
-    switch (type) {
-      case 'bike':
-        setBikeImage(listOfAnimations[Math.floor((Math.random()*listOfAnimations.length))])
-        setBikeAnim.toggle
-        break;
-      case 'horse':
-        setHorseImage(listOfAnimations[Math.floor((Math.random()*listOfAnimations.length))])
-        setHorseAnim.toggle
-        break;
-      case 'skateboard':
-        setSkateboardImage(listOfAnimations[Math.floor((Math.random()*listOfAnimations.length))])
-        setSkateboardAnim.toggle
-        break;
-    }
-  }
-
-  function handleMouseLeave(type: VehicleType, listOfImages: string[]) {
-    switch (type) {
-      case 'bike':
-        setBikeImage(listOfImages[Math.floor((Math.random()*listOfImages.length))])
-        setBikeAnim.toggle
-        break;
-      case 'horse':
-        setHorseImage(listOfImages[Math.floor((Math.random()*listOfImages.length))])
-        setHorseAnim.toggle
-        break;
-      case 'skateboard':
-        setSkateboardImage(listOfImages[Math.floor((Math.random()*listOfImages.length))])
-        setSkateboardAnim.toggle
-        break;
-    }
-  }
-
-  const VehicleCard = ({
-    type,
-    label,
-    image,
-    imageURL,
-    animationURL,
-    imageAlt,
-    previewed,
-  }: VehicleProps) => {
-    {
-      return (
-        <Center paddingTop={0} paddingBottom={6}>
-          <Box
-            maxW={'270px'}
-            w={'full'}
-            bgColor={CARD_COLOR}
-            boxShadow={'dark-lg'}
-            rounded={'md'}
-            overflow={'hidden'}
-            borderWidth={3}
-            borderColor={selectedVehicle === type ? BORDER_CARD_COLOR_SELECTED : BORDER_CARD_COLOR}>
-            <Center>
-            <Box
-              borderColor={selectedVehicle === type ? BORDER_CARD_COLOR_SELECTED : BORDER_CARD_COLOR}
-              rounded={'md'}
-              borderWidth={3}
-              alignSelf={'center'}
-              width={'full'}
-              height={'full'}
-              ml={4}
-              mr={4}
-              mt={4}
-              mb={-2}
-              bgImage={'./images/bgimage.png'}
-              _hover={{
-                transform: 'translateY(-2px)',
-                boxShadow: 'lg',
-              }}>
-              <Center height={'full'}>
-                <Image 
-                height={'170'} width={previewed ? '50' : 'full'} 
-                style={{ content: image, width: 'full', height: '140' }}
-                onMouseEnter={() => {handleMouseEnter(type as VehicleType, animationURL)}}
-                onMouseLeave={() => {handleMouseLeave(type as VehicleType, imageURL)}}
-                />
-              </Center>
-              </Box>
-            </Center>
-
-            <Box p={6}>
-              <Stack spacing={0} align={'center'} mb={2}>
-                <Heading fontSize={'2xl'} fontWeight={'bold'} fontFamily={'heading'} fontStyle={'serif'}>
-                  {label}
-                </Heading>
-              </Stack>
-
-              <Stack direction={'column'} justify={'center'} spacing={1}>
-                <Stack spacing={0} align={'left'}>
-                  <Text fontSize={'xl'} fontWeight={700}>Speed {type === 'skateboard' ? <><SkateboardIcon fontSize={'3xl'}/><SkateboardHalfIcon fontSize={'3xl'}/></> : type === 'bike' ? <><BikeIcon fontSize={'3xl'}/><BikeIcon fontSize={'3xl'}/></> : <><HorseIcon fontSize={'3xl'}/><HorseIcon fontSize={'3xl'}/><HorseIcon fontSize={'3xl'}/></>}</Text>
-                </Stack>
-                <Stack spacing={0} align={'left'}>
-                  <Text fontSize={'xl'}fontWeight={700}>Tricks {type === 'skateboard' ? <><SkateboardIcon fontSize={'3xl'}/><SkateboardIcon fontSize={'3xl'}/><SkateboardIcon fontSize={'3xl'}/></> : type === 'bike' ? <><BikeIcon fontSize={'3xl'}/></> : <><HorseIcon fontSize={'3xl'}/></>}</Text>
-                </Stack>
-              </Stack>
-              <Button
-                w={'full'}
-                mt={4}
-                color={'white'}
-                rounded={'md'}
-                _hover={{
-                  transform: 'translateY(-2px)',
-                  boxShadow: 'lg',
-                }}
-                style={{
-                  backgroundColor: coveyTownController.ourPlayer.vehicle?.vehicleType === type ? BUTTON_COLOR_EQUIPPED : BUTTON_COLOR_UNEQUIPPED,
-                }}
-                onClick={() => handleSelectVehicle(type as VehicleType)}
-                >
-                {coveyTownController.ourPlayer.vehicle?.vehicleType === type ? 'Unequip' : 'Equip'}
-              </Button>
-            </Box>
-          </Box>
-        </Center>
-      );
-    }
-  };
-
-  function handleSelectVehicle(vehicleType: VehicleType) {
-    setSelectedVehicle(() => {
-      if (coveyTownController.ourPlayer.vehicle?.vehicleType === vehicleType) {
-        vehicleRackAreaController.vehicle = undefined;
-        handleUnequipVehicle();
-        return undefined;
-      } else {
-        vehicleRackAreaController.vehicle = vehicleType;
-        handleEquipVehicle();
-        return vehicleType; // Return the new state value
-      }
-    });
-  }
 
   useEffect(() => {
     if (newRack) {
@@ -278,6 +109,208 @@ const [horseImage, setHorseImage] = useState('url("./images/horse.png")')
     closeModal();
   }
 
+  function handleSelectVehicle(vehicleType: VehicleType) {
+    setSelectedVehicle(() => {
+      if (coveyTownController.ourPlayer.vehicle?.vehicleType === vehicleType) {
+        vehicleRackAreaController.vehicle = undefined;
+        handleUnequipVehicle();
+        return undefined;
+      } else {
+        vehicleRackAreaController.vehicle = vehicleType;
+        handleEquipVehicle();
+        return vehicleType; // Return the new state value
+      }
+    });
+  }
+
+  const vehicles = [
+    {
+      type: 'bike',
+      label: 'Bike',
+      image: bikeImage,
+      imageURL: ['url("./images/bike.png")'],
+      animationURL: ['url("./animations/bike-anim.gif")'],
+      imageAlt: 'bike',
+    },
+    {
+      type: 'horse',
+      label: 'Horse',
+      image: horseImage,
+      imageURL: ['url("./images/horse.png")'],
+      animationURL: ['url("./animations/horse-anim.gif")'],
+      imageAlt: 'horse',
+    },
+    {
+      type: 'skateboard',
+      label: 'Skateboard',
+      image: skateboardImage,
+      imageURL: ['url("./images/skateboard.png")'],
+      animationURL: [
+        'url("./animations/skateboard-anim1.gif")',
+        'url("./animations/skateboard-anim2.gif")',
+        'url("./animations/skateboard-anim3.gif")',
+      ],
+      imageAlt: 'skateboard',
+    },
+  ];
+
+  function handleMouseEnter(type: VehicleType, listOfAnimations: string[]) {
+    switch (type) {
+      case 'bike':
+        setBikeImage(listOfAnimations[Math.floor(Math.random() * listOfAnimations.length)]);
+        break;
+      case 'horse':
+        setHorseImage(listOfAnimations[Math.floor(Math.random() * listOfAnimations.length)]);
+        break;
+      case 'skateboard':
+        setSkateboardImage(listOfAnimations[Math.floor(Math.random() * listOfAnimations.length)]);
+        break;
+    }
+  }
+
+  function handleMouseLeave(type: VehicleType, listOfImages: string[]) {
+    switch (type) {
+      case 'bike':
+        setBikeImage(listOfImages[Math.floor(Math.random() * listOfImages.length)]);
+        break;
+      case 'horse':
+        setHorseImage(listOfImages[Math.floor(Math.random() * listOfImages.length)]);
+        break;
+      case 'skateboard':
+        setSkateboardImage(listOfImages[Math.floor(Math.random() * listOfImages.length)]);
+        break;
+    }
+  }
+
+  const VehicleCard = ({ type, label, image, imageURL, animationURL, imageAlt }: VehicleProps) => {
+    {
+      return (
+        <Center paddingTop={0} paddingBottom={6}>
+          <Box
+            maxW={'270px'}
+            w={'full'}
+            bgColor={CARD_COLOR}
+            boxShadow={'dark-lg'}
+            rounded={'md'}
+            overflow={'hidden'}
+            borderWidth={3}
+            borderColor={selectedVehicle === type ? BORDER_CARD_COLOR_SELECTED : BORDER_CARD_COLOR}>
+            <Center>
+              <Box
+                borderColor={
+                  selectedVehicle === type ? BORDER_CARD_COLOR_SELECTED : BORDER_CARD_COLOR
+                }
+                rounded={'md'}
+                borderWidth={3}
+                alignSelf={'center'}
+                width={'full'}
+                height={'full'}
+                ml={4}
+                mr={4}
+                mt={4}
+                mb={-2}
+                bgImage={'./images/bgimage.png'}
+                _hover={{
+                  transform: 'translateY(-2px)',
+                  boxShadow: 'lg',
+                }}>
+                <Center height={'full'}>
+                  <Image
+                    alt={imageAlt}
+                    height={'170'}
+                    width={'full'}
+                    style={{ content: image, width: 'full', height: '140' }}
+                    onMouseEnter={() => {
+                      handleMouseEnter(type as VehicleType, animationURL);
+                    }}
+                    onMouseLeave={() => {
+                      handleMouseLeave(type as VehicleType, imageURL);
+                    }}
+                  />
+                </Center>
+              </Box>
+            </Center>
+
+            <Box p={6}>
+              <Stack spacing={0} align={'center'} mb={2}>
+                <Heading
+                  fontSize={'2xl'}
+                  fontWeight={'bold'}
+                  fontFamily={'heading'}
+                  fontStyle={'serif'}>
+                  {label}
+                </Heading>
+              </Stack>
+
+              <Stack direction={'column'} justify={'center'} spacing={1}>
+                <Stack spacing={0} align={'left'}>
+                  <Text fontSize={'xl'} fontWeight={700}>
+                    Speed{' '}
+                    {type === 'skateboard' ? (
+                      <>
+                        <SkateboardIcon fontSize={'3xl'} />
+                        <SkateboardHalfIcon fontSize={'3xl'} />
+                      </>
+                    ) : type === 'bike' ? (
+                      <>
+                        <BikeIcon fontSize={'3xl'} />
+                        <BikeIcon fontSize={'3xl'} />
+                      </>
+                    ) : (
+                      <>
+                        <HorseIcon fontSize={'3xl'} />
+                        <HorseIcon fontSize={'3xl'} />
+                        <HorseIcon fontSize={'3xl'} />
+                      </>
+                    )}
+                  </Text>
+                </Stack>
+                <Stack spacing={0} align={'left'}>
+                  <Text fontSize={'xl'} fontWeight={700}>
+                    Tricks{' '}
+                    {type === 'skateboard' ? (
+                      <>
+                        <SkateboardIcon fontSize={'3xl'} />
+                        <SkateboardIcon fontSize={'3xl'} />
+                        <SkateboardIcon fontSize={'3xl'} />
+                      </>
+                    ) : type === 'bike' ? (
+                      <>
+                        <BikeIcon fontSize={'3xl'} />
+                      </>
+                    ) : (
+                      <>
+                        <HorseIcon fontSize={'3xl'} />
+                      </>
+                    )}
+                  </Text>
+                </Stack>
+              </Stack>
+              <Button
+                w={'full'}
+                mt={4}
+                color={'white'}
+                rounded={'md'}
+                _hover={{
+                  transform: 'translateY(-2px)',
+                  boxShadow: 'lg',
+                }}
+                style={{
+                  backgroundColor:
+                    coveyTownController.ourPlayer.vehicle?.vehicleType === type
+                      ? BUTTON_COLOR_EQUIPPED
+                      : BUTTON_COLOR_UNEQUIPPED,
+                }}
+                onClick={() => handleSelectVehicle(type as VehicleType)}>
+                {coveyTownController.ourPlayer.vehicle?.vehicleType === type ? 'Unequip' : 'Equip'}
+              </Button>
+            </Box>
+          </Box>
+        </Center>
+      );
+    }
+  };
+
   return (
     <Modal
       isOpen={isOpen}
@@ -285,18 +318,13 @@ const [horseImage, setHorseImage] = useState('url("./images/horse.png")')
         closeModal();
         coveyTownController.unPause();
       }}>
-      <ModalOverlay bgSize={'cover'}/>
-      <ModalContent
-        minHeight={200}
-        minWidth={400}
-        maxW="1000px"
-        bgColor={OVERLAY_COLOR}>
+      <ModalOverlay bgSize={'cover'} />
+      <ModalContent minHeight={200} minWidth={400} maxW='1000px' bgColor={OVERLAY_COLOR}>
         <ModalHeader ml={5}>
-          <Tooltip defaultIsOpen={false} label={tooltipText} placement='top-start' mr={'5'}>
+          <Tooltip defaultIsOpen={false} label={TOOL_TIP_TEXT} placement='top-start' mr={'5'}>
             ⓘ
           </Tooltip>
           Vehicle Rack
-
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody pb={6}>
@@ -310,29 +338,9 @@ const [horseImage, setHorseImage] = useState('url("./images/horse.png")')
                 imageURL={vehicleEnum.imageURL}
                 animationURL={vehicleEnum.animationURL}
                 imageAlt={vehicleEnum.imageAlt}
-                previewed={vehicleEnum.previewed}
               />
             ))}
           </SimpleGrid>
-          {/* <SimpleGrid columns={{ base: 1, md: 2 }} spacing={5}>
-            <Button
-              colorScheme={BUTTON_COLOR_EQUIPPED}
-              onClick={handleEquipVehicle}
-              disabled={
-                !selectedVehicle || selectedVehicle === coveyTownController.ourPlayer.vehicle?.vehicleType
-              }
-              marginLeft={5}
-              marginRight={5}>
-              Equip
-            </Button>
-            <Button
-              onClick={handleUnequipVehicle}
-              disabled={coveyTownController.ourPlayer.vehicle?.vehicleType === undefined}
-              marginRight={5}
-              marginLeft={5}>
-              Unequip
-            </Button>
-          </SimpleGrid> */}
         </ModalBody>
       </ModalContent>
     </Modal>
