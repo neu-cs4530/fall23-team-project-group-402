@@ -15,7 +15,6 @@ import {
   useToast,
   SimpleGrid,
   Tooltip,
-  useBoolean,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
 import VehicleRackAreaController from '../../../../classes/interactable/VehicleRackAreaController';
@@ -34,7 +33,7 @@ const CARD_COLOR = '#BEE3F8';
 const BORDER_CARD_COLOR = '#1A365D';
 const BORDER_CARD_COLOR_SELECTED = 'gold';
 const BUTTON_COLOR_UNEQUIPPED = '#4299E1';
-const BUTTON_COLOR_EQUIPPED = '#38B2AC';
+const BUTTON_COLOR_EQUIPPED = '#000000';
 const TOOL_TIP_TEXT =
   'Select a vehicle to move around town faster. You will also become eligible to play the typing minigame!';
 
