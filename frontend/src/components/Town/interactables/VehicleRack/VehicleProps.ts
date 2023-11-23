@@ -5,5 +5,4 @@ export interface VehicleProps {
   imageURL: string[];
   animationURL: string[];
   imageAlt: string;
-  previewed: boolean;
 }
