@@ -36,12 +36,6 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
     super(nanoid(), mock<GameArea<VehicleTrickGameState>>(), mock<TownController>());
   }
 
-  /*
-    For ease of testing, we will mock the currentWord property
-    to return a copy of the mockBoard property, so that
-    we can change the mockBoard property and then check
-    that the board property is updated correctly.
-    */
   get currentWord(): string {
     return this.mockWord;
   }
@@ -72,10 +66,6 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
 
   get isPlayer() {
     return this.mockIsPlayer;
-  }
-
-  get gamePiece(): 'X' | 'O' {
-    throw new Error('Method should not be called within this component.');
   }
 
   public isActive(): boolean {
@@ -234,7 +224,7 @@ describe('VehicleTrick', () => {
     await checkWordInputField({ interactable });
     expect(score).toHaveTextContent('100');
   }
-  describe('[T3.1] When observing the game', () => {
+  describe('When observing the game', () => {
     beforeEach(() => {
       gameAreaController.mockIsPlayer = false;
     });
@@ -266,7 +256,7 @@ describe('VehicleTrick', () => {
       checkScoreUpdate(false);
     });
   });
-  describe('[T3.2] When playing the game', () => {
+  describe('When playing the game', () => {
     beforeEach(() => {
       gameAreaController.mockIsPlayer = true;
     });
