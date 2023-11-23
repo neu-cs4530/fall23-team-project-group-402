@@ -100,6 +100,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   public unequipVehicle(): undefined {
     this._vehicle = undefined;
+    this.emit('vehicleChange', this._vehicle);
     return this._vehicle;
   }
 
