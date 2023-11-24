@@ -40,10 +40,10 @@ describe('[T4] Leaderboard', () => {
   }
   async function checkForTooltip(present: boolean) {
     if (present) {
-      expect(await screen.findByText('tooltip')).toBeInTheDocument();
+      expect(await screen.findByText('local-tooltip')).toBeInTheDocument();
     } else {
       try {
-        await screen.findByText('tooltip');
+        await screen.findByText('local-tooltip');
         throw new Error('Tooltip was found when it should not be present');
       } catch (error) {
         if ((error as Error).message !== 'Tooltip was found when it should not be present') {
@@ -60,54 +60,63 @@ describe('[T4] Leaderboard', () => {
       ? 'leaderboard does not consolidate'
       : 'leaderboard consolidates';
 
-    const tooltip = await screen.findByText('tooltip');
+    const tooltip = await screen.findByText('local-tooltip');
     expect(tooltip.parentElement).toHaveTextContent(tooltipText);
   }
 
   it('should render a table with the correct headers', () => {
-    render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
+    render(<VehicleTrickLeaderboard localResults={results} persistentResults={[]} />);
     const headers = screen.getAllByRole('columnheader');
     expect(headers).toHaveLength(3);
     expect(headers[0]).toHaveTextContent('Rank');
-    expect(headers[1]).toHaveTextContent('Player');
+    expect(headers[1]).toHaveTextContent('Initials');
     expect(headers[2]).toHaveTextContent('High Score');
   });
   describe('tooltip behaviors', () => {
     it('should have an interactable tooltip next to Player header (non-persistent storage)', async () => {
-      render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
+      render(<VehicleTrickLeaderboard localResults={results} persistentResults={[]} />);
+      const tooltips = screen.getAllByText('ⓘ');
       await checkForTooltip(false);
-      fireEvent.mouseOver(screen.getByText('ⓘ'));
+      fireEvent.mouseOver(tooltips[0]);
       await checkForTooltip(true);
-      fireEvent.mouseLeave(screen.getByText('ⓘ'));
+      fireEvent.mouseLeave(tooltips[0]);
       setTimeout(async () => {
         await checkForTooltip(false);
       }, 1000);
     });
     it('interactable tooltip should have correct text (non-persistent storage)', async () => {
-      render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
-      fireEvent.mouseOver(screen.getByText('ⓘ'));
+      render(<VehicleTrickLeaderboard localResults={results} persistentResults={[]} />);
+      const tooltips = screen.getAllByText('ⓘ');
+      fireEvent.mouseOver(tooltips[0]);
       await checkForTooltip(true);
       await checkTooltipText(false);
     });
     it('interactable tooltip should have correct text (persistent storage)', async () => {
-      render(<VehicleTrickLeaderboard results={results} isPersistent={true} />);
-      fireEvent.mouseOver(screen.getByText('ⓘ'));
+      render(<VehicleTrickLeaderboard localResults={[]} persistentResults={results} />);
+      const tooltips = screen.getAllByText('ⓘ');
+      fireEvent.mouseOver(tooltips[1]);
       await checkForTooltip(true);
       await checkTooltipText(true);
     });
   });
   it('should render a row for each player and consolidate duplicates if database non-persistent', () => {
-    render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
+    render(<VehicleTrickLeaderboard localResults={results} persistentResults={[]} />);
+    const localTab = screen.getByText('Current Leaderboard');
+    localTab.click();
     const rows = screen.getAllByRole('row');
     expect(rows).toHaveLength(4);
   });
   it('should render a row for each player and not consolidate duplicates if database persistent', () => {
-    render(<VehicleTrickLeaderboard results={results} isPersistent={true} />);
+    render(<VehicleTrickLeaderboard localResults={[]} persistentResults={results} />);
+    const persistentTab = screen.getByText('All Time Leaderboard');
+    persistentTab.click();
     const rows = screen.getAllByRole('row');
     expect(rows).toHaveLength(5);
   });
   it('should render the players in order of wins', () => {
-    render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
+    render(<VehicleTrickLeaderboard localResults={results} persistentResults={[]} />);
+    const localTab = screen.getByText('Current Leaderboard');
+    localTab.click();
     const rows = screen.getAllByRole('row');
     checkRow(rows[1], 1, 'SWE', 2000);
     checkRow(rows[2], 2, 'JOB', 500);
