@@ -76,7 +76,7 @@ export default function VehicleTrickLeaderboard({
   return (
     <Box
       overflowY='scroll'
-      maxHeight='215px'
+      maxHeight='365px'
       css={{
         '&::-webkit-scrollbar': {
           width: '2px',

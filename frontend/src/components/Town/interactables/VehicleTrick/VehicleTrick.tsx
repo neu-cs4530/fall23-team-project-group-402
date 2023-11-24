@@ -121,7 +121,14 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
     if (isPlayer) {
       return (
         <FormControl textAlign={'center'}>
-          <Box display='flex' justifyContent='center' alignItems='center' mt={5}>
+          <Box
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            mt={5}
+            fontSize={33}
+            fontFamily={'cursive'}
+            fontWeight={'bold'}>
             {Array.from({ length: word.length }).map((_, index) => (
               <Box key={index} style={{ marginLeft: '4px', marginRight: '4px' }}>
                 {input[index] || '_'}
@@ -144,13 +151,13 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
               gameAreaController.enterWord(targetValue);
             }}
             variant='unstyled'
-            fontFamily={'cursive'}
             style={{
-              opacity: 1,
-              top: -40,
+              opacity: 0,
+              top: -57,
               color: 'transparent',
-              width: `${word.length * 20}px`,
-              border: '1px solid black',
+              width: `${word.length * 30}px`,
+              height: '35px',
+              border: '0px solid black',
             }}
           />
         </FormControl>
@@ -168,7 +175,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
           spacing={20}
           fontWeight={'bold'}
           fontFamily={'fantasy'}
-          fontSize={15}
+          fontSize={24}
           justify={'center'}
           mt={2}>
           <Stack align={'center'}>
@@ -179,8 +186,8 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
           </Stack>
         </Stack>
 
-        <Box mt={14} textAlign='center' aria-label='tarsget-word'>
-          <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={22}>
+        <Box mt={16} textAlign='center' aria-label='tarsget-word'>
+          <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={33}>
             {targetWord}
           </Text>
           {gameContent({ word: targetWord })}
@@ -192,7 +199,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
       return (
         <Container>
           <Box textAlign='center' aria-label='highscore'>
-            <Text fontSize={24} fontWeight={'medium'} fontFamily={'fantasy'}>
+            <Text fontSize={24} fontWeight={'medium'} fontFamily={'fantasy'} mt={2}>
               Score: {score}
             </Text>
           </Box>
@@ -203,13 +210,13 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
                   display='flex'
                   justifyContent='center'
                   alignItems='center'
-                  mt={-4}
+                  mt={12}
                   fontFamily={'fantasy'}>
                   {Array.from({ length: 3 }).map((_, index) => (
                     <Box
                       key={index}
                       style={{ marginLeft: '6px', marginRight: '6px' }}
-                      fontSize={'36px'}>
+                      fontSize={'42px'}>
                       {userInitials[index] || '_'}
                     </Box>
                   ))}
@@ -240,7 +247,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
               </FormControl>
             </Box>
             <Button
-              mt={-16}
+              mt={-7}
               bg='lightblue'
               type='submit'
               onClick={handleClick}
@@ -248,11 +255,11 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
               aria-label='submit'
               _hover={{}}
               variant={'unstyled'}
-              _active={{ bgColor: 'blue.100' }}
+              _active={{ color: 'blue.800' }}
               _focus={{}}
-              fontFamily={'courier'}
+              fontFamily={'georgia'}
               fontSize={19}
-              fontWeight={'bold'}>
+              fontWeight={'medium'}>
               Submit
             </Button>
           </Box>

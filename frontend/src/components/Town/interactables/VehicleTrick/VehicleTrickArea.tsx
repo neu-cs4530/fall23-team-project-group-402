@@ -82,11 +82,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
 
   if (gameStatus === 'IN_PROGRESS') {
     return (
-      <ModalBody
-        bgImage={'./images/keydash.png'}
-        bgColor={'lightblue'}
-        maxHeight={'300'}
-        maxWidth={'full'}>
+      <ModalBody bgImage={'./images/keydash.png'} bgColor={'lightblue'} maxWidth={'full'}>
         <VehicleTrick gameAreaController={gameAreaController} />
       </ModalBody>
     );
@@ -106,7 +102,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
             bgColor={'lightblue'}
             textColor={'black'}
             textAlign={'center'}
-            fontWeight={'bold'}
+            fontWeight={'medium'}
             fontFamily={'courier'}>
             Back
           </Button>
@@ -157,22 +153,22 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
       <ModalBody
         bgImage={'./images/keydash.png'}
         bgColor={'lightblue'}
-        maxHeight={'300'}
+        maxHeight={'450'}
         maxWidth={'full'}
         textAlign={'center'}
-        fontSize={32}
+        fontSize={48}
         fontWeight={'black'}
         fontFamily={'cursive'}>
         <Center>
-          <Stack direction={'column'} spacing={3} justify={'center'} align={'center'}>
+          <Stack direction={'column'} spacing={5} justify={'center'} align={'center'}>
             <Stack spacing={0} align={'center'}>
-              <Text mt={5} fontFamily={'cursive'}>
+              <Text mt={8} fontFamily={'cursive'}>
                 TricKey Typing
               </Text>
             </Stack>
             <Stack spacing={0} align={'center'}>
               <Button
-                mt={1}
+                mt={5}
                 onClick={async () => {
                   if (canPlay) {
                     setStartingGame(true);
@@ -198,7 +194,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
                 disabled={startingGame}
                 variant={'ghost'}
                 fontFamily={'courier'}
-                fontSize={19}
+                fontSize={28}
                 _hover={{}}
                 _active={{ bgColor: 'blue.100' }}
                 _focus={{}}>
@@ -213,8 +209,9 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
                 width={1}
                 onClick={setLeaderboardView.toggle}
                 _active={{ bgColor: 'blue.100' }}
-                _focus={{}}>
-                <TrophyIcon fontSize={75} />
+                _focus={{}}
+                mt={3}>
+                <TrophyIcon fontSize={100} />
               </Button>
             </Stack>
           </Stack>
@@ -246,7 +243,7 @@ export default function VehicleTrickAreaWrapper(): JSX.Element {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
         <ModalOverlay bg={'none'} />
-        <ModalContent borderWidth={8} height={'308'} maxWidth={'416'} borderColor={'gold'}>
+        <ModalContent borderWidth={8} height={'458'} maxWidth={'616'} borderColor={'gold'}>
           <ModalCloseButton />
           <VehicleTrickArea interactableID={gameArea.name} />
         </ModalContent>
