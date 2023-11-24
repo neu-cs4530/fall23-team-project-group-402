@@ -130,7 +130,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
             fontFamily={'cursive'}
             fontWeight={'bold'}>
             {Array.from({ length: word.length }).map((_, index) => (
-              <Box key={index} style={{ marginLeft: '4px', marginRight: '4px' }}>
+              <Box key={index} style={{ marginLeft: '2px', marginRight: '2px' }}>
                 {input[index] || '_'}
               </Box>
             ))}
@@ -139,6 +139,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
             mt={4}
             maxLength={word.length}
             textAlign='center'
+            placeholder='type word here'
             name='title'
             value={input}
             isDisabled={activeInput}
@@ -163,7 +164,11 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
         </FormControl>
       );
     } else {
-      return pleaseWait();
+      return (
+        <Container mt={0}>
+          <Box mt={30}>{pleaseWait()}</Box>
+        </Container>
+      );
     }
   }
 
@@ -179,14 +184,14 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
           justify={'center'}
           mt={2}>
           <Stack align={'center'}>
-            <Text>{seconds} Seconds</Text>
+            <Text aria-label='timer'>{seconds} Seconds</Text>
           </Stack>
           <Stack align={'center'}>
-            <Text>Score: {score} </Text>
+            <Text aria-label='score'>Score: {score} </Text>
           </Stack>
         </Stack>
 
-        <Box mt={16} textAlign='center' aria-label='tarsget-word'>
+        <Box mt={16} textAlign='center' aria-label='target-word'>
           <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={33}>
             {targetWord}
           </Text>
@@ -221,13 +226,14 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
                     </Box>
                   ))}
                 </Box>
-                <Text mt={-1} fontSize={13} fontFamily={'fantasy'} fontWeight={'medium'}>
+                <Text mt={-1} fontSize={16} fontFamily={'fantasy'} fontWeight={'medium'}>
                   Enter Your Initials
                 </Text>
                 <Input
                   mt={7}
                   textAlign='center'
                   name='initials'
+                  placeholder='initials'
                   value={userInitials}
                   width={100}
                   onChange={handleInitialsChange}
@@ -266,7 +272,11 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
         </Container>
       );
     } else {
-      return pleaseWait();
+      return (
+        <Container mt={0}>
+          <Box mt={130}>{pleaseWait()}</Box>
+        </Container>
+      );
     }
   }
 }

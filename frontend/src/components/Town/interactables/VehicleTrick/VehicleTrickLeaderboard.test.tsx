@@ -31,11 +31,12 @@ describe('[T4] Leaderboard', () => {
     { gameID: nanoid(), scores: { ['JOB']: 300 } },
     { gameID: nanoid(), scores: { ['JOB']: 500 } },
   ];
-  function checkRow(row: HTMLElement, player: string, high_score: number) {
+  function checkRow(row: HTMLElement, rank: number, player: string, high_score: number) {
     const columns = within(row).getAllByRole('gridcell');
-    expect(columns).toHaveLength(2);
-    expect(columns[0]).toHaveTextContent(player);
-    expect(columns[1]).toHaveTextContent(high_score.toString());
+    expect(columns).toHaveLength(3);
+    expect(columns[0]).toHaveTextContent(rank.toString());
+    expect(columns[1]).toHaveTextContent(player);
+    expect(columns[2]).toHaveTextContent(high_score.toString());
   }
   async function checkForTooltip(present: boolean) {
     if (present) {
@@ -66,9 +67,10 @@ describe('[T4] Leaderboard', () => {
   it('should render a table with the correct headers', () => {
     render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
     const headers = screen.getAllByRole('columnheader');
-    expect(headers).toHaveLength(2);
-    expect(headers[0]).toHaveTextContent('Player');
-    expect(headers[1]).toHaveTextContent('High Score');
+    expect(headers).toHaveLength(3);
+    expect(headers[0]).toHaveTextContent('Rank');
+    expect(headers[1]).toHaveTextContent('Player');
+    expect(headers[2]).toHaveTextContent('High Score');
   });
   describe('tooltip behaviors', () => {
     it('should have an interactable tooltip next to Player header (non-persistent storage)', async () => {
@@ -107,8 +109,8 @@ describe('[T4] Leaderboard', () => {
   it('should render the players in order of wins', () => {
     render(<VehicleTrickLeaderboard results={results} isPersistent={false} />);
     const rows = screen.getAllByRole('row');
-    checkRow(rows[1], 'SWE', 2000);
-    checkRow(rows[2], 'JOB', 500);
-    checkRow(rows[3], 'ABY', 100);
+    checkRow(rows[1], 1, 'SWE', 2000);
+    checkRow(rows[2], 2, 'JOB', 500);
+    checkRow(rows[3], 3, 'ABY', 100);
   });
 });
