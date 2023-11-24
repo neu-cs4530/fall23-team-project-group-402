@@ -10,11 +10,6 @@ import {
   ModalBody,
   Stack,
   useBoolean,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
-  Tabs,
   ModalHeader,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -111,40 +106,10 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
           </Text> */}
         </ModalHeader>
         <ModalBody bgColor={'lightblue'}>
-          <Tabs isFitted variant='line' mt={-10}>
-            <TabList>
-              <Tab
-                bgColor={'lightblue'}
-                _active={{ bgColor: 'lightblue' }}
-                _focus={{}}
-                textColor={'black'}
-                textAlign={'center'}
-                fontWeight={'medium'}
-                fontFamily={'fantasy'}
-                fontSize={15}>
-                Current Leaderboard
-              </Tab>
-              <Tab
-                bgColor={'lightblue'}
-                _active={{ bgColor: 'lightblue' }}
-                _focus={{}}
-                textColor={'black'}
-                textAlign={'center'}
-                fontWeight={'medium'}
-                fontFamily={'fantasy'}
-                fontSize={15}>
-                All Time Leaderboard
-              </Tab>
-            </TabList>
-            <TabPanels mt={-3}>
-              <TabPanel>
-                <VehicleTrickLeaderboard results={localHistory} isPersistent={false} />
-              </TabPanel>
-              <TabPanel>
-                <VehicleTrickLeaderboard results={persistentHistory} isPersistent={true} />
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+          <VehicleTrickLeaderboard
+            localResults={localHistory}
+            persistentResults={persistentHistory}
+          />
         </ModalBody>
       </>
     );
@@ -204,6 +169,8 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
             <Stack spacing={0} align={'center'}>
               <Button
                 variant={'ghost'}
+                name='leaderboard'
+                role={'leaderboard'}
                 _hover={{}}
                 alignContent={'center'}
                 width={1}
@@ -211,7 +178,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
                 _active={{ bgColor: 'blue.100' }}
                 _focus={{}}
                 mt={3}>
-                <TrophyIcon fontSize={100} />
+                <TrophyIcon fontSize={100} role={'leaderboard'} />
               </Button>
             </Stack>
           </Stack>
