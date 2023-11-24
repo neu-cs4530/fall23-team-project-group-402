@@ -48,18 +48,6 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
     throw new Error('Method should not be called within this component.');
   }
 
-  get moveCount(): number {
-    throw new Error('Method should not be called within this component.');
-  }
-
-  get winner(): PlayerController | undefined {
-    throw new Error('Method should not be called within this component.');
-  }
-
-  get whoseTurn(): PlayerController | undefined {
-    throw new Error('Method should not be called within this component.');
-  }
-
   get status(): GameStatus {
     throw new Error('Method should not be called within this component.');
   }
