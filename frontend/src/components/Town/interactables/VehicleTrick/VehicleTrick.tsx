@@ -1,4 +1,13 @@
-import { Box, Button, Container, Input, Text, Stack, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Container,
+  Input,
+  Text,
+  Stack,
+  useToast,
+  FormControl,
+} from '@chakra-ui/react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 
@@ -62,7 +71,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
 
     // Update the timer every second
     const timerInterval = setInterval(() => {
-      setSeconds(prevSeconds => prevSeconds - 0);
+      setSeconds(prevSeconds => prevSeconds - 1);
     }, 1000);
 
     // Clean up the interval on component unmount
@@ -108,27 +117,43 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   /**
    * View shown while the game is being played.
    */
-  function gameContent() {
+  function gameContent({ word }: { word: string }) {
     if (isPlayer) {
       return (
-        <Input
-          mt={4}
-          textAlign='center'
-          name='title'
-          value={input}
-          isDisabled={activeInput}
-          placeholder='type word here'
-          autoFocus
-          onChange={event => {
-            const targetValue = event.target.value;
-            if (onlyLetters(targetValue)) {
-              setInput(targetValue);
-            }
-            gameAreaController.enterWord(targetValue);
-          }}
-          variant='unstyled'
-          fontFamily={'cursive'}
-        />
+        <FormControl textAlign={'center'}>
+          <Box display='flex' justifyContent='center' alignItems='center' mt={5}>
+            {Array.from({ length: word.length }).map((_, index) => (
+              <Box key={index} style={{ marginLeft: '4px', marginRight: '4px' }}>
+                {input[index] || '_'}
+              </Box>
+            ))}
+          </Box>
+          <Input
+            mt={4}
+            maxLength={word.length}
+            textAlign='center'
+            name='title'
+            value={input}
+            isDisabled={activeInput}
+            autoFocus
+            onChange={event => {
+              const targetValue = event.target.value;
+              if (onlyLetters(targetValue)) {
+                setInput(targetValue);
+              }
+              gameAreaController.enterWord(targetValue);
+            }}
+            variant='unstyled'
+            fontFamily={'cursive'}
+            style={{
+              opacity: 1,
+              top: -40,
+              color: 'transparent',
+              width: `${word.length * 20}px`,
+              border: '1px solid black',
+            }}
+          />
+        </FormControl>
       );
     } else {
       return pleaseWait();
@@ -155,10 +180,10 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
         </Stack>
 
         <Box mt={14} textAlign='center' aria-label='tarsget-word'>
-          <Text fontFamily={'cursive'} fontWeight={'semibold'}>
+          <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={22}>
             {targetWord}
           </Text>
-          {gameContent()}
+          {gameContent({ word: targetWord })}
         </Box>
       </Container>
     );
@@ -167,32 +192,67 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
       return (
         <Container>
           <Box textAlign='center' aria-label='highscore'>
-            <b>Your Score: </b> {score}
+            <Text fontSize={24} fontWeight={'medium'} fontFamily={'fantasy'}>
+              Score: {score}
+            </Text>
           </Box>
-          <Box textAlign='center' mt={4}>
+          <Box textAlign='center' mt={8}>
             <Box>
-              <b>Enter Your Three-Letter Initials:</b>
-            </Box>
-            <Box>
-              <Input
-                mt={4}
-                textAlign='center'
-                name='initials'
-                placeholder='initials'
-                value={userInitials}
-                width={100}
-                onChange={handleInitialsChange}
-                variant='unstyled'
-              />
+              <FormControl textAlign={'center'}>
+                <Box
+                  display='flex'
+                  justifyContent='center'
+                  alignItems='center'
+                  mt={-4}
+                  fontFamily={'fantasy'}>
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <Box
+                      key={index}
+                      style={{ marginLeft: '6px', marginRight: '6px' }}
+                      fontSize={'36px'}>
+                      {userInitials[index] || '_'}
+                    </Box>
+                  ))}
+                </Box>
+                <Text mt={-1} fontSize={13} fontFamily={'fantasy'} fontWeight={'medium'}>
+                  Enter Your Initials
+                </Text>
+                <Input
+                  mt={7}
+                  textAlign='center'
+                  name='initials'
+                  value={userInitials}
+                  width={100}
+                  onChange={handleInitialsChange}
+                  variant='unstyled'
+                  maxLength={3}
+                  autoFocus
+                  fontFamily={'fantasy'}
+                  style={{
+                    opacity: 0,
+                    top: -88,
+                    color: 'transparent',
+                    width: `99px`,
+                    height: '35px',
+                    border: '2px solid black',
+                  }}
+                />
+              </FormControl>
             </Box>
             <Button
-              mt={4}
+              mt={-16}
               bg='lightblue'
               type='submit'
               onClick={handleClick}
               width={100}
               aria-label='submit'
-              _hover={{}}>
+              _hover={{}}
+              variant={'unstyled'}
+              _active={{ bgColor: 'blue.100' }}
+              _focus={{}}
+              fontFamily={'courier'}
+              fontSize={19}
+              fontWeight={'bold'}>
               Submit
             </Button>
           </Box>

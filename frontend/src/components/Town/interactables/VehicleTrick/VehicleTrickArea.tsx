@@ -9,9 +9,15 @@ import {
   useToast,
   ModalBody,
   Stack,
+  useBoolean,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  ModalHeader,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
-import PlayerController from '../../../../classes/PlayerController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
 import { GameResult, GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
@@ -19,6 +25,7 @@ import GameAreaInteractable from '../GameArea';
 import VehicleTrick from './VehicleTrick';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 import { TrophyIcon } from './TrophyIcon';
+import VehicleTrickLeaderboard from './VehicleTrickLeaderboard';
 
 /**
  * The VehicleTrickArea component renders the VehicleTrick game area.
@@ -44,9 +51,9 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     gameAreaController.persistentHistory,
   );
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
-  const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [canPlay, setCanPlay] = useState<boolean>(gameAreaController.canPlay);
   const [startingGame, setStartingGame] = useState(false);
+  const [leaderboardView, setLeaderboardView] = useBoolean();
   const toast = useToast();
 
   useEffect(() => {
@@ -54,7 +61,6 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     const updateGameState = () => {
       setLocalHistory(gameAreaController.localHistory);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
-      setObservers(gameAreaController.observers);
       setPersistentHistory(gameAreaController.persistentHistory);
       setCanPlay(gameAreaController.canPlay);
     };
@@ -77,8 +83,6 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   if (gameStatus === 'IN_PROGRESS') {
     return (
       <ModalBody
-        borderWidth={5}
-        borderColor={'gold'}
         bgImage={'./images/keydash.png'}
         bgColor={'lightblue'}
         maxHeight={'300'}
@@ -86,11 +90,71 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
         <VehicleTrick gameAreaController={gameAreaController} />
       </ModalBody>
     );
+  } else if (leaderboardView) {
+    return (
+      <>
+        <ModalHeader bgColor={'lightblue'}>
+          <Button
+            onClick={setLeaderboardView.toggle}
+            variant={'ghost'}
+            fontSize={12}
+            _hover={{}}
+            mt={-5}
+            ml={-6}
+            _active={{ bgColor: 'lightblue' }}
+            _focus={{}}
+            bgColor={'lightblue'}
+            textColor={'black'}
+            textAlign={'center'}
+            fontWeight={'bold'}
+            fontFamily={'courier'}>
+            Back
+          </Button>
+          {/* <Text as={'span'} fontFamily={'cursive'} ml={20}>
+            Leaderboard
+          </Text> */}
+        </ModalHeader>
+        <ModalBody bgColor={'lightblue'}>
+          <Tabs isFitted variant='line' mt={-10}>
+            <TabList>
+              <Tab
+                bgColor={'lightblue'}
+                _active={{ bgColor: 'lightblue' }}
+                _focus={{}}
+                textColor={'black'}
+                textAlign={'center'}
+                fontWeight={'medium'}
+                fontFamily={'fantasy'}
+                fontSize={15}>
+                Current Leaderboard
+              </Tab>
+              <Tab
+                bgColor={'lightblue'}
+                _active={{ bgColor: 'lightblue' }}
+                _focus={{}}
+                textColor={'black'}
+                textAlign={'center'}
+                fontWeight={'medium'}
+                fontFamily={'fantasy'}
+                fontSize={15}>
+                All Time Leaderboard
+              </Tab>
+            </TabList>
+            <TabPanels mt={-3}>
+              <TabPanel>
+                <VehicleTrickLeaderboard results={localHistory} isPersistent={false} />
+              </TabPanel>
+              <TabPanel>
+                <VehicleTrickLeaderboard results={persistentHistory} isPersistent={true} />
+              </TabPanel>
+            </TabPanels>
+          </Tabs>
+        </ModalBody>
+      </>
+    );
   } else {
     return (
       <ModalBody
-        borderWidth={5}
-        borderColor={'gold'}
         bgImage={'./images/keydash.png'}
         bgColor={'lightblue'}
         maxHeight={'300'}
@@ -135,12 +199,21 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
                 variant={'ghost'}
                 fontFamily={'courier'}
                 fontSize={19}
-                _hover={{}}>
-                Start Game
+                _hover={{}}
+                _active={{ bgColor: 'blue.100' }}
+                _focus={{}}>
+                START GAME
               </Button>
             </Stack>
             <Stack spacing={0} align={'center'}>
-              <Button variant={'ghost'} _hover={{}} alignContent={'center'} width={1}>
+              <Button
+                variant={'ghost'}
+                _hover={{}}
+                alignContent={'center'}
+                width={1}
+                onClick={setLeaderboardView.toggle}
+                _active={{ bgColor: 'blue.100' }}
+                _focus={{}}>
                 <TrophyIcon fontSize={75} />
               </Button>
             </Stack>
@@ -173,7 +246,7 @@ export default function VehicleTrickAreaWrapper(): JSX.Element {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
         <ModalOverlay bg={'none'} />
-        <ModalContent borderWidth={4} height={'308'} maxWidth={'418'} borderColor={'gold'}>
+        <ModalContent borderWidth={8} height={'308'} maxWidth={'416'} borderColor={'gold'}>
           <ModalCloseButton />
           <VehicleTrickArea interactableID={gameArea.name} />
         </ModalContent>
