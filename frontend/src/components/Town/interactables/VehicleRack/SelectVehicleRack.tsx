@@ -29,7 +29,8 @@ import { HorseIcon } from './HorseIcon';
 import { SkateboardHalfIcon } from './SkateboardHalfIcon';
 
 const OVERLAY_COLOR = 'transparent';
-const CARD_COLOR = '#BEE3F8';
+// const CARD_COLOR = '#BEE3F8';
+const CARD_COLOR = '#e5f3fc';
 const BORDER_CARD_COLOR_UNEQUIPPED = '#4299E1';
 const BORDER_CARD_COLOR_EQUIPPED = '#1A365D';
 const BUTTON_COLOR_UNEQUIPPED = '#4299E1';
@@ -195,6 +196,10 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
             rounded={'md'}
             overflow={'hidden'}
             borderWidth={3}
+            _hover={{
+              transform: 'translateY(-4px)',
+              boxShadow: 'lg',
+            }}
             borderColor={
               coveyTownController.ourPlayer.vehicle?.vehicleType === type
                 ? BORDER_CARD_COLOR_EQUIPPED
@@ -218,7 +223,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
                 mb={-2}
                 bgImage={'./images/bgimage.png'}
                 _hover={{
-                  transform: 'translateY(-2px)',
+                  transform: 'translateY(-4px)',
                   boxShadow: 'lg',
                 }}>
                 <Center height={'full'}>
@@ -337,18 +342,37 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
             label={TOOL_TIP_TEXT}
             placement='top-start'
             mr={5}
-            bgColor={CARD_COLOR}
+            bgColor={'white'}
             bgSize={10}
-            color={'darkblue'}>
-            <Text fontSize={24} fontFamily={'serif'} color={'white'}>
+            color={'black'}>
+            <Text fontSize={24} fontFamily={'serif'} color={'#e5f3fc'}>
               ⓘ
             </Text>
           </Tooltip>
-          <Text flex='1' fontSize={36} fontFamily={'cursive'} color={'white'} fontWeight={'medium'}>
+          <Text
+            flex='1'
+            fontSize={36}
+            fontFamily={'monospace'}
+            color={'#e5f3fc'}
+            fontWeight={'bold'}>
             Vehicle Rack
           </Text>
-          <Box width='25px' height='25px' borderWidth={2} borderRadius='full' mt={0} mr={6}>
-            <ModalCloseButton mt={5} mr={8} color={'white'} fontWeight={'bold'} _focus={{}} />
+          <Box
+            width='25px'
+            height='25px'
+            borderWidth={2}
+            borderRadius='full'
+            mt={0}
+            mr={6}
+            color={'#e5f3fc'}>
+            <ModalCloseButton
+              mt={5}
+              mr={8}
+              color={'white'}
+              fontWeight={'bold'}
+              _focus={{}}
+              color={'#e5f3fc'}
+            />
           </Box>
         </ModalHeader>
 
