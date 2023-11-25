@@ -21,6 +21,8 @@ import VehicleTrick from './VehicleTrick';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 import { TrophyIcon } from './TrophyIcon';
 import VehicleTrickLeaderboard from './VehicleTrickLeaderboard';
+import GameComponent from './Sprite';
+import PlayerSprite from './Sprite';
 
 /**
  * The VehicleTrickArea component renders the VehicleTrick game area.
@@ -187,6 +189,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
                 mt={3}>
                 <TrophyIcon fontSize={100} />
               </Button>
+              <PlayerSprite />
             </Stack>
           </Stack>
         </Center>

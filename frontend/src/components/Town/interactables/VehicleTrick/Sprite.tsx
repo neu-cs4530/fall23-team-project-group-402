@@ -22,7 +22,8 @@ class PhaserGame extends Phaser.Scene {
 
   create() {
     console.log('Create method called');
-    const player = this.add.sprite(200, 200, 'bike-atlas');
+    const player = this.add.sprite(100, 100, 'bike-atlas');
+    player.setScale(3);
     console.log('Sprite created:', player);
     const { anims } = this;
     anims.create({
@@ -54,6 +55,8 @@ const PlayerSprite: React.FC = () => {
       width: 400,
       height: 400,
       scene: PhaserGame,
+      parent: 'phaser-container',
+      transparent: true,
     };
 
     const game = new Phaser.Game(config);
@@ -71,10 +74,15 @@ const PlayerSprite: React.FC = () => {
         flex='1'
         textAlign='left'
         position='relative'
-        width='400px' // Adjust the width and height based on your game dimensions
-        height='400px'>
+        width='200px' // Adjust the width and height based on your game dimensions
+        height='200px'
+        borderColor={'red'}
+        borderWidth={10}
+        bgColor={'transparent'}
+        overflow='hidden' // Ensure the game container stays within the box
+      >
         {/* Phaser game container */}
-        <div id='phaser-container' />
+        <div id='phaser-container' style={{ width: '100%', height: '100%' }} />
       </Box>
     </ChakraProvider>
   );
