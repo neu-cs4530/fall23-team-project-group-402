@@ -10,6 +10,7 @@ import {
 } from '@chakra-ui/react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
+import PlayerSprite from './Sprite';
 
 export type VehicleTrickGameProps = {
   gameAreaController: VehicleTrickAreaController;
@@ -71,7 +72,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
 
     // Update the timer every second
     const timerInterval = setInterval(() => {
-      setSeconds(prevSeconds => prevSeconds - 1);
+      setSeconds(prevSeconds => prevSeconds - 0);
     }, 1000);
 
     // Clean up the interval on component unmount
@@ -197,6 +198,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
           </Text>
           {gameContent({ word: targetWord })}
         </Box>
+        <PlayerSprite />
       </Container>
     );
   } else {
