@@ -213,15 +213,15 @@ describe('VehicleTrickAreaController', () => {
       const controller = vehicleTrickAreaControllerWithProp({});
       expect(controller.canPlay).toBe(false);
     });
-    it('should return false if our player has a bike', () => {
+    it('should return true if our player has a bike', () => {
       ourPlayer.vehicle = { vehicleType: 'bike', speedMultiplier: 2 };
       const controller = vehicleTrickAreaControllerWithProp({});
-      expect(controller.canPlay).toBe(false);
+      expect(controller.canPlay).toBe(true);
     });
-    it('should return false if our player has a horse', () => {
+    it('should return true if our player has a horse', () => {
       ourPlayer.vehicle = { vehicleType: 'horse', speedMultiplier: 3 };
       const controller = vehicleTrickAreaControllerWithProp({});
-      expect(controller.canPlay).toBe(false);
+      expect(controller.canPlay).toBe(true);
     });
     it('should return true if our player has a skateboard', () => {
       ourPlayer.vehicle = { vehicleType: 'skateboard', speedMultiplier: 1.5 };
