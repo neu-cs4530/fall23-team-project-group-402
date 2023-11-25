@@ -176,7 +176,8 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
               <Button
                 variant={'ghost'}
                 name='leaderboard'
-                role={'leaderboard'}
+                aria-label={'leaderboard'}
+                role={'button'}
                 _hover={{}}
                 alignContent={'center'}
                 width={1}
@@ -184,7 +185,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
                 _active={{ bgColor: 'blue.100' }}
                 _focus={{}}
                 mt={3}>
-                <TrophyIcon fontSize={100} role={'leaderboard'} />
+                <TrophyIcon fontSize={100} />
               </Button>
             </Stack>
           </Stack>

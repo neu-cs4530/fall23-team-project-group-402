@@ -101,21 +101,21 @@ describe('[T4] Leaderboard', () => {
   });
   it('should render a row for each player and consolidate duplicates if database non-persistent', () => {
     render(<VehicleTrickLeaderboard localResults={results} persistentResults={[]} />);
-    const localTab = screen.getByText('Current Leaderboard');
+    const localTab = screen.getByText('Current');
     localTab.click();
     const rows = screen.getAllByRole('row');
     expect(rows).toHaveLength(4);
   });
   it('should render a row for each player and not consolidate duplicates if database persistent', () => {
     render(<VehicleTrickLeaderboard localResults={[]} persistentResults={results} />);
-    const persistentTab = screen.getByText('All Time Leaderboard');
+    const persistentTab = screen.getByText('All Time');
     persistentTab.click();
     const rows = screen.getAllByRole('row');
     expect(rows).toHaveLength(5);
   });
   it('should render the players in order of wins', () => {
     render(<VehicleTrickLeaderboard localResults={results} persistentResults={[]} />);
-    const localTab = screen.getByText('Current Leaderboard');
+    const localTab = screen.getByText('Current');
     localTab.click();
     const rows = screen.getAllByRole('row');
     checkRow(rows[1], 1, 'SWE', 2000);
