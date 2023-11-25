@@ -1,31 +1,25 @@
 import {
-  Accordion,
-  AccordionButton,
-  AccordionIcon,
-  AccordionItem,
-  AccordionPanel,
-  Box,
   Button,
   Center,
-  Container,
-  Heading,
-  List,
-  ListItem,
+  Text,
   Modal,
   ModalCloseButton,
   ModalContent,
-  ModalHeader,
   ModalOverlay,
   useToast,
+  ModalBody,
+  Stack,
+  useBoolean,
+  ModalHeader,
 } from '@chakra-ui/react';
 import React, { useCallback, useEffect, useState } from 'react';
-import PlayerController from '../../../../classes/PlayerController';
 import { useInteractable, useInteractableAreaController } from '../../../../classes/TownController';
 import useTownController from '../../../../hooks/useTownController';
 import { GameResult, GameStatus, InteractableID } from '../../../../types/CoveyTownSocket';
 import GameAreaInteractable from '../GameArea';
 import VehicleTrick from './VehicleTrick';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
+import { TrophyIcon } from './TrophyIcon';
 import VehicleTrickLeaderboard from './VehicleTrickLeaderboard';
 
 /**
@@ -52,9 +46,9 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     gameAreaController.persistentHistory,
   );
   const [gameStatus, setGameStatus] = useState<GameStatus>(gameAreaController.status);
-  const [observers, setObservers] = useState<PlayerController[]>(gameAreaController.observers);
   const [canPlay, setCanPlay] = useState<boolean>(gameAreaController.canPlay);
   const [startingGame, setStartingGame] = useState(false);
+  const [leaderboardView, setLeaderboardView] = useBoolean();
   const toast = useToast();
 
   useEffect(() => {
@@ -62,7 +56,6 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     const updateGameState = () => {
       setLocalHistory(gameAreaController.localHistory);
       setGameStatus(gameAreaController.status || 'WAITING_TO_START');
-      setObservers(gameAreaController.observers);
       setPersistentHistory(gameAreaController.persistentHistory);
       setCanPlay(gameAreaController.canPlay);
     };
@@ -83,85 +76,121 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   }, [townController, gameAreaController, toast]);
 
   if (gameStatus === 'IN_PROGRESS') {
-    return <VehicleTrick gameAreaController={gameAreaController} />;
+    return (
+      <ModalBody bgImage={'./images/keydash.png'} bgColor={'lightblue'} maxWidth={'full'}>
+        <VehicleTrick gameAreaController={gameAreaController} />
+      </ModalBody>
+    );
+  } else if (leaderboardView) {
+    return (
+      <>
+        <ModalHeader bgColor={'lightblue'} textAlign='center' display='flex' alignItems='center'>
+          <Button
+            onClick={setLeaderboardView.toggle}
+            variant={'ghost'}
+            fontSize={12}
+            _hover={{}}
+            mt={-5}
+            ml={-6}
+            _active={{ bgColor: 'lightblue' }}
+            _focus={{}}
+            bgColor={'lightblue'}
+            textColor={'black'}
+            textAlign={'center'}
+            fontWeight={'medium'}
+            fontFamily={'courier'}>
+            Back
+          </Button>
+          <Text
+            flex={'1'}
+            textColor={'black'}
+            textAlign={'center'}
+            fontWeight={'medium'}
+            fontFamily={'fantasy'}
+            ml={-10}>
+            Leaderboard
+          </Text>
+        </ModalHeader>
+        <ModalBody bgColor={'lightblue'}>
+          <VehicleTrickLeaderboard
+            localResults={localHistory}
+            persistentResults={persistentHistory}
+          />
+        </ModalBody>
+      </>
+    );
   } else {
     return (
-      <Container>
-        <Accordion allowToggle>
-          <AccordionItem>
-            <Heading as='h3'>
-              <AccordionButton>
-                <Box as='span' flex='1' textAlign='left'>
-                  All-Time Leaderboard
-                  <AccordionIcon />
-                </Box>
-              </AccordionButton>
-            </Heading>
-            <AccordionPanel>
-              <VehicleTrickLeaderboard results={persistentHistory} isPersistent={true} />
-            </AccordionPanel>
-          </AccordionItem>
-          <AccordionItem>
-            <Heading as='h3'>
-              <AccordionButton>
-                <Box as='span' flex='1' textAlign='left'>
-                  Local Leaderboard
-                  <AccordionIcon />
-                </Box>
-              </AccordionButton>
-            </Heading>
-            <AccordionPanel>
-              <VehicleTrickLeaderboard results={localHistory} isPersistent={false} />
-            </AccordionPanel>
-          </AccordionItem>
-          <AccordionItem>
-            <Heading as='h3'>
-              <AccordionButton>
-                <Box as='span' flex='1' textAlign='left'>
-                  Current Observers
-                  <AccordionIcon />
-                </Box>
-              </AccordionButton>
-            </Heading>
-            <AccordionPanel>
-              <List aria-label='list of observers in the game'>
-                {observers.map(currPlayer => {
-                  return <ListItem key={currPlayer.id}>{currPlayer.userName}</ListItem>;
-                })}
-              </List>
-            </AccordionPanel>
-          </AccordionItem>
-        </Accordion>
+      <ModalBody
+        bgImage={'./images/keydash.png'}
+        bgColor={'lightblue'}
+        maxHeight={'450'}
+        maxWidth={'full'}
+        textAlign={'center'}
+        fontSize={48}
+        fontWeight={'black'}
+        fontFamily={'cursive'}>
         <Center>
-          <Button
-            mt={4}
-            onClick={async () => {
-              if (canPlay) {
-                setStartingGame(true);
-                try {
-                  await gameAreaController.joinGame();
-                } catch (err) {
-                  toast({
-                    title: 'Error joining game',
-                    description: (err as Error).toString(),
-                    status: 'error',
-                  });
-                }
-                setStartingGame(false);
-              } else {
-                toast({
-                  title: 'Unable to Start Game',
-                  description: 'Player must have a vehicle equipped to start a game!',
-                  status: 'error',
-                });
-              }
-            }}
-            isLoading={startingGame}
-            disabled={startingGame}>
-            Start Game
-          </Button>
+          <Stack direction={'column'} spacing={5} justify={'center'} align={'center'}>
+            <Stack spacing={0} align={'center'}>
+              <Text mt={8} fontFamily={'cursive'}>
+                TricKey Typing
+              </Text>
+            </Stack>
+            <Stack spacing={0} align={'center'}>
+              <Button
+                mt={5}
+                onClick={async () => {
+                  if (canPlay) {
+                    setStartingGame(true);
+                    try {
+                      await gameAreaController.joinGame();
+                    } catch (err) {
+                      toast({
+                        title: 'Error joining game',
+                        description: (err as Error).toString(),
+                        status: 'error',
+                      });
+                    }
+                    setStartingGame(false);
+                  } else {
+                    toast({
+                      title: 'Unable to Start Game',
+                      description: 'Player must have a vehicle equipped to start a game!',
+                      status: 'error',
+                    });
+                  }
+                }}
+                isLoading={startingGame}
+                disabled={startingGame}
+                variant={'ghost'}
+                fontFamily={'courier'}
+                fontSize={28}
+                _hover={{}}
+                _active={{ bgColor: 'blue.100' }}
+                _focus={{}}>
+                START GAME
+              </Button>
+            </Stack>
+            <Stack spacing={0} align={'center'}>
+              <Button
+                variant={'ghost'}
+                name='leaderboard'
+                aria-label={'leaderboard'}
+                role={'button'}
+                _hover={{}}
+                alignContent={'center'}
+                width={1}
+                onClick={setLeaderboardView.toggle}
+                _active={{ bgColor: 'blue.100' }}
+                _focus={{}}
+                mt={3}>
+                <TrophyIcon fontSize={100} />
+              </Button>
+            </Stack>
+          </Stack>
         </Center>
-      </Container>
+      </ModalBody>
     );
   }
 }
@@ -187,11 +216,10 @@ export default function VehicleTrickAreaWrapper(): JSX.Element {
   if (gameArea && gameArea.getData('type') === 'VehicleTrick') {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>{gameArea.name}</ModalHeader>
+        <ModalOverlay bg={'none'} />
+        <ModalContent borderWidth={8} height={'458'} maxWidth={'616'} borderColor={'gold'}>
           <ModalCloseButton />
-          <VehicleTrickArea interactableID={gameArea.name} />;
+          <VehicleTrickArea interactableID={gameArea.name} />
         </ModalContent>
       </Modal>
     );

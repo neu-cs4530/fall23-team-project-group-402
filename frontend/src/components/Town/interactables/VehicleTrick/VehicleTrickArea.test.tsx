@@ -40,8 +40,8 @@ const useInteractableAreaControllerSpy = jest.spyOn(
 const leaderboardComponentSpy = jest.spyOn(VehicleTrickLeaderboard, 'default');
 leaderboardComponentSpy.mockReturnValue(<div data-testid='leaderboard' />);
 
-const boardComponentSpy = jest.spyOn(VehicleTrick, 'default');
-boardComponentSpy.mockReturnValue(<div data-testid='board' />);
+const trickComponentSpy = jest.spyOn(VehicleTrick, 'default');
+trickComponentSpy.mockReturnValue(<div data-testid='trick' />);
 
 const randomLocation = (): PlayerLocation => ({
   moving: Math.random() < 0.5,
@@ -63,22 +63,24 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
 
   mockIsActive = false;
 
-  mockHistory: GameResult[] = [];
+  mockLocalHistory: GameResult[] = [];
+
+  mockPersistentHistory: GameResult[] = [];
 
   public constructor() {
     super(nanoid(), mock<GameArea<VehicleTrickGameState>>(), mock<TownController>());
   }
 
-  get localHistory(): GameResult[] {
-    return this.mockHistory;
-  }
-
-  get observers(): PlayerController[] {
-    return this.mockObservers;
-  }
-
   get status(): GameStatus {
     return this.mockStatus;
+  }
+
+  get localHistory(): GameResult[] {
+    return this.mockLocalHistory;
+  }
+
+  get persistentHistory(): GameResult[] {
+    return this.mockPersistentHistory;
   }
 
   get isPlayer() {
@@ -221,42 +223,91 @@ describe('VehicleTrickArea', () => {
     });
   });
   describe('Rendering the local leaderboard', () => {
+    it('Renders the leaderboard button', () => {
+      renderVehicleTrickArea();
+      expect(screen.getByLabelText('leaderboard')).toBeInTheDocument();
+    });
+    it('Renders the leaderboard when the button is clicked', () => {
+      renderVehicleTrickArea();
+      const button = screen.getByLabelText('leaderboard');
+      fireEvent.click(button);
+      expect(leaderboardComponentSpy).toHaveBeenCalled();
+    });
+    it('Does not render the leaderboard when the button is clicked if the leaderboard is already displayed', () => {
+      renderVehicleTrickArea();
+      const button = screen.getByLabelText('leaderboard');
+      fireEvent.click(button);
+      expect(leaderboardComponentSpy).toHaveBeenCalled();
+      fireEvent.click(button);
+      expect(leaderboardComponentSpy).toHaveBeenCalledTimes(1);
+      expect(button).not.toBeInTheDocument();
+    });
+    it('Does not render the leaderboard if the start game button is clicked', () => {
+      gameAreaController.mockStatus = 'WAITING_TO_START';
+      gameAreaController.mockIsPlayer = false;
+      renderVehicleTrickArea();
+      const startButton = screen.getByText('START GAME');
+      fireEvent.click(startButton);
+      expect(leaderboardComponentSpy).not.toHaveBeenCalled();
+    });
     it('Renders the leaderboard with the history when the component is mounted', () => {
-      gameAreaController.mockHistory = [
+      gameAreaController.mockLocalHistory = [
         {
           gameID: nanoid(),
           scores: { [nanoid()]: 100 },
         },
       ];
+      gameAreaController.mockPersistentHistory = [
+        {
+          gameID: nanoid(),
+          scores: { [nanoid()]: 200 },
+        },
+      ];
       renderVehicleTrickArea();
+      const button = screen.getByLabelText('leaderboard');
+      fireEvent.click(button);
       expect(leaderboardComponentSpy).toHaveBeenCalledWith(
         {
-          results: gameAreaController.mockHistory,
-          isPersistent: false,
+          localResults: gameAreaController.mockLocalHistory,
+          persistentResults: gameAreaController.mockPersistentHistory,
         },
         {},
       );
     });
     it('Renders the leaderboard with the history when the game is updated', () => {
-      gameAreaController.mockHistory = [
+      gameAreaController.mockLocalHistory = [
         {
           gameID: nanoid(),
           scores: { [nanoid()]: 100 },
         },
       ];
+      gameAreaController.mockPersistentHistory = [
+        {
+          gameID: nanoid(),
+          scores: { [nanoid()]: 300 },
+        },
+      ];
       renderVehicleTrickArea();
+      const button = screen.getByLabelText('leaderboard');
+      fireEvent.click(button);
       expect(leaderboardComponentSpy).toHaveBeenCalledWith(
         {
-          results: gameAreaController.mockHistory,
-          isPersistent: false,
+          localResults: gameAreaController.mockLocalHistory,
+          persistentResults: gameAreaController.mockPersistentHistory,
         },
         {},
       );
 
-      gameAreaController.mockHistory = [
+      gameAreaController.mockLocalHistory = [
         {
           gameID: nanoid(),
-          scores: { [nanoid()]: 200 },
+          scores: { [nanoid()]: 500 },
+        },
+      ];
+      gameAreaController.mockPersistentHistory = [
+        {
+          gameID: nanoid(),
+          scores: { [nanoid()]: 400 },
         },
       ];
       act(() => {
@@ -264,8 +315,8 @@ describe('VehicleTrickArea', () => {
       });
       expect(leaderboardComponentSpy).toHaveBeenCalledWith(
         {
-          results: gameAreaController.mockHistory,
-          isPersistent: false,
+          localResults: gameAreaController.mockLocalHistory,
+          persistentResults: gameAreaController.mockPersistentHistory,
         },
         {},
       );
@@ -276,20 +327,20 @@ describe('VehicleTrickArea', () => {
       gameAreaController.mockStatus = 'IN_PROGRESS';
       gameAreaController.mockIsPlayer = false;
       renderVehicleTrickArea();
-      expect(screen.queryByText('Start Game')).not.toBeInTheDocument();
+      expect(screen.queryByText('START GAME')).not.toBeInTheDocument();
     });
     it('Is shown when the game is not in progress', () => {
       gameAreaController.mockStatus = 'WAITING_TO_START';
       gameAreaController.mockIsPlayer = false;
       renderVehicleTrickArea();
-      expect(screen.queryByText('Start Game')).toBeInTheDocument();
+      expect(screen.queryByText('START GAME')).toBeInTheDocument();
     });
     describe('When clicked', () => {
       it('Calls joinGame on the gameAreaController', () => {
         gameAreaController.mockStatus = 'WAITING_TO_START';
         gameAreaController.mockIsPlayer = false;
         renderVehicleTrickArea();
-        const button = screen.getByText('Start Game');
+        const button = screen.getByText('START GAME');
         fireEvent.click(button);
         setTimeout(async () => {
           expect(gameAreaController.joinGame).toBeCalled();
@@ -300,7 +351,7 @@ describe('VehicleTrickArea', () => {
         gameAreaController.mockIsPlayer = false;
         const errorMessage = nanoid();
         renderVehicleTrickArea();
-        const button = screen.getByText('Start Game');
+        const button = screen.getByText('START GAME');
         fireEvent.click(button);
         setTimeout(async () => {
           expect(gameAreaController.joinGame).toBeCalled();
@@ -321,7 +372,7 @@ describe('VehicleTrickArea', () => {
         gameAreaController.mockStatus = 'WAITING_TO_START';
         gameAreaController.mockIsPlayer = false;
         renderVehicleTrickArea();
-        const button = screen.getByText('Start Game');
+        const button = screen.getByText('START GAME');
         expect(button).toBeEnabled();
         expect(within(button).queryByText('Loading...')).not.toBeInTheDocument(); //Check that the loading text is not displayed
         fireEvent.click(button);
@@ -341,61 +392,23 @@ describe('VehicleTrickArea', () => {
       gameAreaController.mockStatus = 'IN_PROGRESS';
       gameAreaController.mockIsPlayer = false;
       renderVehicleTrickArea();
-      expect(screen.queryByText('Start Game')).not.toBeInTheDocument();
+      expect(screen.queryByText('START GAME')).not.toBeInTheDocument();
       act(() => {
         gameAreaController.mockStatus = 'OVER';
         gameAreaController.emit('gameUpdated');
       });
-      expect(screen.queryByText('Start Game')).toBeInTheDocument();
+      expect(screen.queryByText('START GAME')).toBeInTheDocument();
     });
     it('Removes the display of the button when a game becomes no longer possible to join', () => {
       gameAreaController.mockStatus = 'WAITING_TO_START';
       gameAreaController.mockIsPlayer = false;
       renderVehicleTrickArea();
-      expect(screen.queryByText('Start Game')).toBeInTheDocument();
+      expect(screen.queryByText('START GAME')).toBeInTheDocument();
       act(() => {
         gameAreaController.mockStatus = 'IN_PROGRESS';
         gameAreaController.emit('gameUpdated');
       });
-      expect(screen.queryByText('Start Game')).not.toBeInTheDocument();
-    });
-  });
-  describe('Rendering the current observers', () => {
-    beforeEach(() => {
-      gameAreaController.mockObservers = [
-        new PlayerController('player 1', 'player 1', randomLocation(), undefined),
-        new PlayerController('player 2', 'player 2', randomLocation(), undefined),
-        new PlayerController('player 3', 'player 3', randomLocation(), undefined),
-      ];
-      gameAreaController.mockStatus = 'WAITING_TO_START';
-      gameAreaController.mockIsPlayer = false;
-    });
-    it('Displays the correct observers when the component is mounted', () => {
-      renderVehicleTrickArea();
-      const observerList = screen.getByLabelText('list of observers in the game');
-      const observerItems = observerList.querySelectorAll('li');
-      expect(observerItems).toHaveLength(gameAreaController.mockObservers.length);
-      for (let i = 0; i < observerItems.length; i++) {
-        expect(observerItems[i]).toHaveTextContent(gameAreaController.mockObservers[i].userName);
-      }
-    });
-    it('Displays the correct observers when the game is updated', () => {
-      renderVehicleTrickArea();
-      act(() => {
-        gameAreaController.mockObservers = [
-          new PlayerController('player 1', 'player 1', randomLocation(), undefined),
-          new PlayerController('player 2', 'player 2', randomLocation(), undefined),
-          new PlayerController('player 3', 'player 3', randomLocation(), undefined),
-          new PlayerController('player 4', 'player 4', randomLocation(), undefined),
-        ];
-        gameAreaController.emit('gameUpdated');
-      });
-      const observerList = screen.getByLabelText('list of observers in the game');
-      const observerItems = observerList.querySelectorAll('li');
-      expect(observerItems).toHaveLength(gameAreaController.mockObservers.length);
-      for (let i = 0; i < observerItems.length; i++) {
-        expect(observerItems[i]).toHaveTextContent(gameAreaController.mockObservers[i].userName);
-      }
+      expect(screen.queryByText('START GAME')).not.toBeInTheDocument();
     });
   });
 });
