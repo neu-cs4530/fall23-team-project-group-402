@@ -28,14 +28,15 @@ import { SkateboardIcon } from './SkateboardIcon';
 import { HorseIcon } from './HorseIcon';
 import { SkateboardHalfIcon } from './SkateboardHalfIcon';
 
-const OVERLAY_COLOR = '#EBF8FF';
+const OVERLAY_COLOR = 'transparent';
 const CARD_COLOR = '#BEE3F8';
-const BORDER_CARD_COLOR = '#1A365D';
-const BORDER_CARD_COLOR_SELECTED = 'gold';
+const BORDER_CARD_COLOR_UNEQUIPPED = '#4299E1';
+const BORDER_CARD_COLOR_EQUIPPED = '#1A365D';
 const BUTTON_COLOR_UNEQUIPPED = '#4299E1';
-const BUTTON_COLOR_EQUIPPED = '#000000';
+const BUTTON_COLOR_EQUIPPED = '#1A365D';
 const TOOL_TIP_TEXT =
   'Select a vehicle to move around town faster. You will also become eligible to play the typing minigame!';
+const OVERLAY_BORDER_COLOR = '#1A365D';
 
 export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackArea }): JSX.Element {
   const coveyTownController = useTownController();
@@ -194,11 +195,17 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
             rounded={'md'}
             overflow={'hidden'}
             borderWidth={3}
-            borderColor={selectedVehicle === type ? BORDER_CARD_COLOR_SELECTED : BORDER_CARD_COLOR}>
+            borderColor={
+              coveyTownController.ourPlayer.vehicle?.vehicleType === type
+                ? BORDER_CARD_COLOR_EQUIPPED
+                : BORDER_CARD_COLOR_UNEQUIPPED
+            }>
             <Center>
               <Box
                 borderColor={
-                  selectedVehicle === type ? BORDER_CARD_COLOR_SELECTED : BORDER_CARD_COLOR
+                  coveyTownController.ourPlayer.vehicle?.vehicleType === type
+                    ? BORDER_CARD_COLOR_EQUIPPED
+                    : BORDER_CARD_COLOR_UNEQUIPPED
                 }
                 rounded={'md'}
                 borderWidth={3}
@@ -319,14 +326,32 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
         coveyTownController.unPause();
       }}>
       <ModalOverlay bgSize={'cover'} />
-      <ModalContent minHeight={200} minWidth={400} maxW='1000px' bgColor={OVERLAY_COLOR}>
-        <ModalHeader ml={5}>
-          <Tooltip defaultIsOpen={false} label={TOOL_TIP_TEXT} placement='top-start' mr={'5'}>
-            ⓘ
+      <ModalContent
+        minHeight={200}
+        maxW='1000px'
+        bgColor={OVERLAY_COLOR}
+        borderColor={OVERLAY_BORDER_COLOR}>
+        <ModalHeader ml={5} textAlign={'center'} display='flex' alignItems='center'>
+          <Tooltip
+            defaultIsOpen={false}
+            label={TOOL_TIP_TEXT}
+            placement='top-start'
+            mr={5}
+            bgColor={CARD_COLOR}
+            bgSize={10}
+            color={'darkblue'}>
+            <Text fontSize={24} fontFamily={'serif'} color={'white'}>
+              ⓘ
+            </Text>
           </Tooltip>
-          Vehicle Rack
+          <Text flex='1' fontSize={36} fontFamily={'cursive'} color={'white'} fontWeight={'medium'}>
+            Vehicle Rack
+          </Text>
+          <Box width='25px' height='25px' borderWidth={2} borderRadius='full' mt={0} mr={6}>
+            <ModalCloseButton mt={5} mr={8} color={'white'} fontWeight={'bold'} _focus={{}} />
+          </Box>
         </ModalHeader>
-        <ModalCloseButton />
+
         <ModalBody pb={6}>
           <SimpleGrid columns={{ base: 1, md: 3 }} spacing={2}>
             {vehicles.map(vehicleEnum => (
