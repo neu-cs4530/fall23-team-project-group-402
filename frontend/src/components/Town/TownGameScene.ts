@@ -352,25 +352,6 @@ export default class TownGameScene extends Phaser.Scene {
   }
 
   create() {
-    console.log('Create method called');
-    const player = this.add.sprite(3182, 873, 'bike-atlas');
-    console.log('Sprite created:', player);
-    const { anims } = this;
-    anims.create({
-      key: `walk`,
-      frames: anims.generateFrameNames(`bike-atlas`, {
-        prefix: `bike-trick-1.`,
-        start: 0,
-        end: 10,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: 0,
-    });
-    console.log('Animation created');
-    player.anims.play('walk', true);
-    console.log('Animation played');
-
     this._map = this.make.tilemap({ key: 'map' });
 
     /* Parameters are the name you gave the tileset in Tiled and then the key of the

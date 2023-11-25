@@ -7,6 +7,7 @@ import {
   Stack,
   useToast,
   FormControl,
+  Center,
 } from '@chakra-ui/react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
@@ -14,6 +15,7 @@ import PlayerSprite from './Sprite';
 
 export type VehicleTrickGameProps = {
   gameAreaController: VehicleTrickAreaController;
+  vehicleType: string | undefined;
 };
 
 /**
@@ -31,7 +33,10 @@ export type VehicleTrickGameProps = {
  *
  * @param gameAreaController the controller for the VehicleTrick game
  */
-export default function VehicleTrick({ gameAreaController }: VehicleTrickGameProps): JSX.Element {
+export default function VehicleTrick({
+  gameAreaController,
+  vehicleType,
+}: VehicleTrickGameProps): JSX.Element {
   const [input, setInput] = useState<string>('');
   const [seconds, setSeconds] = useState(15);
   const [score, setScore] = useState(0);
@@ -176,29 +181,36 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   if (!activeInput) {
     return (
       <Container>
-        <Stack
-          direction={'row'}
-          spacing={20}
-          fontWeight={'bold'}
-          fontFamily={'fantasy'}
-          fontSize={24}
-          justify={'center'}
-          mt={2}>
-          <Stack align={'center'}>
-            <Text aria-label='timer'>{seconds} Seconds</Text>
+        <Center>
+          <Stack direction={'column'} spacing={5} justify={'center'} align={'center'}>
+            <Stack
+              direction={'row'}
+              spacing={20}
+              fontWeight={'bold'}
+              fontFamily={'fantasy'}
+              fontSize={24}
+              justify={'center'}
+              mt={2}>
+              <Stack align={'center'}>
+                <Text aria-label='timer'>{seconds} Seconds</Text>
+              </Stack>
+              <Stack align={'center'}>
+                <Text aria-label='score'>Score: {score} </Text>
+              </Stack>
+            </Stack>
+            <Stack align={'cente'}>
+              <Box mt={16} textAlign='center' aria-label='target-word'>
+                <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={33}>
+                  {targetWord}
+                </Text>
+                {gameContent({ word: targetWord })}
+              </Box>
+            </Stack>
+            <Stack align={'center'} mt={-100}>
+              <PlayerSprite vehicleType={vehicleType} />
+            </Stack>
           </Stack>
-          <Stack align={'center'}>
-            <Text aria-label='score'>Score: {score} </Text>
-          </Stack>
-        </Stack>
-
-        <Box mt={16} textAlign='center' aria-label='target-word'>
-          <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={33}>
-            {targetWord}
-          </Text>
-          {gameContent({ word: targetWord })}
-        </Box>
-        <PlayerSprite />
+        </Center>
       </Container>
     );
   } else {

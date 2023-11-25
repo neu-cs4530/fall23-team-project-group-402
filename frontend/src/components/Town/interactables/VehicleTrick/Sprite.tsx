@@ -1,53 +1,71 @@
 import React, { useEffect } from 'react';
-import { ChakraProvider, Box, extendTheme } from '@chakra-ui/react';
+import { Box } from '@chakra-ui/react';
 import Phaser from 'phaser';
 
-const theme = extendTheme({
-  // Your Chakra UI theme configuration
-});
-
 class PhaserGame extends Phaser.Scene {
-  constructor() {
+  vehicleType: string | undefined;
+
+  player: Phaser.GameObjects.Sprite | undefined;
+
+  constructor(vehicleType: string | undefined) {
     super({ key: 'PhaserGame' });
+    this.vehicleType = vehicleType;
+    this.player = undefined;
   }
 
   preload() {
-    // Load your sprite and animation
-    this.load.atlas(
-      'bike-atlas',
-      './assets/atlas/bike-atlas.png',
-      './assets/atlas/bike-atlas.json',
-    );
+    if (this.vehicleType) {
+      this.load.atlas(
+        `${this.vehicleType}-atlas`,
+        `./assets/atlas/${this.vehicleType}-atlas.png`,
+        `./assets/atlas/${this.vehicleType}-atlas.json`,
+      );
+    }
+  }
+
+  createTrickAnimations(numTricks: number, numFrames: number) {
+    const { anims } = this;
+    for (let i = 1; i <= numTricks; i++) {
+      anims.create({
+        key: `${this.vehicleType}-trick-${i}`,
+        frames: anims.generateFrameNames(`${this.vehicleType}-atlas`, {
+          prefix: `${this.vehicleType}-trick-${i}.`,
+          start: 0,
+          end: numFrames,
+          zeroPad: 3,
+        }),
+        frameRate: 10,
+        repeat: 0,
+      });
+    }
   }
 
   create() {
-    console.log('Create method called');
-    const player = this.add.sprite(100, 100, 'bike-atlas');
-    player.setScale(3);
-    console.log('Sprite created:', player);
-    const { anims } = this;
-    anims.create({
-      key: `walk`,
-      frames: anims.generateFrameNames(`bike-atlas`, {
-        prefix: `bike-trick-1.`,
-        start: 0,
-        end: 10,
-        zeroPad: 3,
-      }),
-      frameRate: 10,
-      repeat: 0,
-    });
-    console.log('Animation created');
-    player.anims.play('walk', true);
-    console.log('Animation played');
+    const player = this.add.sprite(88, 50, `${this.vehicleType}-atlas`);
+    player.setScale(1.9);
+    if (this.vehicleType === 'bike') {
+      this.createTrickAnimations(1, 10);
+      player.setY(99);
+    } else if (this.vehicleType === 'skateboard') {
+      this.createTrickAnimations(3, 9);
+      player.setY(99);
+    } else if (this.vehicleType === 'horse') {
+      this.createTrickAnimations(1, 10);
+      player.setY(78);
+    }
+    player.anims.play(`${this.vehicleType}-trick-1`, true);
+
+    this.player = player;
   }
 
-  update() {
-    // Update logic
+  update(): void {
+    // if (this.player) {
+    //   this.player.anims.play(`${this.vehicleType}-trick-1`, true);
+    // }
   }
 }
 
-const PlayerSprite: React.FC = () => {
+const PlayerSprite: React.FC<{ vehicleType: string | undefined }> = ({ vehicleType }) => {
   useEffect(() => {
     // Phaser game initialization
     const config: Phaser.Types.Core.GameConfig = {
@@ -56,35 +74,34 @@ const PlayerSprite: React.FC = () => {
       height: 400,
       scene: PhaserGame,
       parent: 'phaser-container',
-      transparent: true,
+      transparent: true, // Set the parent container ID
     };
 
     const game = new Phaser.Game(config);
+    const newGameScene = new PhaserGame(vehicleType);
+    game.scene.add('sprite', newGameScene, true);
 
     // Cleanup Phaser game on component unmount
     return () => {
       game.destroy(true);
     };
-  }, []); // Empty dependency array to run the effect only once on mount
+  }); // Empty dependency array to run the effect only once on mount
 
   return (
-    <ChakraProvider theme={theme}>
-      <Box
-        as='span'
-        flex='1'
-        textAlign='left'
-        position='relative'
-        width='200px' // Adjust the width and height based on your game dimensions
-        height='200px'
-        borderColor={'red'}
-        borderWidth={10}
-        bgColor={'transparent'}
-        overflow='hidden' // Ensure the game container stays within the box
-      >
-        {/* Phaser game container */}
-        <div id='phaser-container' style={{ width: '100%', height: '100%' }} />
-      </Box>
-    </ChakraProvider>
+    <Box
+      as='span'
+      flex='1'
+      textAlign='left'
+      width='200px' // Adjust the width and height based on your game dimensions
+      maxHeight='160px'
+      mt={-45}
+      borderColor={'red'}
+      borderWidth={0}
+      overflow='hidden' // Ensure the game container stays within the box
+    >
+      {/* Phaser game container */}
+      <div id='phaser-container' style={{ width: '100%', height: '100%' }} />
+    </Box>
   );
 };
 

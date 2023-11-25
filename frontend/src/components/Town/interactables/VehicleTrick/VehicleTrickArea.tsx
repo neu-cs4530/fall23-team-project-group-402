@@ -21,7 +21,6 @@ import VehicleTrick from './VehicleTrick';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 import { TrophyIcon } from './TrophyIcon';
 import VehicleTrickLeaderboard from './VehicleTrickLeaderboard';
-import GameComponent from './Sprite';
 import PlayerSprite from './Sprite';
 
 /**
@@ -43,6 +42,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     useInteractableAreaController<VehicleTrickAreaController>(interactableID);
   const townController = useTownController();
 
+  const ourVehicle = townController.ourPlayer.vehicle?.vehicleType;
   const [localHistory, setLocalHistory] = useState<GameResult[]>(gameAreaController.localHistory);
   const [persistentHistory, setPersistentHistory] = useState<GameResult[]>(
     gameAreaController.persistentHistory,
@@ -80,7 +80,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   if (gameStatus === 'IN_PROGRESS') {
     return (
       <ModalBody bgImage={'./images/emptyramp.png'} bgColor={'lightblue'} maxWidth={'full'}>
-        <VehicleTrick gameAreaController={gameAreaController} />
+        <VehicleTrick gameAreaController={gameAreaController} vehicleType={ourVehicle} />
       </ModalBody>
     );
   } else if (leaderboardView) {
@@ -189,7 +189,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
                 mt={3}>
                 <TrophyIcon fontSize={100} />
               </Button>
-              <PlayerSprite />
+              {/* <PlayerSprite vehicleType={townController.ourPlayer.vehicle?.vehicleType} /> */}
             </Stack>
           </Stack>
         </Center>
