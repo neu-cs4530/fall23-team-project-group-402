@@ -263,7 +263,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
               variant={'unstyled'}
               _active={{ color: 'blue.800' }}
               _focus={{}}
-              fontFamily={'georgia'}
+              fontFamily={'fantasy'}
               fontSize={19}
               fontWeight={'medium'}>
               Submit

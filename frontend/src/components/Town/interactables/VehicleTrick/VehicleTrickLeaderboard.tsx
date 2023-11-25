@@ -6,6 +6,7 @@ import {
   TabPanel,
   TabPanels,
   Tabs,
+  Text,
   Tbody,
   Td,
   Th,
@@ -191,7 +192,7 @@ export default function VehicleTrickLeaderboard({
   }
 
   return (
-    <Tabs isFitted variant='line' mt={-10}>
+    <Tabs isFitted variant='line' mt={-5}>
       <TabList>
         <Tab
           bgColor={'lightblue'}
@@ -202,13 +203,15 @@ export default function VehicleTrickLeaderboard({
           fontWeight={'medium'}
           fontFamily={'fantasy'}
           fontSize={15}>
-          Current Leaderboard
           <Tooltip
             label={localLeaderboardTooltip}
             placement='bottom-start'
             aria-label='local-tooltip'>
             ⓘ
           </Tooltip>
+          <Text as={'span'} ml={2}>
+            Current
+          </Text>
         </Tab>
         <Tab
           bgColor={'lightblue'}
@@ -219,13 +222,15 @@ export default function VehicleTrickLeaderboard({
           fontWeight={'medium'}
           fontFamily={'fantasy'}
           fontSize={15}>
-          All Time Leaderboard
           <Tooltip
             label={persistentLeaderboardTooltip}
             placement='bottom-start'
             aria-label='local-tooltip'>
             ⓘ
           </Tooltip>
+          <Text as={'span'} ml={2}>
+            All Time
+          </Text>
         </Tab>
       </TabList>
       <TabPanels mt={-3}>

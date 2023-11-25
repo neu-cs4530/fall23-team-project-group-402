@@ -84,7 +84,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   } else if (leaderboardView) {
     return (
       <>
-        <ModalHeader bgColor={'lightblue'}>
+        <ModalHeader bgColor={'lightblue'} textAlign='center' display='flex' alignItems='center'>
           <Button
             onClick={setLeaderboardView.toggle}
             variant={'ghost'}
@@ -101,9 +101,15 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
             fontFamily={'courier'}>
             Back
           </Button>
-          {/* <Text as={'span'} fontFamily={'cursive'} ml={20}>
+          <Text
+            flex={'1'}
+            textColor={'black'}
+            textAlign={'center'}
+            fontWeight={'medium'}
+            fontFamily={'fantasy'}
+            ml={-10}>
             Leaderboard
-          </Text> */}
+          </Text>
         </ModalHeader>
         <ModalBody bgColor={'lightblue'}>
           <VehicleTrickLeaderboard
