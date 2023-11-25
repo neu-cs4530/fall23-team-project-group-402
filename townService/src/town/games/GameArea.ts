@@ -17,21 +17,28 @@ export default abstract class GameArea<
 > extends InteractableArea {
   protected _game?: GameType;
 
-  protected _history: GameResult[] = [];
+  protected _localHistory: GameResult[] = [];
+
+  protected _persistentHistory: GameResult[] = [];
 
   public get game(): GameType | undefined {
     return this._game;
   }
 
-  public get history(): GameResult[] {
-    return this._history;
+  public get localHistory(): GameResult[] {
+    return this._localHistory;
+  }
+
+  public get persistentHistory(): GameResult[] {
+    return this._persistentHistory;
   }
 
   public toModel(): GameAreaModel<GameType['state']> {
     return {
       id: this.id,
       game: this._game?.toModel(),
-      history: this._history,
+      localHistory: this._localHistory,
+      persistentHistory: this._persistentHistory,
       occupants: this.occupantsByID,
       type: this.getType(),
     };

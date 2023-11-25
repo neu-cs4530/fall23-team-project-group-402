@@ -97,7 +97,7 @@ class MockTicTacToeAreaController extends TicTacToeAreaController {
     throw new Error('Method should not be called within this component.');
   }
 
-  get history(): GameResult[] {
+  get localHistory(): GameResult[] {
     return this.mockHistory;
   }
 

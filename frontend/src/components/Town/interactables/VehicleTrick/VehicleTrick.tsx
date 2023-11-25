@@ -25,7 +25,8 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   const [input, setInput] = useState<string>('');
   const [seconds, setSeconds] = useState(15);
   const [score, setScore] = useState(0);
-  const [targetWord, setTargetWord] = useState('');
+  const [isPlayer, setIsPlayer] = useState(gameAreaController.isPlayer);
+  const [targetWord, setTargetWord] = useState(gameAreaController.currentWord);
   const [activeInput, setActiveInput] = useState(false);
   const [userInitials, setUserInitials] = useState('');
   const toast = useToast();
@@ -36,22 +37,24 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
       setInput('');
     };
 
+    const updateIsPlayer = () => {
+      setIsPlayer(gameAreaController.isPlayer);
+    };
+
     gameAreaController.addListener('scoreChanged', setScore);
     gameAreaController.addListener('targetWordChanged', updateTargetWord);
+    gameAreaController.addListener('gameUpdated', updateIsPlayer);
+
     return () => {
       gameAreaController.removeListener('scoreChanged', setScore);
       gameAreaController.removeListener('targetWordChanged', updateTargetWord);
+      gameAreaController.removeListener('gameUpdated', updateIsPlayer);
     };
   }, [gameAreaController]);
 
   useEffect(() => {
     // Exit the useEffect if the timer reaches 0
     if (seconds === 0) {
-      toast({
-        title: 'Game over',
-        description: 'Time has concluded',
-        status: 'success',
-      });
       setInput('');
       setActiveInput(true);
       return;
@@ -79,27 +82,35 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   };
 
   function handleClick(event: { preventDefault: () => void }) {
-    event.preventDefault(); // magic, sorry.
-
-    toast({
-      title: 'Acknowledgement',
-      description: 'User Initials have been acknowledged',
-      status: 'success',
-    });
+    event.preventDefault();
+    if (userInitials.length === 3) {
+      gameAreaController.gameEnded(userInitials);
+    } else {
+      toast({
+        title: 'Invalid Username',
+        description: 'Username must be 3 characters long',
+        status: 'error',
+      });
+    }
   }
 
-  if (!activeInput) {
+  /**
+   * View shown for what an observer sees while a game is being played.
+   */
+  function pleaseWait() {
     return (
-      <Container>
-        <Box>
-          <b>Time Left:</b> {seconds} seconds
-        </Box>
-        <Box mt={1}>
-          <b>Score: </b> {score}
-        </Box>
-        <Box mt={4} textAlign='center'>
-          {targetWord}
-        </Box>
+      <Box textAlign='center' aria-label='observer-text'>
+        <b>Please wait, someone else is currently playing!</b>
+      </Box>
+    );
+  }
+
+  /**
+   * View shown while the game is being played.
+   */
+  function gameContent() {
+    if (isPlayer) {
+      return (
         <Input
           mt={4}
           textAlign='center'
@@ -116,34 +127,63 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
             gameAreaController.enterWord(targetValue);
           }}
         />
+      );
+    } else {
+      return pleaseWait();
+    }
+  }
+
+  if (!activeInput) {
+    return (
+      <Container>
+        <Box aria-label='timer'>
+          <b>Time Left:</b> {seconds} seconds
+        </Box>
+        <Box mt={1} aria-label='score'>
+          <b>Score: </b> {score}
+        </Box>
+        <Box mt={4} textAlign='center' aria-label='target-word'>
+          {targetWord}
+        </Box>
+        {gameContent()}
       </Container>
     );
   } else {
-    return (
-      <Container>
-        <Box textAlign='center'>
-          <b>Your Score: </b> {score}
-        </Box>
-        <Box textAlign='center' mt={4}>
-          <Box>
-            <b>Enter Your Three-Letter Initials:</b>
+    if (isPlayer) {
+      return (
+        <Container>
+          <Box textAlign='center' aria-label='highscore'>
+            <b>Your Score: </b> {score}
           </Box>
-          <Box>
-            <Input
+          <Box textAlign='center' mt={4}>
+            <Box>
+              <b>Enter Your Three-Letter Initials:</b>
+            </Box>
+            <Box>
+              <Input
+                mt={4}
+                textAlign='center'
+                name='initials'
+                placeholder='initials'
+                value={userInitials}
+                width={100}
+                onChange={handleInitialsChange}
+              />
+            </Box>
+            <Button
               mt={4}
-              textAlign='center'
-              name='initials'
-              placeholder='initials'
-              value={userInitials}
+              bg='lightblue'
+              type='submit'
+              onClick={handleClick}
               width={100}
-              onChange={handleInitialsChange}
-            />
+              aria-label='submit'>
+              Submit
+            </Button>
           </Box>
-          <Button mt={4} bg='lightblue' type='submit' onClick={handleClick} width={100}>
-            Submit
-          </Button>
-        </Box>
-      </Container>
-    );
+        </Container>
+      );
+    } else {
+      return pleaseWait();
+    }
   }
 }

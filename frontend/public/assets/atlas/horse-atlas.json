@@ -2,8 +2,8 @@
   "frames": {
     "horse-left": {
       "frame": {
-        "x": 655,
-        "y": 1,
+        "x": 158,
+        "y": 145,
         "w": 67,
         "h": 70
       },
@@ -26,8 +26,8 @@
     },
     "horse-left-move.000": {
       "frame": {
-        "x": 501,
-        "y": 1,
+        "x": 341,
+        "y": 71,
         "w": 75,
         "h": 68
       },
@@ -146,8 +146,8 @@
     },
     "horse-right": {
       "frame": {
-        "x": 341,
-        "y": 71,
+        "x": 74,
+        "y": 214,
         "w": 67,
         "h": 70
       },
@@ -170,8 +170,8 @@
     },
     "horse-right-move.000": {
       "frame": {
-        "x": 578,
-        "y": 1,
+        "x": 418,
+        "y": 71,
         "w": 75,
         "h": 68
       },
@@ -290,8 +290,8 @@
     },
     "horse-front": {
       "frame": {
-        "x": 169,
-        "y": 74,
+        "x": 227,
+        "y": 145,
         "w": 28,
         "h": 69
       },
@@ -314,8 +314,8 @@
     },
     "horse-front-move.000": {
       "frame": {
-        "x": 199,
-        "y": 74,
+        "x": 674,
+        "y": 1,
         "w": 28,
         "h": 68
       },
@@ -338,8 +338,8 @@
     },
     "horse-front-move.001": {
       "frame": {
-        "x": 169,
-        "y": 74,
+        "x": 227,
+        "y": 145,
         "w": 28,
         "h": 69
       },
@@ -362,8 +362,8 @@
     },
     "horse-front-move.002": {
       "frame": {
-        "x": 229,
-        "y": 136,
+        "x": 610,
+        "y": 60,
         "w": 28,
         "h": 68
       },
@@ -386,8 +386,8 @@
     },
     "horse-front-move.003": {
       "frame": {
-        "x": 169,
-        "y": 74,
+        "x": 227,
+        "y": 145,
         "w": 28,
         "h": 69
       },
@@ -410,8 +410,8 @@
     },
     "horse-back": {
       "frame": {
-        "x": 257,
-        "y": 73,
+        "x": 578,
+        "y": 1,
         "w": 30,
         "h": 61
       },
@@ -434,8 +434,8 @@
     },
     "horse-back-move.000": {
       "frame": {
-        "x": 289,
-        "y": 73,
+        "x": 610,
+        "y": 1,
         "w": 30,
         "h": 57
       },
@@ -458,8 +458,8 @@
     },
     "horse-back-move.001": {
       "frame": {
-        "x": 257,
-        "y": 73,
+        "x": 578,
+        "y": 1,
         "w": 30,
         "h": 61
       },
@@ -482,8 +482,8 @@
     },
     "horse-back-move.002": {
       "frame": {
-        "x": 289,
-        "y": 132,
+        "x": 642,
+        "y": 1,
         "w": 30,
         "h": 57
       },
@@ -506,8 +506,8 @@
     },
     "horse-back-move.003": {
       "frame": {
-        "x": 257,
-        "y": 73,
+        "x": 578,
+        "y": 1,
         "w": 30,
         "h": 61
       },
@@ -527,6 +527,270 @@
         "x": 0.5,
         "y": 0.5
       }
+    },
+    "horse-trick-1.000": {
+      "frame": {
+        "x": 1,
+        "y": 215,
+        "w": 67,
+        "h": 70
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 7,
+        "y": 5,
+        "w": 67,
+        "h": 70
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "horse-trick-1.001": {
+      "frame": {
+        "x": 169,
+        "y": 74,
+        "w": 72,
+        "h": 69
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 0,
+        "w": 72,
+        "h": 69
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "horse-trick-1.002": {
+      "frame": {
+        "x": 501,
+        "y": 1,
+        "w": 75,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 75,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "horse-trick-1.003": {
+      "frame": {
+        "x": 501,
+        "y": 1,
+        "w": 75,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 75,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "horse-trick-1.004": {
+      "frame": {
+        "x": 257,
+        "y": 73,
+        "w": 74,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 74,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "horse-trick-1.005": {
+      "frame": {
+        "x": 85,
+        "y": 140,
+        "w": 71,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 71,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "horse-trick-1.006": {
+      "frame": {
+        "x": 1,
+        "y": 141,
+        "w": 71,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 2,
+        "w": 71,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "horse-trick-1.007": {
+      "frame": {
+        "x": 501,
+        "y": 1,
+        "w": 75,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 75,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "horse-trick-1.008": {
+      "frame": {
+        "x": 257,
+        "y": 73,
+        "w": 74,
+        "h": 72
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 1,
+        "y": 1,
+        "w": 74,
+        "h": 72
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "horse-trick-1.009": {
+      "frame": {
+        "x": 169,
+        "y": 74,
+        "w": 72,
+        "h": 69
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 8,
+        "y": 0,
+        "w": 72,
+        "h": 69
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
+    },
+    "horse-trick-1.010": {
+      "frame": {
+        "x": 1,
+        "y": 215,
+        "w": 67,
+        "h": 70
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 7,
+        "y": 5,
+        "w": 67,
+        "h": 70
+      },
+      "sourceSize": {
+        "w": 81,
+        "h": 76
+      },
+      "pivot": {
+        "x": 0.5,
+        "y": 0.5
+      }
     }
   },
   "meta": {
@@ -535,8 +799,8 @@
     "image": "horse-atlas.png",
     "format": "RGBA8888",
     "size": {
-      "w": 723,
-      "h": 205
+      "w": 703,
+      "h": 286
     },
     "scale": 1
   }
