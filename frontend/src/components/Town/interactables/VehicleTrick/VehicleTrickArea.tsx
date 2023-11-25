@@ -77,7 +77,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
 
   if (gameStatus === 'IN_PROGRESS') {
     return (
-      <ModalBody bgImage={'./images/keydash.png'} bgColor={'lightblue'} maxWidth={'full'}>
+      <ModalBody bgImage={'./images/emptyramp.png'} bgColor={'lightblue'} maxWidth={'full'}>
         <VehicleTrick gameAreaController={gameAreaController} />
       </ModalBody>
     );
@@ -217,7 +217,7 @@ export default function VehicleTrickAreaWrapper(): JSX.Element {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
         <ModalOverlay bg={'none'} />
-        <ModalContent borderWidth={8} height={'458'} maxWidth={'616'} borderColor={'gold'}>
+        <ModalContent borderWidth={8} height={'465'} maxWidth={'616'} borderColor={'gold'}>
           <ModalCloseButton />
           <VehicleTrickArea interactableID={gameArea.name} />
         </ModalContent>
