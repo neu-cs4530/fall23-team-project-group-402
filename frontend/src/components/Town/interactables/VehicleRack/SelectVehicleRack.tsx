@@ -47,13 +47,19 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   );
   const isOpen = newRack !== undefined;
   vehicleRackAreaController.occupants = coveyTownController.players;
-  const [selectedVehicle, setSelectedVehicle] = useState<VehicleType | undefined>(
-    vehicleRackAreaController.vehicle,
-  );
 
   const [bikeImage, setBikeImage] = useState('url("./images/bike.png")');
   const [skateboardImage, setSkateboardImage] = useState('url("./images/skateboard.png")');
   const [horseImage, setHorseImage] = useState('url("./images/horse.png")');
+  const [bikeEquip, setBikeEquip] = useState(
+    coveyTownController.ourPlayer.vehicle?.vehicleType === 'bike',
+  );
+  const [skateboardEquip, setSkateboardEquip] = useState(
+    coveyTownController.ourPlayer.vehicle?.vehicleType === 'skateboard',
+  );
+  const [horseEquip, setHorseEquip] = useState(
+    coveyTownController.ourPlayer.vehicle?.vehicleType === 'horse',
+  );
 
   const toast = useToast();
 
@@ -73,10 +79,32 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     }
   }, [coveyTownController, newRack, vehicleRackAreaController]);
 
+  function _equipVehicle(vehicleType: VehicleType) {
+    switch (vehicleType) {
+      case 'bike':
+        setBikeEquip(true);
+        setHorseEquip(false);
+        setSkateboardEquip(false);
+        break;
+      case 'horse':
+        setHorseEquip(true);
+        setBikeEquip(false);
+        setSkateboardEquip(false);
+        break;
+      case 'skateboard':
+        setSkateboardEquip(true);
+        setBikeEquip(false);
+        setHorseEquip(false);
+        break;
+    }
+  }
+
   function handleUnequipVehicle() {
     try {
-      const vehicle = vehicleRackAreaController.unequipVehicle();
-      coveyTownController.emitVehicleChange(vehicle);
+      vehicleRackAreaController.unequipVehicle();
+      setBikeEquip(false);
+      setSkateboardEquip(false);
+      setHorseEquip(false);
       toast({
         title: `Success`,
         description: `Unequipped Vehicle`,
@@ -89,16 +117,16 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
         status: 'error',
       });
     }
-    closeModal();
   }
 
   function handleEquipVehicle() {
     try {
       const vehicle = vehicleRackAreaController.equipVehicle();
       coveyTownController.emitVehicleChange(vehicle);
+      _equipVehicle(vehicle?.vehicleType as VehicleType);
       toast({
         title: `Success`,
-        description: `Equipped: ${selectedVehicle}`,
+        description: `Equipped: ${vehicleRackAreaController.vehicle?.toUpperCase()}`,
         status: 'info',
       });
     } catch (error) {
@@ -108,27 +136,23 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
         status: 'error',
       });
     }
-    closeModal();
   }
 
   function handleSelectVehicle(vehicleType: VehicleType) {
-    setSelectedVehicle(() => {
-      if (coveyTownController.ourPlayer.vehicle?.vehicleType === vehicleType) {
-        vehicleRackAreaController.vehicle = undefined;
-        handleUnequipVehicle();
-        return undefined;
-      } else {
-        vehicleRackAreaController.vehicle = vehicleType;
-        handleEquipVehicle();
-        return vehicleType; // Return the new state value
-      }
-    });
+    if (coveyTownController.ourPlayer.vehicle?.vehicleType === vehicleType) {
+      vehicleRackAreaController.vehicle = undefined;
+      handleUnequipVehicle();
+    } else {
+      vehicleRackAreaController.vehicle = vehicleType;
+      handleEquipVehicle();
+    }
   }
 
   const vehicles = [
     {
       type: 'bike',
       label: 'Bike',
+      equip: bikeEquip,
       image: bikeImage,
       imageURL: ['url("./images/bike.png")'],
       animationURL: ['url("./animations/bike-anim.gif")'],
@@ -137,6 +161,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     {
       type: 'horse',
       label: 'Horse',
+      equip: horseEquip,
       image: horseImage,
       imageURL: ['url("./images/horse.png")'],
       animationURL: ['url("./animations/horse-anim.gif")'],
@@ -145,6 +170,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     {
       type: 'skateboard',
       label: 'Skateboard',
+      equip: skateboardEquip,
       image: skateboardImage,
       imageURL: ['url("./images/skateboard.png")'],
       animationURL: [
@@ -184,7 +210,15 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     }
   }
 
-  const VehicleCard = ({ type, label, image, imageURL, animationURL, imageAlt }: VehicleProps) => {
+  const VehicleCard = ({
+    type,
+    label,
+    equip,
+    image,
+    imageURL,
+    animationURL,
+    imageAlt,
+  }: VehicleProps) => {
     {
       return (
         <Center paddingTop={0} paddingBottom={6}>
@@ -200,18 +234,10 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
               transform: 'translateY(-4px)',
               boxShadow: 'lg',
             }}
-            borderColor={
-              coveyTownController.ourPlayer.vehicle?.vehicleType === type
-                ? BORDER_CARD_COLOR_EQUIPPED
-                : BORDER_CARD_COLOR_UNEQUIPPED
-            }>
+            borderColor={equip ? BORDER_CARD_COLOR_EQUIPPED : BORDER_CARD_COLOR_UNEQUIPPED}>
             <Center>
               <Box
-                borderColor={
-                  coveyTownController.ourPlayer.vehicle?.vehicleType === type
-                    ? BORDER_CARD_COLOR_EQUIPPED
-                    : BORDER_CARD_COLOR_UNEQUIPPED
-                }
+                borderColor={equip ? BORDER_CARD_COLOR_EQUIPPED : BORDER_CARD_COLOR_UNEQUIPPED}
                 rounded={'md'}
                 borderWidth={3}
                 alignSelf={'center'}
@@ -308,13 +334,10 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
                   boxShadow: 'lg',
                 }}
                 style={{
-                  backgroundColor:
-                    coveyTownController.ourPlayer.vehicle?.vehicleType === type
-                      ? BUTTON_COLOR_EQUIPPED
-                      : BUTTON_COLOR_UNEQUIPPED,
+                  backgroundColor: equip ? BUTTON_COLOR_EQUIPPED : BUTTON_COLOR_UNEQUIPPED,
                 }}
                 onClick={() => handleSelectVehicle(type as VehicleType)}>
-                {coveyTownController.ourPlayer.vehicle?.vehicleType === type ? 'Unequip' : 'Equip'}
+                {equip ? 'Unequip' : 'Equip'}
               </Button>
             </Box>
           </Box>
@@ -330,7 +353,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
         closeModal();
         coveyTownController.unPause();
       }}>
-      <ModalOverlay bgSize={'cover'} />
+      <ModalOverlay bgSize={'cover'} bg='rgba(0, 0, 0, .95)' />
       <ModalContent
         minHeight={200}
         maxW='1000px'
@@ -365,14 +388,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
             mt={0}
             mr={6}
             color={'#e5f3fc'}>
-            <ModalCloseButton
-              mt={5}
-              mr={8}
-              color={'white'}
-              fontWeight={'bold'}
-              _focus={{}}
-              color={'#e5f3fc'}
-            />
+            <ModalCloseButton mt={5} mr={8} fontWeight={'bold'} _focus={{}} color={'#e5f3fc'} />
           </Box>
         </ModalHeader>
 
@@ -382,6 +398,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
               <VehicleCard
                 type={vehicleEnum.type}
                 key={vehicleEnum.type}
+                equip={vehicleEnum.equip}
                 label={vehicleEnum.label}
                 image={vehicleEnum.image}
                 imageURL={vehicleEnum.imageURL}
