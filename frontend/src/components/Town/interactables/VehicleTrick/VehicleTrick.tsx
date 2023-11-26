@@ -11,11 +11,12 @@ import {
 } from '@chakra-ui/react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
-import PlayerSprite from './Sprite';
+import PlayerSprite from './PlayerSprite';
 
 export type VehicleTrickGameProps = {
   gameAreaController: VehicleTrickAreaController;
   vehicleType: string | undefined;
+  usePhaser: boolean;
 };
 
 /**
@@ -36,6 +37,7 @@ export type VehicleTrickGameProps = {
 export default function VehicleTrick({
   gameAreaController,
   vehicleType,
+  usePhaser,
 }: VehicleTrickGameProps): JSX.Element {
   const [input, setInput] = useState<string>('');
   const [seconds, setSeconds] = useState(15);
@@ -45,19 +47,6 @@ export default function VehicleTrick({
   const [activeInput, setActiveInput] = useState(false);
   const [userInitials, setUserInitials] = useState('');
   const toast = useToast();
-
-  const testPlayAnim = () => {
-    console.log('playing');
-  };
-
-  const updateScore = (newScore: number) => {
-    setScore(newScore);
-
-    if (newScore > 0) {
-      console.log('score updated');
-      testPlayAnim();
-    }
-  };
 
   useEffect(() => {
     const updateTargetWord = () => {
@@ -69,12 +58,16 @@ export default function VehicleTrick({
       setIsPlayer(gameAreaController.isPlayer);
     };
 
+    const updateScore = () => {
+      setScore(gameAreaController.currentScore);
+    };
+
     gameAreaController.addListener('scoreChanged', updateScore);
     gameAreaController.addListener('targetWordChanged', updateTargetWord);
     gameAreaController.addListener('gameUpdated', updateIsPlayer);
 
     return () => {
-      gameAreaController.removeListener('scoreChanged', setScore);
+      gameAreaController.removeListener('scoreChanged', updateScore);
       gameAreaController.removeListener('targetWordChanged', updateTargetWord);
       gameAreaController.removeListener('gameUpdated', updateIsPlayer);
     };
@@ -90,18 +83,27 @@ export default function VehicleTrick({
 
     // Update the timer every second
     const timerInterval = setInterval(() => {
-      setSeconds(prevSeconds => prevSeconds - 0);
+      setSeconds(prevSeconds => prevSeconds - 1);
     }, 1000);
 
     // Clean up the interval on component unmount
     return () => clearInterval(timerInterval);
   }, [seconds, toast]);
 
+  /**
+   * Determines if the given word is valid (only contains characters A/a-Z/z)
+   * @param word The word to check
+   * @returns True if the word contains only valid character, false otherwise.
+   */
   function onlyLetters(word: string) {
     const validCharacters = /^[A-Za-z]+$/;
     return validCharacters.test(word) || word === '';
   }
 
+  /**
+   * Handles updating state when the users enters their intials.
+   * @param e The input change event
+   */
   const handleInitialsChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value.slice(0, 3);
     if (onlyLetters(inputValue)) {
@@ -109,6 +111,10 @@ export default function VehicleTrick({
     }
   };
 
+  /**
+   * Handles updating state when the user clicks the submit button on the initials screen.
+   * @param event The click event
+   */
   function handleClick(event: { preventDefault: () => void }) {
     event.preventDefault();
     if (userInitials.length === 3) {
@@ -122,6 +128,10 @@ export default function VehicleTrick({
     }
   }
 
+  /**
+   * Event handler for when the user enters a word.
+   * @param event The input event
+   */
   async function enterWord(event: React.ChangeEvent<HTMLInputElement>) {
     const targetValue = event.target.value;
     if (onlyLetters(targetValue)) {
@@ -130,7 +140,6 @@ export default function VehicleTrick({
 
     try {
       await gameAreaController.enterWord(targetValue);
-      console.log('got here');
     } catch (err) {
       toast({
         title: 'Error entering word',
@@ -203,6 +212,24 @@ export default function VehicleTrick({
     }
   }
 
+  /**
+   * Renders the player sprite.
+   * NOTE: jest is unable to render Phaser game scenes, so we have a flag
+   * to replace the player sprite with text in our unit tests.
+   * @returns the rendered player sprite
+   */
+  function playerSprite() {
+    if (usePhaser) {
+      return <PlayerSprite vehicleType={vehicleType} targetWord={targetWord} />;
+    }
+
+    return (
+      <Box textAlign='center' aria-label='player-sprite'>
+        <b>Player Sprite</b>
+      </Box>
+    );
+  }
+
   if (!activeInput) {
     return (
       <Container>
@@ -232,11 +259,7 @@ export default function VehicleTrick({
               </Box>
             </Stack>
             <Stack align={'center'} mt={-100}>
-              <PlayerSprite
-                vehicleType={vehicleType}
-                // updateScore={updateScore}
-                targetWord={targetWord}
-              />
+              {playerSprite()}
             </Stack>
           </Stack>
         </Center>

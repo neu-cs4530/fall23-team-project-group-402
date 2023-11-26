@@ -21,7 +21,6 @@ import VehicleTrick from './VehicleTrick';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 import { TrophyIcon } from './TrophyIcon';
 import VehicleTrickLeaderboard from './VehicleTrickLeaderboard';
-import PlayerSprite from './Sprite';
 
 /**
  * The VehicleTrickArea component renders the VehicleTrick game area.
@@ -80,7 +79,11 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
   if (gameStatus === 'IN_PROGRESS') {
     return (
       <ModalBody bgImage={'./images/emptyramp.png'} bgColor={'lightblue'} maxWidth={'full'}>
-        <VehicleTrick gameAreaController={gameAreaController} vehicleType={ourVehicle} />
+        <VehicleTrick
+          gameAreaController={gameAreaController}
+          vehicleType={ourVehicle}
+          usePhaser={true}
+        />
       </ModalBody>
     );
   } else if (leaderboardView) {
@@ -189,7 +192,6 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
                 mt={3}>
                 <TrophyIcon fontSize={100} />
               </Button>
-              {/* <PlayerSprite vehicleType={townController.ourPlayer.vehicle?.vehicleType} /> */}
             </Stack>
           </Stack>
         </Center>
