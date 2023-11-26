@@ -122,6 +122,24 @@ export default function VehicleTrick({
     }
   }
 
+  async function enterWord(event: React.ChangeEvent<HTMLInputElement>) {
+    const targetValue = event.target.value;
+    if (onlyLetters(targetValue)) {
+      setInput(targetValue);
+    }
+
+    try {
+      await gameAreaController.enterWord(targetValue);
+      console.log('got here');
+    } catch (err) {
+      toast({
+        title: 'Error entering word',
+        description: (err as Error).toString(),
+        status: 'error',
+      });
+    }
+  }
+
   /**
    * View shown for what an observer sees while a game is being played.
    */
@@ -163,13 +181,7 @@ export default function VehicleTrick({
             value={input}
             isDisabled={activeInput}
             autoFocus
-            onChange={event => {
-              const targetValue = event.target.value;
-              if (onlyLetters(targetValue)) {
-                setInput(targetValue);
-              }
-              gameAreaController.enterWord(targetValue);
-            }}
+            onChange={async event => enterWord(event)}
             variant='unstyled'
             style={{
               opacity: 0,
@@ -220,7 +232,11 @@ export default function VehicleTrick({
               </Box>
             </Stack>
             <Stack align={'center'} mt={-100}>
-              <PlayerSprite vehicleType={vehicleType} updateScore={updateScore} />
+              <PlayerSprite
+                vehicleType={vehicleType}
+                // updateScore={updateScore}
+                targetWord={targetWord}
+              />
             </Stack>
           </Stack>
         </Center>

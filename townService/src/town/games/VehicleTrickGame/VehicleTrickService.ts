@@ -17,8 +17,9 @@ export default class VehicleTrickService {
    * @returns The fetched top vehicle trick scores
    */
   async getTopScores(): Promise<VehicleTrickScore[]> {
-    const response = await axios.get(`${SERVER_URL}/topScores`);
-    return response.data;
+    // const response = await axios.get(`${SERVER_URL}/topScores`);
+    // return response.data;
+    return [];
   }
 
   /**
@@ -29,7 +30,8 @@ export default class VehicleTrickService {
    * @returns The updated top list of scores
    */
   async addScore(scoreToAdd: VehicleTrickScore): Promise<VehicleTrickScore[]> {
-    const response = await axios.post(`${SERVER_URL}/topScores`, scoreToAdd);
-    return response.data;
+    // const response = await axios.post(`${SERVER_URL}/topScores`, scoreToAdd);
+    // return response.data;
+    return [];
   }
 }

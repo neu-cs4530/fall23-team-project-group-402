@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box } from '@chakra-ui/react';
 import Phaser from 'phaser';
 
@@ -10,7 +10,7 @@ class PhaserGame extends Phaser.Scene {
   constructor(vehicleType: string | undefined) {
     super({ key: 'PhaserGame' });
     this.vehicleType = vehicleType;
-    this.player = undefined;
+    // this.player = undefined;
   }
 
   preload() {
@@ -59,18 +59,51 @@ class PhaserGame extends Phaser.Scene {
   }
 
   update(): void {
+    // this
     // if (this.player) {
     //   this.player.anims.play(`${this.vehicleType}-trick-1`, true);
     // }
   }
+
+  playAnimation(): void {
+    if (this.player && this.vehicleType) {
+      const trickNumber: number =
+        this.vehicleType === 'skateboard' ? Math.floor(Math.random() * 3) + 1 : 1;
+      this.player.anims.play(`${this.vehicleType}-trick-${trickNumber}`, true);
+    }
+  }
+
+  /*
+  const player = this._player;
+    if (player && player.gameObjects) {
+      const { sprite } = player.gameObjects;
+      const vehicleType: VehicleType | undefined = player.vehicle?.vehicleType;
+      const trickNumber: number =
+        vehicleType === 'skateboard' ? Math.floor(Math.random() * 3) + 1 : 1;
+      sprite.anims.play(`${vehicleType}-trick-${trickNumber}`, true);
+    }
+
+  */
 }
 
-const PlayerSprite: React.FC<{
+// export default function PlayerSprite({
+//   vehicleType: string | undefined;
+//   updateScore: (score: number) => void;
+//   targetWord: string;
+// }: { vehicleType, updateScore, targetWord }): JSX.Element {
+// }
+
+type SpriteProps = {
   vehicleType: string | undefined;
-  updateScore: (score: number) => void;
-}> = ({ vehicleType, updateScore }) => {
+  targetWord: string;
+};
+
+export default function PlayerSprite({ vehicleType, targetWord }: SpriteProps): JSX.Element {
+  const [game, setGame] = useState<PhaserGame | undefined>(undefined);
+
   useEffect(() => {
     // Phaser game initialization
+    console.log('creating game');
     const config: Phaser.Types.Core.GameConfig = {
       type: Phaser.AUTO,
       width: 400,
@@ -80,19 +113,24 @@ const PlayerSprite: React.FC<{
       transparent: true, // Set the parent container ID
     };
 
-    const game = new Phaser.Game(config);
+    const phaserGame = new Phaser.Game(config);
     const newGameScene = new PhaserGame(vehicleType);
-    game.scene.add('sprite', newGameScene, true);
+    phaserGame.scene.add('sprite', newGameScene, true);
+    setGame(newGameScene);
 
     // Cleanup Phaser game on component unmount
     return () => {
-      game.destroy(true);
+      if (game) {
+        phaserGame.destroy(true);
+      }
     };
-  }, []);
+  }, [vehicleType]);
 
   useEffect(() => {
-    console.log('test log');
-  }, [updateScore]);
+    if (game) {
+      game.playAnimation();
+    }
+  }, [targetWord]);
 
   return (
     <Box
@@ -108,6 +146,4 @@ const PlayerSprite: React.FC<{
       <div id='phaser-container' style={{ width: '100%', height: '100%' }} />
     </Box>
   );
-};
-
-export default PlayerSprite;
+}
