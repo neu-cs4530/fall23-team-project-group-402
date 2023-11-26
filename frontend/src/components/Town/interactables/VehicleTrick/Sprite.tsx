@@ -65,7 +65,10 @@ class PhaserGame extends Phaser.Scene {
   }
 }
 
-const PlayerSprite: React.FC<{ vehicleType: string | undefined }> = ({ vehicleType }) => {
+const PlayerSprite: React.FC<{
+  vehicleType: string | undefined;
+  updateScore: (score: number) => void;
+}> = ({ vehicleType, updateScore }) => {
   useEffect(() => {
     // Phaser game initialization
     const config: Phaser.Types.Core.GameConfig = {
@@ -85,21 +88,23 @@ const PlayerSprite: React.FC<{ vehicleType: string | undefined }> = ({ vehicleTy
     return () => {
       game.destroy(true);
     };
-  }); // Empty dependency array to run the effect only once on mount
+  }, []);
+
+  useEffect(() => {
+    console.log('test log');
+  }, [updateScore]);
 
   return (
     <Box
       as='span'
       flex='1'
       textAlign='left'
-      width='200px' // Adjust the width and height based on your game dimensions
+      width='200px'
       maxHeight='160px'
       mt={-45}
       borderColor={'red'}
       borderWidth={0}
-      overflow='hidden' // Ensure the game container stays within the box
-    >
-      {/* Phaser game container */}
+      overflow='hidden'>
       <div id='phaser-container' style={{ width: '100%', height: '100%' }} />
     </Box>
   );

@@ -46,6 +46,19 @@ export default function VehicleTrick({
   const [userInitials, setUserInitials] = useState('');
   const toast = useToast();
 
+  const testPlayAnim = () => {
+    console.log('playing');
+  };
+
+  const updateScore = (newScore: number) => {
+    setScore(newScore);
+
+    if (newScore > 0) {
+      console.log('score updated');
+      testPlayAnim();
+    }
+  };
+
   useEffect(() => {
     const updateTargetWord = () => {
       setTargetWord(gameAreaController.currentWord);
@@ -56,7 +69,7 @@ export default function VehicleTrick({
       setIsPlayer(gameAreaController.isPlayer);
     };
 
-    gameAreaController.addListener('scoreChanged', setScore);
+    gameAreaController.addListener('scoreChanged', updateScore);
     gameAreaController.addListener('targetWordChanged', updateTargetWord);
     gameAreaController.addListener('gameUpdated', updateIsPlayer);
 
@@ -207,7 +220,7 @@ export default function VehicleTrick({
               </Box>
             </Stack>
             <Stack align={'center'} mt={-100}>
-              <PlayerSprite vehicleType={vehicleType} />
+              <PlayerSprite vehicleType={vehicleType} updateScore={updateScore} />
             </Stack>
           </Stack>
         </Center>
