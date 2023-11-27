@@ -66,7 +66,7 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
     throw new Error('Method should not be called within this component.');
   }
 
-  protected _updateFrom(newModel: GameArea<VehicleTrickGameState>): void {}
+  protected _updateFrom(): void {}
 
   public updateTimer(newTime: number) {
     this.mockTimeLeft = newTime;
