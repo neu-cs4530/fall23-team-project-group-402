@@ -240,6 +240,73 @@ describe('VehicleTrick', () => {
     await checkWordInputField({ interactable });
     expect(score).toHaveTextContent('100');
   }
+  describe('listeners', () => {
+    it('properly registers for listeners when the component is mounted', () => {
+      const addListenerSpy = jest.spyOn(gameAreaController, 'addListener');
+      addListenerSpy.mockClear();
+
+      render(<VehicleTrick gameAreaController={gameAreaController} />);
+      expect(addListenerSpy).toBeCalledTimes(4);
+      expect(addListenerSpy).toHaveBeenCalledWith('scoreChanged', expect.any(Function));
+      expect(addListenerSpy).toHaveBeenCalledWith('targetWordChanged', expect.any(Function));
+      expect(addListenerSpy).toHaveBeenCalledWith('timeLeftChanged', expect.any(Function));
+      expect(addListenerSpy).toHaveBeenCalledWith('gameUpdated', expect.any(Function));
+    });
+    it('does not register listeners on every render', () => {
+      const removeListenerSpy = jest.spyOn(gameAreaController, 'removeListener');
+      const addListenerSpy = jest.spyOn(gameAreaController, 'addListener');
+      addListenerSpy.mockClear();
+      removeListenerSpy.mockClear();
+      const renderData = render(<VehicleTrick gameAreaController={gameAreaController} />);
+      expect(addListenerSpy).toBeCalledTimes(4);
+      addListenerSpy.mockClear();
+
+      renderData.rerender(<VehicleTrick gameAreaController={gameAreaController} />);
+
+      expect(addListenerSpy).not.toBeCalled();
+      expect(removeListenerSpy).not.toBeCalled();
+    });
+    it('removes the listeners when the component is unmounted', () => {
+      const removeListenerSpy = jest.spyOn(gameAreaController, 'removeListener');
+      const addListenerSpy = jest.spyOn(gameAreaController, 'addListener');
+      addListenerSpy.mockClear();
+      removeListenerSpy.mockClear();
+      const renderData = render(<VehicleTrick gameAreaController={gameAreaController} />);
+      expect(addListenerSpy).toBeCalledTimes(4);
+
+      const addedListeners = addListenerSpy.mock.calls;
+      const scoreChangedListener = addedListeners.find(call => call[0] === 'scoreChanged');
+      const targetWordChangedListener = addedListeners.find(
+        call => call[0] === 'targetWordChanged',
+      );
+      const timeLeftChangedListener = addedListeners.find(call => call[0] === 'timeLeftChanged');
+      const gameUpdatedListener = addedListeners.find(call => call[0] === 'gameUpdated');
+
+      expect(scoreChangedListener).toBeDefined();
+      expect(targetWordChangedListener).toBeDefined();
+      expect(timeLeftChangedListener).toBeDefined();
+      expect(gameUpdatedListener).toBeDefined();
+
+      renderData.unmount();
+
+      expect(removeListenerSpy).toBeCalledTimes(4);
+
+      const removedListeners = removeListenerSpy.mock.calls;
+      const removedScoreChangedListener = removedListeners.find(call => call[0] === 'scoreChanged');
+      const removedTargetWordChangedListener = removedListeners.find(
+        call => call[0] === 'targetWordChanged',
+      );
+      const removedTimeLeftChangedListener = removedListeners.find(
+        call => call[0] === 'timeLeftChanged',
+      );
+      const removedGameUpdatedListener = removedListeners.find(call => call[0] === 'gameUpdated');
+
+      expect(removedScoreChangedListener).toEqual(scoreChangedListener);
+      expect(removedTargetWordChangedListener).toEqual(targetWordChangedListener);
+      expect(removedTimeLeftChangedListener).toEqual(timeLeftChangedListener);
+      expect(removedGameUpdatedListener).toEqual(gameUpdatedListener);
+    });
+  });
   describe('When observing the game', () => {
     beforeEach(() => {
       gameAreaController.mockIsPlayer = false;
