@@ -4,7 +4,7 @@ import React from 'react';
 import { GameResult } from '../../../../types/CoveyTownSocket';
 import VehicleTrickLeaderboard from './VehicleTrickLeaderboard';
 
-describe('[T4] Leaderboard', () => {
+describe('Leaderboard', () => {
   // Spy on console.error and intercept react key warnings to fail test
   let consoleErrorSpy: jest.SpyInstance<void, [message?: any, ...optionalParms: any[]]>;
   beforeAll(() => {
