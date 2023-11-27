@@ -88,6 +88,7 @@ describe('VehicleTrickAreaController', () => {
                 player: playerID,
                 targetWord: '',
                 currentScore: 0,
+                timeLeft: 15,
               },
             },
       },
