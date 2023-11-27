@@ -1,4 +1,13 @@
-import { Box, Button, Container, Input, useToast } from '@chakra-ui/react';
+import {
+  Box,
+  Button,
+  Container,
+  Input,
+  Text,
+  Stack,
+  useToast,
+  FormControl,
+} from '@chakra-ui/react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
 
@@ -87,7 +96,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
       gameAreaController.gameEnded(userInitials);
     } else {
       toast({
-        title: 'Invalid Username',
+        title: 'Invalid Initials',
         description: 'Username must be 3 characters long',
         status: 'error',
       });
@@ -108,44 +117,86 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
   /**
    * View shown while the game is being played.
    */
-  function gameContent() {
+  function gameContent({ word }: { word: string }) {
     if (isPlayer) {
       return (
-        <Input
-          mt={4}
-          textAlign='center'
-          name='title'
-          value={input}
-          isDisabled={activeInput}
-          placeholder='type word here'
-          autoFocus
-          onChange={event => {
-            const targetValue = event.target.value;
-            if (onlyLetters(targetValue)) {
-              setInput(targetValue);
-            }
-            gameAreaController.enterWord(targetValue);
-          }}
-        />
+        <FormControl textAlign={'center'}>
+          <Box
+            display='flex'
+            justifyContent='center'
+            alignItems='center'
+            mt={5}
+            fontSize={33}
+            fontFamily={'cursive'}
+            fontWeight={'bold'}>
+            {Array.from({ length: word.length }).map((_, index) => (
+              <Box key={index} style={{ marginLeft: '2px', marginRight: '2px' }}>
+                {input[index] || '_'}
+              </Box>
+            ))}
+          </Box>
+          <Input
+            mt={4}
+            maxLength={word.length}
+            textAlign='center'
+            placeholder='type word here'
+            name='title'
+            value={input}
+            isDisabled={activeInput}
+            autoFocus
+            onChange={event => {
+              const targetValue = event.target.value;
+              if (onlyLetters(targetValue)) {
+                setInput(targetValue);
+              }
+              gameAreaController.enterWord(targetValue);
+            }}
+            variant='unstyled'
+            style={{
+              opacity: 0,
+              top: -57,
+              color: 'transparent',
+              width: `${word.length * 30}px`,
+              height: '35px',
+              border: '0px solid black',
+            }}
+          />
+        </FormControl>
       );
     } else {
-      return pleaseWait();
+      return (
+        <Container mt={0}>
+          <Box mt={30}>{pleaseWait()}</Box>
+        </Container>
+      );
     }
   }
 
   if (!activeInput) {
     return (
       <Container>
-        <Box aria-label='timer'>
-          <b>Time Left:</b> {seconds} seconds
+        <Stack
+          direction={'row'}
+          spacing={20}
+          fontWeight={'bold'}
+          fontFamily={'fantasy'}
+          fontSize={24}
+          justify={'center'}
+          mt={2}>
+          <Stack align={'center'}>
+            <Text aria-label='timer'>{seconds} Seconds</Text>
+          </Stack>
+          <Stack align={'center'}>
+            <Text aria-label='score'>Score: {score} </Text>
+          </Stack>
+        </Stack>
+
+        <Box mt={16} textAlign='center' aria-label='target-word'>
+          <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={33}>
+            {targetWord}
+          </Text>
+          {gameContent({ word: targetWord })}
         </Box>
-        <Box mt={1} aria-label='score'>
-          <b>Score: </b> {score}
-        </Box>
-        <Box mt={4} textAlign='center' aria-label='target-word'>
-          {targetWord}
-        </Box>
-        {gameContent()}
       </Container>
     );
   } else {
@@ -153,37 +204,79 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
       return (
         <Container>
           <Box textAlign='center' aria-label='highscore'>
-            <b>Your Score: </b> {score}
+            <Text fontSize={24} fontWeight={'medium'} fontFamily={'fantasy'} mt={2}>
+              Score: {score}
+            </Text>
           </Box>
-          <Box textAlign='center' mt={4}>
+          <Box textAlign='center' mt={8}>
             <Box>
-              <b>Enter Your Three-Letter Initials:</b>
-            </Box>
-            <Box>
-              <Input
-                mt={4}
-                textAlign='center'
-                name='initials'
-                placeholder='initials'
-                value={userInitials}
-                width={100}
-                onChange={handleInitialsChange}
-              />
+              <FormControl textAlign={'center'}>
+                <Box
+                  display='flex'
+                  justifyContent='center'
+                  alignItems='center'
+                  mt={12}
+                  fontFamily={'fantasy'}>
+                  {Array.from({ length: 3 }).map((_, index) => (
+                    <Box
+                      key={index}
+                      style={{ marginLeft: '6px', marginRight: '6px' }}
+                      fontSize={'42px'}>
+                      {userInitials[index] || '_'}
+                    </Box>
+                  ))}
+                </Box>
+                <Text mt={-1} fontSize={16} fontFamily={'fantasy'} fontWeight={'medium'}>
+                  Enter Your Initials
+                </Text>
+                <Input
+                  mt={7}
+                  textAlign='center'
+                  name='initials'
+                  placeholder='initials'
+                  value={userInitials}
+                  width={100}
+                  onChange={handleInitialsChange}
+                  variant='unstyled'
+                  maxLength={3}
+                  autoFocus
+                  fontFamily={'fantasy'}
+                  style={{
+                    opacity: 0,
+                    top: -88,
+                    color: 'transparent',
+                    width: `99px`,
+                    height: '35px',
+                    border: '2px solid black',
+                  }}
+                />
+              </FormControl>
             </Box>
             <Button
-              mt={4}
+              mt={-7}
               bg='lightblue'
               type='submit'
               onClick={handleClick}
               width={100}
-              aria-label='submit'>
+              aria-label='submit'
+              _hover={{}}
+              variant={'unstyled'}
+              _active={{ color: 'blue.800' }}
+              _focus={{}}
+              fontFamily={'fantasy'}
+              fontSize={19}
+              fontWeight={'medium'}>
               Submit
             </Button>
           </Box>
         </Container>
       );
     } else {
-      return pleaseWait();
+      return (
+        <Container mt={0}>
+          <Box mt={130}>{pleaseWait()}</Box>
+        </Container>
+      );
     }
   }
 }

@@ -161,7 +161,7 @@ describe('VehicleTrick', () => {
           expect.objectContaining({
             description: 'Username must be 3 characters long',
             status: 'error',
-            title: 'Invalid Username',
+            title: 'Invalid Initials',
           }),
         );
       }
@@ -284,7 +284,7 @@ describe('VehicleTrick', () => {
         render(<VehicleTrick gameAreaController={gameAreaController} />);
         jest.advanceTimersByTime(16000);
         const highScore = screen.getByLabelText('highscore');
-        expect(highScore).toHaveTextContent('Your Score: 0');
+        expect(highScore).toHaveTextContent('Score: 0');
         checkInitialsInputField({ interactable: true });
       });
       it('input field ignores non-alphabetical characters', async () => {
