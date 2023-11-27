@@ -32,6 +32,8 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
 
   mockScore = 100;
 
+  mockTimeLeft = 15;
+
   public constructor() {
     super(nanoid(), mock<GameArea<VehicleTrickGameState>>(), mock<TownController>());
   }
@@ -42,6 +44,10 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
 
   get currentScore(): number {
     return this.mockScore;
+  }
+
+  get currentTimeLeft(): number {
+    return this.mockTimeLeft;
   }
 
   get observers(): PlayerController[] {
@@ -89,6 +95,27 @@ describe('VehicleTrick', () => {
   afterAll(() => {
     consoleErrorSpy.mockRestore();
   });
+
+  const mockPlayer = nanoid();
+
+  const mockGameState = {
+    currentScore: 0,
+    player: mockPlayer,
+    status: 'GAME IN PROGRESS' as GameStatus,
+    targetWord: 'cookies',
+    timeLeft: 10,
+  };
+
+  const mockGame = { id: nanoid(), players: [mockPlayer], state: mockGameState };
+
+  const mockModel: GameArea<VehicleTrickGameState> = {
+    game: mockGame,
+    id: nanoid(),
+    localHistory: [],
+    occupants: [],
+    persistentHistory: [],
+    type: 'VehicleTrickArea',
+  };
 
   const gameAreaController = new MockVehicleTrickAreaController();
   const observerText = 'Please wait, someone else is currently playing!';
@@ -189,7 +216,8 @@ describe('VehicleTrick', () => {
   async function checkForIncrementingTimer() {
     const timer = screen.getByLabelText('timer');
     expect(timer).toHaveTextContent('15');
-    jest.advanceTimersByTime(5000);
+    gameAreaController.updateFrom(mockModel, []);
+    // jest.advanceTimersByTime(5000);
     expect(timer).toHaveTextContent('10');
   }
   async function checkTargetWordUpdate(interactable: boolean) {
@@ -228,7 +256,7 @@ describe('VehicleTrick', () => {
       await checkInitialsInputField({ interactable: false });
     });
     it('increments the timer', async () => {
-      jest.useFakeTimers();
+      // jest.useFakeTimers();
       render(<VehicleTrick gameAreaController={gameAreaController} />);
       await checkWordInputField({ interactable: false });
       checkForIncrementingTimer();
@@ -255,7 +283,7 @@ describe('VehicleTrick', () => {
         await checkWordInputField({ interactable: true });
       });
       it('increments the timer', async () => {
-        jest.useFakeTimers();
+        // jest.useFakeTimers();
         render(<VehicleTrick gameAreaController={gameAreaController} />);
         checkForIncrementingTimer();
       });
