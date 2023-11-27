@@ -109,12 +109,12 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
 
   private async _startTimer() {
     const intervalId = setInterval(() => {
-      if (this.game && this.game.state.timeLeft > 0) {
-        this._incrementTimer(); // Your timer increment logic goes here
+      if (this.game && this.game.state.status === 'IN_PROGRESS' && this.game.state.timeLeft > 0) {
+        this._incrementTimer();
       } else if (!this.game) {
         throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
       } else {
-        clearInterval(intervalId); // Stop the interval if the condition is no longer met
+        clearInterval(intervalId);
       }
     }, 1000);
   }
