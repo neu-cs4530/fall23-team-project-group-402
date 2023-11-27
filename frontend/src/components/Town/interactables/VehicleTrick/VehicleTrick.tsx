@@ -8,6 +8,7 @@ import {
   useToast,
   FormControl,
   Center,
+  ModalBody,
 } from '@chakra-ui/react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
@@ -232,116 +233,122 @@ export default function VehicleTrick({
 
   if (!activeInput) {
     return (
-      <Container>
-        <Center>
-          <Stack direction={'column'} spacing={5} justify={'center'} align={'center'}>
-            <Stack
-              direction={'row'}
-              spacing={20}
-              fontWeight={'bold'}
-              fontFamily={'fantasy'}
-              fontSize={24}
-              justify={'center'}
-              mt={2}>
-              <Stack align={'center'}>
-                <Text aria-label='timer'>{seconds} Seconds</Text>
+      <ModalBody bgImage={'./images/emptyramp.png'} bgColor={'lightblue'} maxWidth={'full'}>
+        <Container>
+          <Center>
+            <Stack direction={'column'} spacing={5} justify={'center'} align={'center'}>
+              <Stack
+                direction={'row'}
+                spacing={20}
+                fontWeight={'bold'}
+                fontFamily={'fantasy'}
+                fontSize={24}
+                justify={'center'}
+                mt={2}>
+                <Stack align={'center'}>
+                  <Text aria-label='timer'>{seconds} Seconds</Text>
+                </Stack>
+                <Stack align={'center'}>
+                  <Text aria-label='score'>Score: {score} </Text>
+                </Stack>
               </Stack>
-              <Stack align={'center'}>
-                <Text aria-label='score'>Score: {score} </Text>
+              <Stack align={'cente'}>
+                <Box mt={16} textAlign='center' aria-label='target-word'>
+                  <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={33}>
+                    {targetWord}
+                  </Text>
+                  {gameContent({ word: targetWord })}
+                </Box>
+              </Stack>
+              <Stack align={'center'} mt={-100}>
+                {playerSprite()}
               </Stack>
             </Stack>
-            <Stack align={'cente'}>
-              <Box mt={16} textAlign='center' aria-label='target-word'>
-                <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={33}>
-                  {targetWord}
-                </Text>
-                {gameContent({ word: targetWord })}
-              </Box>
-            </Stack>
-            <Stack align={'center'} mt={-100}>
-              {playerSprite()}
-            </Stack>
-          </Stack>
-        </Center>
-      </Container>
+          </Center>
+        </Container>
+      </ModalBody>
     );
   } else {
     if (isPlayer) {
       return (
-        <Container>
-          <Box textAlign='center' aria-label='highscore'>
-            <Text fontSize={24} fontWeight={'medium'} fontFamily={'fantasy'} mt={2}>
-              Score: {score}
-            </Text>
-          </Box>
-          <Box textAlign='center' mt={8}>
-            <Box>
-              <FormControl textAlign={'center'}>
-                <Box
-                  display='flex'
-                  justifyContent='center'
-                  alignItems='center'
-                  mt={12}
-                  fontFamily={'fantasy'}>
-                  {Array.from({ length: 3 }).map((_, index) => (
-                    <Box
-                      key={index}
-                      style={{ marginLeft: '6px', marginRight: '6px' }}
-                      fontSize={'42px'}>
-                      {userInitials[index] || '_'}
-                    </Box>
-                  ))}
-                </Box>
-                <Text mt={-1} fontSize={16} fontFamily={'fantasy'} fontWeight={'medium'}>
-                  Enter Your Initials
-                </Text>
-                <Input
-                  mt={7}
-                  textAlign='center'
-                  name='initials'
-                  placeholder='initials'
-                  value={userInitials}
-                  width={100}
-                  onChange={handleInitialsChange}
-                  variant='unstyled'
-                  maxLength={3}
-                  autoFocus
-                  fontFamily={'fantasy'}
-                  style={{
-                    opacity: 0,
-                    top: -88,
-                    color: 'transparent',
-                    width: `99px`,
-                    height: '35px',
-                    border: '2px solid black',
-                  }}
-                />
-              </FormControl>
+        <ModalBody bgImage={'./images/keydash.png'} bgColor={'lightblue'} maxWidth={'full'}>
+          <Container>
+            <Box textAlign='center' aria-label='highscore'>
+              <Text fontSize={24} fontWeight={'medium'} fontFamily={'fantasy'} mt={2}>
+                Score: {score}
+              </Text>
             </Box>
-            <Button
-              mt={-7}
-              bg='lightblue'
-              type='submit'
-              onClick={handleClick}
-              width={100}
-              aria-label='submit'
-              _hover={{}}
-              variant={'unstyled'}
-              _active={{ color: 'blue.800' }}
-              _focus={{}}
-              fontFamily={'fantasy'}
-              fontSize={19}
-              fontWeight={'medium'}>
-              Submit
-            </Button>
-          </Box>
-        </Container>
+            <Box textAlign='center' mt={8}>
+              <Box>
+                <FormControl textAlign={'center'}>
+                  <Box
+                    display='flex'
+                    justifyContent='center'
+                    alignItems='center'
+                    mt={12}
+                    fontFamily={'fantasy'}>
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <Box
+                        key={index}
+                        style={{ marginLeft: '6px', marginRight: '6px' }}
+                        fontSize={'42px'}>
+                        {userInitials[index] || '_'}
+                      </Box>
+                    ))}
+                  </Box>
+                  <Text mt={-1} fontSize={16} fontFamily={'fantasy'} fontWeight={'medium'}>
+                    Enter Your Initials
+                  </Text>
+                  <Input
+                    mt={7}
+                    textAlign='center'
+                    name='initials'
+                    placeholder='initials'
+                    value={userInitials}
+                    width={100}
+                    onChange={handleInitialsChange}
+                    variant='unstyled'
+                    maxLength={3}
+                    autoFocus
+                    fontFamily={'fantasy'}
+                    style={{
+                      opacity: 0,
+                      top: -88,
+                      color: 'transparent',
+                      width: `99px`,
+                      height: '35px',
+                      border: '2px solid black',
+                    }}
+                  />
+                </FormControl>
+              </Box>
+              <Button
+                mt={-7}
+                bg='lightblue'
+                type='submit'
+                onClick={handleClick}
+                width={100}
+                aria-label='submit'
+                _hover={{}}
+                variant={'unstyled'}
+                _active={{ color: 'blue.800' }}
+                _focus={{}}
+                fontFamily={'fantasy'}
+                fontSize={19}
+                fontWeight={'medium'}>
+                Submit
+              </Button>
+            </Box>
+          </Container>
+        </ModalBody>
       );
     } else {
       return (
-        <Container mt={0}>
-          <Box mt={130}>{pleaseWait()}</Box>
-        </Container>
+        <ModalBody bgImage={'./images/keydash.png'} bgColor={'lightblue'} maxWidth={'full'}>
+          <Container mt={0}>
+            <Box mt={130}>{pleaseWait()}</Box>
+          </Container>
+        </ModalBody>
       );
     }
   }

@@ -78,13 +78,11 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
 
   if (gameStatus === 'IN_PROGRESS') {
     return (
-      <ModalBody bgImage={'./images/emptyramp.png'} bgColor={'lightblue'} maxWidth={'full'}>
-        <VehicleTrick
-          gameAreaController={gameAreaController}
-          vehicleType={ourVehicle}
-          usePhaser={true}
-        />
-      </ModalBody>
+      <VehicleTrick
+        gameAreaController={gameAreaController}
+        vehicleType={ourVehicle}
+        usePhaser={true}
+      />
     );
   } else if (leaderboardView) {
     return (
