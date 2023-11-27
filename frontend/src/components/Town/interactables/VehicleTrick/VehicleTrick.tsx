@@ -32,7 +32,7 @@ export type VehicleTrickGameProps = {
  */
 export default function VehicleTrick({ gameAreaController }: VehicleTrickGameProps): JSX.Element {
   const [input, setInput] = useState<string>('');
-  const [seconds, setSeconds] = useState(15);
+  const [timeLeft, setTimeLeft] = useState(gameAreaController.currentTimeLeft);
   const [score, setScore] = useState(0);
   const [isPlayer, setIsPlayer] = useState(gameAreaController.isPlayer);
   const [targetWord, setTargetWord] = useState(gameAreaController.currentWord);
@@ -50,33 +50,28 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
       setIsPlayer(gameAreaController.isPlayer);
     };
 
+    const updateTimeLeft = () => {
+      setTimeLeft(gameAreaController.currentTimeLeft);
+      if (gameAreaController.currentTimeLeft == 0) {
+        console.log('entered!');
+        setInput('');
+        setActiveInput(true);
+        return;
+      }
+    };
+
     gameAreaController.addListener('scoreChanged', setScore);
     gameAreaController.addListener('targetWordChanged', updateTargetWord);
+    gameAreaController.addListener('timeLeftChanged', updateTimeLeft);
     gameAreaController.addListener('gameUpdated', updateIsPlayer);
 
     return () => {
       gameAreaController.removeListener('scoreChanged', setScore);
       gameAreaController.removeListener('targetWordChanged', updateTargetWord);
+      gameAreaController.removeListener('timeLeftChanged', updateTimeLeft);
       gameAreaController.removeListener('gameUpdated', updateIsPlayer);
     };
   }, [gameAreaController]);
-
-  useEffect(() => {
-    // Exit the useEffect if the timer reaches 0
-    if (seconds === 0) {
-      setInput('');
-      setActiveInput(true);
-      return;
-    }
-
-    // Update the timer every second
-    const timerInterval = setInterval(() => {
-      setSeconds(prevSeconds => prevSeconds - 1);
-    }, 1000);
-
-    // Clean up the interval on component unmount
-    return () => clearInterval(timerInterval);
-  }, [seconds, toast]);
 
   function onlyLetters(word: string) {
     const validCharacters = /^[A-Za-z]+$/;
@@ -184,7 +179,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
           justify={'center'}
           mt={2}>
           <Stack align={'center'}>
-            <Text aria-label='timer'>{seconds} Seconds</Text>
+            <Text aria-label='timer'>{timeLeft} Seconds</Text>
           </Stack>
           <Stack align={'center'}>
             <Text aria-label='score'>Score: {score} </Text>

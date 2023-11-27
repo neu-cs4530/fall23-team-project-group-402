@@ -74,15 +74,15 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
               this._persistentHistory = this._trickScoresToGameResult(scores, gameID);
               this._emitAreaChanged();
             });
-          }
 
-          // Add to the current session's history
-          this._localHistory.push({
-            gameID,
-            scores: {
-              [playerName]: currentScore,
-            },
-          });
+            // Add to the current session's history
+            this._localHistory.push({
+              gameID,
+              scores: {
+                [playerName]: currentScore,
+              },
+            });
+          }
         }
       }
     }
@@ -96,6 +96,27 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
         [score.initials]: score.score,
       },
     }));
+  }
+
+  private _incrementTimer(): void {
+    const game = this._game;
+    if (!game) {
+      throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+    }
+    game.iterateClock();
+    this._stateUpdated(game.toModel());
+  }
+
+  private async _startTimer() {
+    const intervalId = setInterval(() => {
+      if (this.game && this.game.state.timeLeft > 0) {
+        this._incrementTimer(); // Your timer increment logic goes here
+      } else if (!this.game) {
+        throw new InvalidParametersError(GAME_NOT_IN_PROGRESS_MESSAGE);
+      } else {
+        clearInterval(intervalId); // Stop the interval if the condition is no longer met
+      }
+    }, 1000);
   }
 
   /**
@@ -133,6 +154,7 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
       }
       game.join(player);
       this._stateUpdated(game.toModel());
+      this._startTimer();
       return { gameID: game.id } as InteractableCommandReturnType<CommandType>;
     }
     if (command.type === 'LeaveGame') {
