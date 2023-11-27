@@ -66,6 +66,13 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
     throw new Error('Method should not be called within this component.');
   }
 
+  protected _updateFrom(newModel: GameArea<VehicleTrickGameState>): void {}
+
+  public updateTimer(newTime: number) {
+    this.mockTimeLeft = newTime;
+    this.emit('timeLeftChanged', newTime);
+  }
+
   public mockReset() {
     this.mockWord = 'cookies';
     this.mockScore = 100;
@@ -216,8 +223,7 @@ describe('VehicleTrick', () => {
   async function checkForIncrementingTimer() {
     const timer = screen.getByLabelText('timer');
     expect(timer).toHaveTextContent('15');
-    gameAreaController.updateFrom(mockModel, []);
-    // jest.advanceTimersByTime(5000);
+    gameAreaController.updateTimer(10);
     expect(timer).toHaveTextContent('10');
   }
   async function checkTargetWordUpdate(interactable: boolean) {
@@ -322,8 +328,7 @@ describe('VehicleTrick', () => {
       jest.advanceTimersByTime(16000);
       await checkInitialsInputField({ interactable: false });
     });
-    it('increments the timer', async () => {
-      // jest.useFakeTimers();
+    it('the timer is updated when the controller changes it', async () => {
       render(<VehicleTrick gameAreaController={gameAreaController} />);
       await checkWordInputField({ interactable: false });
       checkForIncrementingTimer();
