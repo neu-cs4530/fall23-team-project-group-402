@@ -201,25 +201,22 @@ describe('VehicleTrickGameArea', () => {
           expect(addScoreSpy).not.toHaveBeenCalled();
         });
         test('when the game is over, it records a new row in the history and calls _emitAreaChanged', () => {
-          const move: VehicleTrickMove = { word: 'testing' };
-          jest.spyOn(game, 'applyMove').mockImplementationOnce(() => {
+          jest.spyOn(game, 'leave').mockImplementationOnce(() => {
             game.endGame();
           });
           game.setScore(500);
-          gameArea.handleCommand({ type: 'GameMove', move, gameID }, player);
+          gameArea.handleCommand({ type: 'GameEnded', playerInitials: 'LEE' }, player);
 
           expect(game.state.status).toEqual('OVER');
           expect(game.state.currentScore).toEqual(500);
           expect(gameArea.localHistory.length).toEqual(1);
-          expect(addScoreSpy).not.toHaveBeenCalled();
           expect(gameArea.localHistory[0]).toEqual({
             gameID: game.id,
             scores: {
-              [player.userName]: 500,
+              LEE: 500,
             },
           });
           expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
-          expect(addScoreSpy).not.toHaveBeenCalled();
         });
       });
     });
@@ -272,23 +269,22 @@ describe('VehicleTrickGameArea', () => {
           expect(addScoreSpy).not.toHaveBeenCalled();
         });
         it('should update the history if the game is over', () => {
-          const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player);
+          gameArea.handleCommand({ type: 'JoinGame' }, player);
           interactableUpdateSpy.mockClear();
           jest.spyOn(game, 'leave').mockImplementationOnce(() => {
             game.endGame();
           });
           game.setScore(200);
-          gameArea.handleCommand({ type: 'LeaveGame', gameID }, player);
+          gameArea.handleCommand({ type: 'GameEnded', playerInitials: 'LEE' }, player);
           expect(game.state.status).toEqual('OVER');
           expect(gameArea.localHistory.length).toEqual(1);
           expect(gameArea.localHistory[0]).toEqual({
             gameID: game.id,
             scores: {
-              [player.userName]: 200,
+              LEE: 200,
             },
           });
           expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
-          expect(addScoreSpy).not.toHaveBeenCalled();
         });
       });
     });
