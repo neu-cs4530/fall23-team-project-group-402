@@ -45,7 +45,12 @@ class PhaserScene extends Phaser.Scene {
 
   create() {
     if (!this._vehicleType) return;
-    const player = this.add.sprite(88, 50, `${this._vehicleType}-atlas`);
+    const player = this.add.sprite(
+      88,
+      50,
+      `${this._vehicleType}-atlas`,
+      `${this._vehicleType}-right`,
+    );
     player.setScale(1.9);
 
     if (this._vehicleType === 'bike') {
@@ -60,7 +65,6 @@ class PhaserScene extends Phaser.Scene {
     }
 
     this._player = player;
-    this._player.anims.play(`${this._vehicleType}-trick-1`, true);
   }
 
   /**
@@ -71,7 +75,7 @@ class PhaserScene extends Phaser.Scene {
     if (this._player && this._vehicleType) {
       const trickNumber: number =
         this._vehicleType === 'skateboard' ? Math.floor(Math.random() * 3) + 1 : 1;
-      this._player.anims.play(`${this._vehicleType}-trick-${trickNumber}`, true);
+      this._player.anims.play(`${this._vehicleType}-trick-${trickNumber}`, false);
     }
   }
 }
