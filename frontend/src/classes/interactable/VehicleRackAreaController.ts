@@ -3,6 +3,7 @@ import {
   VehicleRackArea as VehicleRackAreaModel,
   VehicleType,
 } from '../../types/CoveyTownSocket';
+import PlayerController from '../PlayerController';
 import TownController from '../TownController';
 import InteractableAreaController, { BaseInteractableEventMap } from './InteractableAreaController';
 
@@ -53,21 +54,9 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
   }
 
   public equipVehicle(): Vehicle | undefined {
-    const ourPlayer = this.occupants.find(
-      occupant => occupant.id === this._townController.ourPlayer.id,
-    );
-    const vehicle = ourPlayer?.equipVehicle(this._vehicle);
+    const vehicle = this._player?.equipVehicle(this.vehicle);
     this._townController.emitVehicleChange(vehicle);
     return vehicle;
-  }
-
-  public unequipVehicle(): undefined {
-    const ourPlayer = this.occupants.find(
-      occupant => occupant.id === this._townController.ourPlayer.id,
-    );
-    const vehicle = ourPlayer?.unequipVehicle();
-    this._townController.emitVehicleChange(vehicle);
-    return vehicle
   }
 
   public toInteractableAreaModel(): VehicleRackAreaModel {
@@ -76,5 +65,15 @@ export default class VehicleRackAreaController extends InteractableAreaControlle
       occupants: this.occupants.map(player => player.id),
       type: 'VehicleRackArea',
     };
+  }
+
+  /**
+   * Returns the player playing the game if there is one, or undefined otherwise
+   */
+  private get _player(): PlayerController | undefined {
+    const ourPlayer = this.occupants.find(
+      occupant => occupant.id === this._townController.ourPlayer.id,
+    );
+    return ourPlayer;
   }
 }

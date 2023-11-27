@@ -106,7 +106,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
       _equipVehicle(vehicle?.vehicleType as VehicleType);
       toast({
         title: `Success`,
-        description: `${vehicle ? `Equipped ${vehicle.vehicleType}` : 'Unequipped'}`,
+        description: `${vehicle ? `Equipped ${vehicle?.vehicleType}` : 'Unequipped'}`,
         status: 'info',
       });
     } catch (error) {
@@ -121,14 +121,13 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   function handleSelectVehicle(vehicleType: VehicleType) {
     if (coveyTownController.ourPlayer.vehicle?.vehicleType === vehicleType) {
       vehicleRackAreaController.vehicle = undefined;
-      handleEquipVehicle();
       setBikeEquip(false);
       setSkateboardEquip(false);
       setHorseEquip(false);
     } else {
       vehicleRackAreaController.vehicle = vehicleType;
-      handleEquipVehicle();
     }
+    handleEquipVehicle();
   }
 
   const vehicles = [
