@@ -41,7 +41,7 @@ const OVERLAY_BORDER_COLOR = '#1A365D';
 
 export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackArea }): JSX.Element {
   const coveyTownController = useTownController();
-  const newRack = useInteractable('vehicleRackArea');
+  const newRack = useInteractable<VehicleRackArea>('vehicleRackArea');
   const vehicleRackAreaController = useInteractableAreaController<VehicleRackAreaController>(
     vehicleArea?.name,
   );
@@ -99,26 +99,6 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
     }
   }
 
-  function handleUnequipVehicle() {
-    try {
-      vehicleRackAreaController.unequipVehicle();
-      setBikeEquip(false);
-      setSkateboardEquip(false);
-      setHorseEquip(false);
-      toast({
-        title: `Success`,
-        description: `Unequipped Vehicle`,
-        status: 'info',
-      });
-    } catch (error) {
-      toast({
-        title: `Error unequipping vehicle`,
-        description: (error as Error).toString,
-        status: 'error',
-      });
-    }
-  }
-
   function handleEquipVehicle() {
     try {
       const vehicle = vehicleRackAreaController.equipVehicle();
@@ -126,12 +106,12 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
       _equipVehicle(vehicle?.vehicleType as VehicleType);
       toast({
         title: `Success`,
-        description: `Equipped: ${vehicleRackAreaController.vehicle?.toUpperCase()}`,
+        description: `${vehicle ? `Equipped ${vehicle.vehicleType}` : 'Unequipped'}`,
         status: 'info',
       });
     } catch (error) {
       toast({
-        title: `Error equipping vehicle`,
+        title: `Error`,
         description: (error as Error).toString,
         status: 'error',
       });
@@ -141,7 +121,10 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
   function handleSelectVehicle(vehicleType: VehicleType) {
     if (coveyTownController.ourPlayer.vehicle?.vehicleType === vehicleType) {
       vehicleRackAreaController.vehicle = undefined;
-      handleUnequipVehicle();
+      handleEquipVehicle();
+      setBikeEquip(false);
+      setSkateboardEquip(false);
+      setHorseEquip(false);
     } else {
       vehicleRackAreaController.vehicle = vehicleType;
       handleEquipVehicle();
@@ -353,7 +336,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
         closeModal();
         coveyTownController.unPause();
       }}>
-      <ModalOverlay bgSize={'cover'} bg='rgba(0, 0, 0, .95)' />
+      <ModalOverlay bgSize={'cover'} bg='rgba(0, 0, 0, .4)' />
       <ModalContent
         minHeight={200}
         maxW='1000px'
@@ -364,6 +347,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
             defaultIsOpen={false}
             label={TOOL_TIP_TEXT}
             placement='top-start'
+            aria-label='tooltip'
             mr={5}
             bgColor={'white'}
             bgSize={10}

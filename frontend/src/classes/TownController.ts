@@ -441,6 +441,16 @@ export default class TownController extends (EventEmitter as new () => TypedEmit
      */
     this._socket.on('playerVehicleChanged', vehiclePlayer => {
       const playerToUpdate = this.players.find(eachPlayer => eachPlayer.id === vehiclePlayer.id);
+      if (playerToUpdate && playerToUpdate.gameObjects) {
+        const { sprite } = playerToUpdate.gameObjects;
+        const vehicleType = playerToUpdate.vehicle ? playerToUpdate.vehicle.vehicleType : 'walk';
+        sprite.body.setVelocity(0, 0);
+        sprite.anims.stop();
+        sprite.setTexture(
+          `${vehicleType}-atlas`,
+          `${vehicleType}-${playerToUpdate.location.rotation}`,
+        );
+      }
       if (playerToUpdate) {
         playerToUpdate.vehicle = vehiclePlayer.vehicle;
         this.emit('playerVehicleChanged', playerToUpdate);

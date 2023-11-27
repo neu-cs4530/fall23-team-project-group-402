@@ -62,6 +62,7 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
 
   set vehicle(vehicle: Vehicle | undefined) {
     this._vehicle = vehicle;
+    this.emit('vehicleChange', this.vehicle);
   }
 
   get vehicle(): Vehicle | undefined {
@@ -84,24 +85,24 @@ export default class PlayerController extends (EventEmitter as new () => TypedEm
         speedMultiplier = 1;
         break;
     }
-    if (this._vehicle?.vehicleType !== vehicleType) {
-      this.emit('vehicleChange', this._vehicle);
+    if (this.vehicle?.vehicleType !== vehicleType) {
+      this.emit('vehicleChange', this.vehicle);
     }
     if (vehicleType) {
-      this._vehicle = {
+      this.vehicle = {
         speedMultiplier: speedMultiplier,
         vehicleType: vehicleType,
       };
     } else {
-      this._vehicle = undefined;
+      this.vehicle = undefined;
     }
-    return this._vehicle;
+    return this.vehicle;
   }
 
   public unequipVehicle(): undefined {
-    this._vehicle = undefined;
-    this.emit('vehicleChange', this._vehicle);
-    return this._vehicle;
+    this.vehicle = undefined;
+    this.emit('vehicleChange', this.vehicle);
+    return undefined;
   }
 
   toPlayerModel(): PlayerModel {
