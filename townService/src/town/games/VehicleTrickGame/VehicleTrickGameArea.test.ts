@@ -25,6 +25,7 @@ class TestingGame extends Game<VehicleTrickGameState, VehicleTrickMove> {
       targetWord: '',
       currentScore: 0,
       status: 'WAITING_TO_START',
+      timeLeft: 15,
     });
   }
 

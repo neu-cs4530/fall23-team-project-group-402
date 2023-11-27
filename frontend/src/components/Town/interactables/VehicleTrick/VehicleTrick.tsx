@@ -53,10 +53,8 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
     const updateTimeLeft = () => {
       setTimeLeft(gameAreaController.currentTimeLeft);
       if (gameAreaController.currentTimeLeft == 0) {
-        console.log('entered!');
         setInput('');
         setActiveInput(true);
-        return;
       }
     };
 
