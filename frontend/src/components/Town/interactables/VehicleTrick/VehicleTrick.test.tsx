@@ -103,27 +103,6 @@ describe('VehicleTrick', () => {
     consoleErrorSpy.mockRestore();
   });
 
-  const mockPlayer = nanoid();
-
-  const mockGameState = {
-    currentScore: 0,
-    player: mockPlayer,
-    status: 'GAME IN PROGRESS' as GameStatus,
-    targetWord: 'cookies',
-    timeLeft: 10,
-  };
-
-  const mockGame = { id: nanoid(), players: [mockPlayer], state: mockGameState };
-
-  const mockModel: GameArea<VehicleTrickGameState> = {
-    game: mockGame,
-    id: nanoid(),
-    localHistory: [],
-    occupants: [],
-    persistentHistory: [],
-    type: 'VehicleTrickArea',
-  };
-
   const gameAreaController = new MockVehicleTrickAreaController();
   const observerText = 'Please wait, someone else is currently playing!';
   beforeEach(() => {
@@ -223,7 +202,9 @@ describe('VehicleTrick', () => {
   async function checkForIncrementingTimer() {
     const timer = screen.getByLabelText('timer');
     expect(timer).toHaveTextContent('15');
-    gameAreaController.updateTimer(10);
+    act(() => {
+      gameAreaController.updateTimer(10);
+    });
     expect(timer).toHaveTextContent('10');
   }
   async function checkTargetWordUpdate(interactable: boolean) {
@@ -316,30 +297,28 @@ describe('VehicleTrick', () => {
   describe('When observing the game', () => {
     beforeEach(() => {
       gameAreaController.mockIsPlayer = false;
+      gameAreaController.updateTimer(15);
+      render(<VehicleTrick gameAreaController={gameAreaController} />);
     });
     it('displays a timer, score and current word when the player starts game', async () => {
-      render(<VehicleTrick gameAreaController={gameAreaController} />);
       checkForGameComponents();
       await checkWordInputField({ interactable: false });
     });
     it('displays observer message in place of initials screen when timer runs out', async () => {
-      jest.useFakeTimers();
-      render(<VehicleTrick gameAreaController={gameAreaController} />);
-      jest.advanceTimersByTime(16000);
+      act(() => {
+        gameAreaController.updateTimer(0);
+      });
       await checkInitialsInputField({ interactable: false });
     });
     it('the timer is updated when the controller changes it', async () => {
-      render(<VehicleTrick gameAreaController={gameAreaController} />);
       await checkWordInputField({ interactable: false });
       checkForIncrementingTimer();
     });
     it('updates the targetWord in response to targetWordChanged events', async () => {
-      render(<VehicleTrick gameAreaController={gameAreaController} />);
       await checkWordInputField({ interactable: false });
       checkTargetWordUpdate(false);
     });
     it('updates the score in response to scoreChanged events', async () => {
-      render(<VehicleTrick gameAreaController={gameAreaController} />);
       await checkWordInputField({ interactable: false });
       checkScoreUpdate(false);
     });
@@ -347,62 +326,52 @@ describe('VehicleTrick', () => {
   describe('When playing the game', () => {
     beforeEach(() => {
       gameAreaController.mockIsPlayer = true;
+      act(() => {
+        gameAreaController.updateTimer(15);
+      });
+      render(<VehicleTrick gameAreaController={gameAreaController} />);
     });
     describe('Gameplay screen', () => {
       it('displays an input field, timer, score and current word when the player starts game', async () => {
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         checkForGameComponents();
         await checkWordInputField({ interactable: true });
       });
       it('increments the timer', async () => {
-        // jest.useFakeTimers();
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         checkForIncrementingTimer();
       });
       it('makes a move when word is typed', async () => {
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         await checkWordInputField({ interactable: true, checkWord: 'cook' });
       });
       it('field does not update when invalid word is typed', async () => {
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         await checkWordInputField({ interactable: true, checkInvalidChar: 'cook>' });
       });
       it('updates the targetWord in response to targetWordChanged events', async () => {
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         await checkWordInputField({ interactable: true });
         checkTargetWordUpdate(true);
       });
       it('updates the score in response to scoreChanged events', async () => {
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         await checkWordInputField({ interactable: true });
         checkScoreUpdate(true);
       });
     });
     describe('Initials screen', () => {
+      beforeEach(() => {
+        act(() => {
+          gameAreaController.updateTimer(0);
+        });
+      });
       it('displays initials screen when timer runs out', async () => {
-        jest.useFakeTimers();
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
-        jest.advanceTimersByTime(16000);
         const highScore = screen.getByLabelText('highscore');
         expect(highScore).toHaveTextContent('Score: 0');
         checkInitialsInputField({ interactable: true });
       });
       it('input field ignores non-alphabetical characters', async () => {
-        jest.useFakeTimers();
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
-        jest.advanceTimersByTime(16000);
         checkInitialsInputField({ interactable: true, checkInvalidInitials: 'SW^' });
       });
       it('allows user to submit valid initials', async () => {
-        jest.useFakeTimers();
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
-        jest.advanceTimersByTime(16000);
         checkInitialsInputField({ interactable: true, checkInitials: 'SWE' });
       });
       it('does not allow user to submit initials under 3 characters', async () => {
-        jest.useFakeTimers();
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
-        jest.advanceTimersByTime(16000);
         checkInitialsInputField({ interactable: true, checkShortInitials: 'SW' });
       });
     });
