@@ -45,6 +45,9 @@ export default class VehicleTrickGame extends Game<VehicleTrickGameState, Vehicl
     this._wordGenerator = wordGenerator ?? new TrickWordGenerator();
   }
 
+  /**
+   * Iterates the internal clock for the vehicle trick game if we can.
+   */
   public iterateClock(): void {
     const newTimeLeft = this.state.timeLeft - 1;
     if (newTimeLeft >= 0) {

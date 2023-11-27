@@ -18,10 +18,10 @@ export type VehicleTrickGameProps = {
 /**
  * A component that renders the VehicleTrick game
  *
- * Renders a timer (which immediately begins counting down), the current word that needs to be typed,
+ * Renders a timer connected to the backend, the current word that needs to be typed,
  * and an input field that is automatically selected. The input field only accepts letters.
  *
- * The timer is rerendered each second to represent the countdown, the input field rerenders each time
+ * The timer is rerendered each time the backend updates the timer, the input field rerenders each time
  * the player types in a letter, and the word displayed rerenders whenever the user spells it correctly.
  *
  * Once the timer runs out, the display automatically changes to display the user's score, an 3-letter

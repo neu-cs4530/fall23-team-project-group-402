@@ -42,6 +42,9 @@ export default class VehicleTrickAreaController extends GameAreaController<
     return this._currentScore;
   }
 
+  /**
+   * Returns the time left in the game.
+   */
   get currentTimeLeft(): number {
     return this._currentTimeLeft;
   }

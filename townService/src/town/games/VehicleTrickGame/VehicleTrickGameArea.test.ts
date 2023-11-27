@@ -1,4 +1,4 @@
-import { mock, mockClear } from 'jest-mock-extended';
+import { mock, mockClear, mockReset } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
 import VehicleTrickGameArea from './VehicleTrickGameArea';
 import { createPlayerForTesting } from '../../../TestUtils';
@@ -29,6 +29,13 @@ class TestingGame extends Game<VehicleTrickGameState, VehicleTrickMove> {
     });
   }
 
+  public iterateClock(): void {
+    this.state = {
+      ...this.state,
+      timeLeft: this.state.timeLeft - 1,
+    };
+  }
+
   public applyMove(): void {}
 
   public endGame() {
@@ -51,6 +58,13 @@ class TestingGame extends Game<VehicleTrickGameState, VehicleTrickMove> {
       currentScore: newScore,
     };
   }
+
+  public startGame(): void {
+    this.state = {
+      ...this.state,
+      status: 'IN_PROGRESS',
+    };
+  }
 }
 
 describe('VehicleTrickGameArea', () => {
@@ -68,6 +82,7 @@ describe('VehicleTrickGameArea', () => {
   ];
 
   beforeEach(done => {
+    jest.useRealTimers();
     const gameConstructorSpy = jest.spyOn(VehicleTrickGameModule, 'default');
     game = new TestingGame();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -143,6 +158,19 @@ describe('VehicleTrickGameArea', () => {
           expect(interactableUpdateSpy).not.toHaveBeenCalled();
           expect(addScoreSpy).not.toHaveBeenCalled();
         });
+      });
+      it('should start the game timer by calling setInterval', () => {
+        const setIntervalSpy = jest.spyOn(global, 'setInterval');
+        setIntervalSpy.mockImplementation();
+        expect(setIntervalSpy).not.toHaveBeenCalled();
+
+        const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player);
+        expect(gameID).toBeDefined();
+        if (!game) {
+          throw new Error('Game was not created by the first call to join');
+        }
+        expect(setIntervalSpy).toHaveBeenCalled();
+        mockReset(setIntervalSpy);
       });
     });
     describe('when given a GameMove command', () => {

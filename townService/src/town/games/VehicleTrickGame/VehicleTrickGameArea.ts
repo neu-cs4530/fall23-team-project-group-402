@@ -39,6 +39,10 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
     this._loadPersistentHistory();
   }
 
+  /**
+   * Gets the type of this GameArea.
+   * @returns The type of this Interactable area.
+   */
   protected getType(): InteractableType {
     return 'VehicleTrickArea';
   }
@@ -53,6 +57,12 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
     });
   }
 
+  /**
+   * Handles updating the state and emmitting events based on certain
+   * state changes.
+   * @param updatedState The updated state of the game
+   * @param playerInitials The player's entered initials, if any
+   */
   private _stateUpdated(
     updatedState: GameInstance<VehicleTrickGameState>,
     playerInitials: string | null = null,
@@ -89,6 +99,12 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
     this._emitAreaChanged();
   }
 
+  /**
+   * Maps VehicleTrickScores to GameResults for the game's history.
+   * @param scores The scores in the game
+   * @param gameID The gameID the scores were in
+   * @returns The GameResults representing the scores
+   */
   private _trickScoresToGameResult(scores: VehicleTrickScore[], gameID: string): GameResult[] {
     return scores.map(score => ({
       gameID,
@@ -98,6 +114,9 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
     }));
   }
 
+  /**
+   * Increments the game's timer.
+   */
   private _incrementTimer(): void {
     const game = this._game;
     if (!game) {
@@ -107,7 +126,10 @@ export default class VehicleTrickGameArea extends GameArea<VehicleTrickGame> {
     this._stateUpdated(game.toModel());
   }
 
-  private async _startTimer() {
+  /**
+   * Starts the game's timer.
+   */
+  private _startTimer() {
     const intervalId = setInterval(() => {
       if (this.game && this.game.state.status === 'IN_PROGRESS' && this.game.state.timeLeft > 0) {
         this._incrementTimer();
