@@ -49,7 +49,11 @@ class PhaserScene extends Phaser.Scene {
       88,
       50,
       `${this._vehicleType}-atlas`,
-      `${this._vehicleType}-right`,
+      `${
+        this._vehicleType === 'skateboard'
+          ? `${this._vehicleType}-front`
+          : `${this._vehicleType}-right`
+      }`,
     );
     player.setScale(1.9);
 

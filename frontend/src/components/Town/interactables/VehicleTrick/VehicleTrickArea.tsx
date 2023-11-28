@@ -99,7 +99,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
             textColor={'black'}
             textAlign={'center'}
             fontWeight={'medium'}
-            fontFamily={'fantasy'}
+            fontFamily={'serif'}
             ml={-10}>
             Leaderboard
           </Text>
