@@ -145,11 +145,7 @@ export default function VehicleTrickLeaderboard({
             </Tr>
           </Thead>
           <Tbody style={{ overflowY: 'auto' }} textAlign={'center'}>
-            {leaderboardList.map(record => {
-              const playerIndex = leaderboardList.findIndex(
-                player => player.initials === record.initials && player.score === record.score,
-              );
-
+            {leaderboardList.map((record, index) => {
               return (
                 <Tr key={nanoid()}>
                   <Td
@@ -160,7 +156,7 @@ export default function VehicleTrickLeaderboard({
                     fontFamily={'fantasy'}
                     fontSize={15}
                     borderBottom={'none'}>
-                    {playerIndex + 1}
+                    {index + 1}
                   </Td>
                   <Td
                     textColor={'black'}
