@@ -28,9 +28,10 @@ type LeaderboardRow = {
 
 /**
  * A component that renders a list of GameResult's as a leaderboard, formatted as a table with the following columns:
+ * - Rank: The rank of the player in the leaderboard
  * - Player: the three letter username for the player
  * - Score: the player's highest score
- * Each column has a header (a table header `th` element) with the name of the column.
+ * Each column has a header with the name of the column.
  *
  *
  * The table is sorted by score, with the player with the highest score at the top.
@@ -47,6 +48,7 @@ export default function VehicleTrickLeaderboard({
   const localLeaderboardTooltip = 'This leaderboard consolidates duplicate username entries';
   const persistentLeaderboardTooltip =
     'This leaderboard does not consolidate duplicate username entries';
+  const font = 'serif';
   // /**
   //  * Creates the leaderboard rows to render given the game's history.
   //  * Note, for the current session leaderboard, only the highest score for each initial
@@ -119,7 +121,7 @@ export default function VehicleTrickLeaderboard({
                 textColor={'black'}
                 textAlign={'center'}
                 fontWeight={'medium'}
-                fontFamily={'fantasy'}
+                fontFamily={font}
                 fontSize={15}
                 borderBottom={'none'}>
                 Rank
@@ -128,7 +130,7 @@ export default function VehicleTrickLeaderboard({
                 textColor={'black'}
                 textAlign={'center'}
                 fontWeight={'medium'}
-                fontFamily={'fantasy'}
+                fontFamily={font}
                 fontSize={15}
                 borderBottom={'none'}>
                 Initials
@@ -137,7 +139,7 @@ export default function VehicleTrickLeaderboard({
                 textColor={'black'}
                 textAlign={'center'}
                 fontWeight={'medium'}
-                fontFamily={'fantasy'}
+                fontFamily={font}
                 fontSize={15}
                 borderBottom={'none'}>
                 High Score
@@ -157,7 +159,7 @@ export default function VehicleTrickLeaderboard({
                     textAlign={'center'}
                     maxWidth={30}
                     fontWeight={'medium'}
-                    fontFamily={'fantasy'}
+                    fontFamily={font}
                     fontSize={15}
                     borderBottom={'none'}>
                     {playerIndex + 1}
@@ -167,7 +169,7 @@ export default function VehicleTrickLeaderboard({
                     textAlign={'center'}
                     maxWidth={30}
                     fontWeight={'medium'}
-                    fontFamily={'fantasy'}
+                    fontFamily={font}
                     fontSize={15}
                     borderBottom={'none'}>
                     {record.initials}
@@ -177,7 +179,7 @@ export default function VehicleTrickLeaderboard({
                     textAlign={'center'}
                     maxWidth={30}
                     fontWeight={'medium'}
-                    fontFamily={'fantasy'}
+                    fontFamily={font}
                     fontSize={15}
                     borderBottom={'none'}>
                     {record.score}
@@ -201,7 +203,7 @@ export default function VehicleTrickLeaderboard({
           textColor={'black'}
           textAlign={'center'}
           fontWeight={'medium'}
-          fontFamily={'fantasy'}
+          fontFamily={font}
           fontSize={15}>
           <Tooltip
             label={localLeaderboardTooltip}
@@ -220,7 +222,7 @@ export default function VehicleTrickLeaderboard({
           textColor={'black'}
           textAlign={'center'}
           fontWeight={'medium'}
-          fontFamily={'fantasy'}
+          fontFamily={font}
           fontSize={15}>
           <Tooltip
             label={persistentLeaderboardTooltip}

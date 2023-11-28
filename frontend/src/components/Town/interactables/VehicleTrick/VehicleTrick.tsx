@@ -167,8 +167,8 @@ export default function VehicleTrick({
             alignItems='center'
             mt={5}
             fontSize={33}
-            fontFamily={'cursive'}
-            fontWeight={'bold'}>
+            fontFamily={'courier'}
+            fontWeight={'semibold'}>
             {Array.from({ length: word.length }).map((_, index) => (
               <Box key={index} style={{ marginLeft: '2px', marginRight: '2px' }}>
                 {input[index] || '_'}
@@ -247,7 +247,7 @@ export default function VehicleTrick({
               </Stack>
               <Stack align={'cente'}>
                 <Box mt={16} textAlign='center' aria-label='target-word'>
-                  <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={33}>
+                  <Text fontFamily={'courier'} fontWeight={'semibold'} fontSize={33}>
                     {targetWord}
                   </Text>
                   {gameContent({ word: targetWord })}
@@ -267,7 +267,7 @@ export default function VehicleTrick({
         <ModalBody bgImage={'./images/keydash.png'} bgColor={'lightblue'} maxWidth={'full'}>
           <Container>
             <Box textAlign='center' aria-label='highscore'>
-              <Text fontSize={24} fontWeight={'medium'} fontFamily={'fantasy'} mt={2}>
+              <Text fontSize={24} fontWeight={'bold'} fontFamily={'courier'} mt={2}>
                 Score: {score}
               </Text>
             </Box>
@@ -279,7 +279,7 @@ export default function VehicleTrick({
                     justifyContent='center'
                     alignItems='center'
                     mt={12}
-                    fontFamily={'fantasy'}>
+                    fontFamily={'courier'}>
                     {Array.from({ length: 3 }).map((_, index) => (
                       <Box
                         key={index}
@@ -289,7 +289,7 @@ export default function VehicleTrick({
                       </Box>
                     ))}
                   </Box>
-                  <Text mt={-1} fontSize={16} fontFamily={'fantasy'} fontWeight={'medium'}>
+                  <Text mt={0} fontSize={16} fontFamily={'courier'} fontWeight={'medium'}>
                     Enter Your Initials
                   </Text>
                   <Input
@@ -323,12 +323,11 @@ export default function VehicleTrick({
                 width={100}
                 aria-label='submit'
                 _hover={{}}
-                variant={'unstyled'}
                 _active={{ color: 'blue.800' }}
                 _focus={{}}
-                fontFamily={'fantasy'}
+                fontFamily={'courier'}
                 fontSize={19}
-                fontWeight={'medium'}>
+                variant={'ghost'}>
                 Submit
               </Button>
             </Box>
