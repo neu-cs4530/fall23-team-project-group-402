@@ -39,13 +39,41 @@ describe('VehicleTrickGame', () => {
     playerID: string | undefined,
     targetWord: string,
     currentScore: number,
+    timeLeft?: number,
   ) {
     expect(game.state.status).toEqual(status);
     expect(game.state.player).toEqual(playerID);
     expect(game.state.targetWord).toEqual(targetWord);
     expect(game.state.currentScore).toEqual(currentScore);
+    if (timeLeft) {
+      expect(game.state.timeLeft).toEqual(timeLeft);
+    }
   }
 
+  describe('iterateClock', () => {
+    it('updates the state if the new time is greater than or equal to zero', () => {
+      testGameState('WAITING_TO_START', undefined, '', 0, 15);
+      game.iterateClock();
+      testGameState('WAITING_TO_START', undefined, '', 0, 14);
+    });
+    it('does not update the state if the new time is less that zero', () => {
+      // Simulate a player joining
+      const player = createPlayerForTesting();
+      game.join(player);
+      testGameState('IN_PROGRESS', player.id, 'testing', 0, 15);
+
+      for (let i = 1; i <= 15; i++) {
+        game.iterateClock();
+        testGameState('IN_PROGRESS', player.id, 'testing', 0, 15 - i);
+      }
+
+      // Incrementing the timer now should not do anything
+      for (let i = 1; i <= 5; i++) {
+        game.iterateClock();
+        testGameState('IN_PROGRESS', player.id, 'testing', 0, 0);
+      }
+    });
+  });
   describe('applyMove', () => {
     describe('invalid moves', () => {
       it('throws an error if the game is not in progress', () => {
@@ -213,16 +241,16 @@ describe('VehicleTrickGame', () => {
     });
   });
   describe('end game if time elapsed', () => {
-    jest.setTimeout(200000);
+    jest.useFakeTimers();
     it('ends the game and sets the status to over', async () => {
       const player = createPlayerForTesting();
       setIntervalSpy.mockRestore();
       clearIntervalSpy.mockRestore();
       game.join(player);
       testGameState('IN_PROGRESS', player.id, 'testing', 0);
-      // eslint-disable-next-line no-promise-executor-return
-      await new Promise(resolve => setTimeout(resolve, 16000));
+      jest.advanceTimersByTime(16000);
       testGameState('OVER', player.id, 'testing', 0);
+      jest.useRealTimers();
     });
   });
 });

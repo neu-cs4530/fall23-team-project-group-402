@@ -61,17 +61,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
       setCanPlay(gameAreaController.canPlay);
     };
     gameAreaController.addListener('gameUpdated', updateGameState);
-    // Remove game end toast later
-    const onGameEnd = () => {
-      toast({
-        title: 'Game over',
-        description: 'Time has concluded',
-        status: 'success',
-      });
-    };
-    gameAreaController.addListener('gameEnd', onGameEnd);
     return () => {
-      gameAreaController.removeListener('gameEnd', onGameEnd);
       gameAreaController.removeListener('gameUpdated', updateGameState);
     };
   }, [townController, gameAreaController, toast]);

@@ -120,6 +120,7 @@ export interface VehicleTrickScore {
 export interface VehicleTrickGameState extends GameState {
   targetWord: string
   currentScore: number
+  timeLeft: number
   player?: PlayerID
 }
 

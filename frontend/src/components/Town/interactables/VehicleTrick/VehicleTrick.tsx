@@ -23,10 +23,10 @@ export type VehicleTrickGameProps = {
 /**
  * A component that renders the VehicleTrick game
  *
- * Renders a timer (which immediately begins counting down), the current word that needs to be typed,
+ * Renders a timer connected to the backend, the current word that needs to be typed,
  * and an input field that is automatically selected. The input field only accepts letters.
  *
- * The timer is rerendered each second to represent the countdown, the input field rerenders each time
+ * The timer is rerendered each time the backend updates the timer, the input field rerenders each time
  * the player types in a letter, and the word displayed rerenders whenever the user spells it correctly.
  *
  * Once the timer runs out, the display automatically changes to display the user's score, an 3-letter
@@ -41,7 +41,7 @@ export default function VehicleTrick({
   usePhaser,
 }: VehicleTrickGameProps): JSX.Element {
   const [input, setInput] = useState<string>('');
-  const [seconds, setSeconds] = useState(15);
+  const [timeLeft, setTimeLeft] = useState(gameAreaController.currentTimeLeft);
   const [score, setScore] = useState(0);
   const [isPlayer, setIsPlayer] = useState(gameAreaController.isPlayer);
   const [targetWord, setTargetWord] = useState(gameAreaController.currentWord);
@@ -59,37 +59,30 @@ export default function VehicleTrick({
       setIsPlayer(gameAreaController.isPlayer);
     };
 
+    const updateTimeLeft = () => {
+      setTimeLeft(gameAreaController.currentTimeLeft);
+      if (gameAreaController.currentTimeLeft == 0) {
+        setInput('');
+        setActiveInput(true);
+      }
+    };
+
     const updateScore = () => {
       setScore(gameAreaController.currentScore);
     };
 
     gameAreaController.addListener('scoreChanged', updateScore);
     gameAreaController.addListener('targetWordChanged', updateTargetWord);
+    gameAreaController.addListener('timeLeftChanged', updateTimeLeft);
     gameAreaController.addListener('gameUpdated', updateIsPlayer);
 
     return () => {
       gameAreaController.removeListener('scoreChanged', updateScore);
       gameAreaController.removeListener('targetWordChanged', updateTargetWord);
+      gameAreaController.removeListener('timeLeftChanged', updateTimeLeft);
       gameAreaController.removeListener('gameUpdated', updateIsPlayer);
     };
   }, [gameAreaController]);
-
-  useEffect(() => {
-    // Exit the useEffect if the timer reaches 0
-    if (seconds === 0) {
-      setInput('');
-      setActiveInput(true);
-      return;
-    }
-
-    // Update the timer every second
-    const timerInterval = setInterval(() => {
-      setSeconds(prevSeconds => prevSeconds - 1);
-    }, 1000);
-
-    // Clean up the interval on component unmount
-    return () => clearInterval(timerInterval);
-  }, [seconds, toast]);
 
   /**
    * Determines if the given word is valid (only contains characters A/a-Z/z)
@@ -246,7 +239,7 @@ export default function VehicleTrick({
                 justify={'center'}
                 mt={2}>
                 <Stack align={'center'}>
-                  <Text aria-label='timer'>{seconds} Seconds</Text>
+                  <Text aria-label='timer'>{timeLeft} Seconds</Text>
                 </Stack>
                 <Stack align={'center'}>
                   <Text aria-label='score'>Score: {score} </Text>

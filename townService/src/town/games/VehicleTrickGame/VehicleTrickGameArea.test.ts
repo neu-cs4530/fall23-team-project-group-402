@@ -1,4 +1,4 @@
-import { mock, mockClear } from 'jest-mock-extended';
+import { mock, mockClear, mockReset } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
 import VehicleTrickGameArea from './VehicleTrickGameArea';
 import { createPlayerForTesting } from '../../../TestUtils';
@@ -25,7 +25,15 @@ class TestingGame extends Game<VehicleTrickGameState, VehicleTrickMove> {
       targetWord: '',
       currentScore: 0,
       status: 'WAITING_TO_START',
+      timeLeft: 15,
     });
+  }
+
+  public iterateClock(): void {
+    this.state = {
+      ...this.state,
+      timeLeft: this.state.timeLeft - 1,
+    };
   }
 
   public applyMove(): void {}
@@ -50,6 +58,13 @@ class TestingGame extends Game<VehicleTrickGameState, VehicleTrickMove> {
       currentScore: newScore,
     };
   }
+
+  public startGame(): void {
+    this.state = {
+      ...this.state,
+      status: 'IN_PROGRESS',
+    };
+  }
 }
 
 describe('VehicleTrickGameArea', () => {
@@ -67,6 +82,7 @@ describe('VehicleTrickGameArea', () => {
   ];
 
   beforeEach(done => {
+    jest.useRealTimers();
     const gameConstructorSpy = jest.spyOn(VehicleTrickGameModule, 'default');
     game = new TestingGame();
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -143,6 +159,19 @@ describe('VehicleTrickGameArea', () => {
           expect(addScoreSpy).not.toHaveBeenCalled();
         });
       });
+      it('should start the game timer by calling setInterval', () => {
+        const setIntervalSpy = jest.spyOn(global, 'setInterval');
+        setIntervalSpy.mockImplementation();
+        expect(setIntervalSpy).not.toHaveBeenCalled();
+
+        const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player);
+        expect(gameID).toBeDefined();
+        if (!game) {
+          throw new Error('Game was not created by the first call to join');
+        }
+        expect(setIntervalSpy).toHaveBeenCalled();
+        mockReset(setIntervalSpy);
+      });
     });
     describe('when given a GameMove command', () => {
       it('should throw an error when there is no game in progress', () => {
@@ -200,25 +229,22 @@ describe('VehicleTrickGameArea', () => {
           expect(addScoreSpy).not.toHaveBeenCalled();
         });
         test('when the game is over, it records a new row in the history and calls _emitAreaChanged', () => {
-          const move: VehicleTrickMove = { word: 'testing' };
-          jest.spyOn(game, 'applyMove').mockImplementationOnce(() => {
+          jest.spyOn(game, 'leave').mockImplementationOnce(() => {
             game.endGame();
           });
           game.setScore(500);
-          gameArea.handleCommand({ type: 'GameMove', move, gameID }, player);
+          gameArea.handleCommand({ type: 'GameEnded', playerInitials: 'LEE' }, player);
 
           expect(game.state.status).toEqual('OVER');
           expect(game.state.currentScore).toEqual(500);
           expect(gameArea.localHistory.length).toEqual(1);
-          expect(addScoreSpy).not.toHaveBeenCalled();
           expect(gameArea.localHistory[0]).toEqual({
             gameID: game.id,
             scores: {
-              [player.userName]: 500,
+              LEE: 500,
             },
           });
           expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
-          expect(addScoreSpy).not.toHaveBeenCalled();
         });
       });
     });
@@ -271,23 +297,22 @@ describe('VehicleTrickGameArea', () => {
           expect(addScoreSpy).not.toHaveBeenCalled();
         });
         it('should update the history if the game is over', () => {
-          const { gameID } = gameArea.handleCommand({ type: 'JoinGame' }, player);
+          gameArea.handleCommand({ type: 'JoinGame' }, player);
           interactableUpdateSpy.mockClear();
           jest.spyOn(game, 'leave').mockImplementationOnce(() => {
             game.endGame();
           });
           game.setScore(200);
-          gameArea.handleCommand({ type: 'LeaveGame', gameID }, player);
+          gameArea.handleCommand({ type: 'GameEnded', playerInitials: 'LEE' }, player);
           expect(game.state.status).toEqual('OVER');
           expect(gameArea.localHistory.length).toEqual(1);
           expect(gameArea.localHistory[0]).toEqual({
             gameID: game.id,
             scores: {
-              [player.userName]: 200,
+              LEE: 200,
             },
           });
           expect(interactableUpdateSpy).toHaveBeenCalledTimes(1);
-          expect(addScoreSpy).not.toHaveBeenCalled();
         });
       });
     });
