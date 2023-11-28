@@ -110,6 +110,7 @@ export function SelectVehicleArea({ vehicleArea }: { vehicleArea: VehicleRackAre
         status: 'info',
       });
     } catch (error) {
+      console.log(error);
       toast({
         title: `Error`,
         description: (error as Error).toString,

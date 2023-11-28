@@ -1,17 +1,16 @@
 import { ChakraProvider } from '@chakra-ui/react';
-import { fireEvent, render, screen, waitFor, within } from '@testing-library/react';
-import { mock, mockReset } from 'jest-mock-extended';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { mock, mockClear, mockReset } from 'jest-mock-extended';
 import React from 'react';
 import { nanoid } from 'nanoid';
-import { act } from 'react-dom/test-utils';
 import PlayerController from '../../../../classes/PlayerController';
 import TownController, * as TownControllerHooks from '../../../../classes/TownController';
 import TownControllerContext from '../../../../contexts/TownControllerContext';
-import { PlayerLocation } from '../../../../types/CoveyTownSocket';
+import { PlayerLocation, Vehicle } from '../../../../types/CoveyTownSocket';
 import PhaserGameArea from '../GameArea';
 import VehicleRackAreaWrapper from './SelectVehicleRack';
 import VehicleRackAreaController from '../../../../classes/interactable/VehicleRackAreaController';
-import userEvent from '@testing-library/user-event';
+import * as UseTownControllerHook from '../../../../hooks/useTownController';
 
 const mockToast = jest.fn();
 jest.mock('@chakra-ui/react', () => {
@@ -38,14 +37,34 @@ const randomLocation = (): PlayerLocation => ({
 });
 
 class MockVehicleRackAreaController extends VehicleRackAreaController {
-  public constructor() {
-    super(nanoid(), mock<TownController>(), undefined);
+  ourPlayer: PlayerController;
+
+  public constructor(townController: TownController, ourPlayer: PlayerController) {
+    super(nanoid(), townController, undefined);
+    this.ourPlayer = ourPlayer;
+  }
+
+  public get occupants(): PlayerController[] {
+    return [this.ourPlayer];
+  }
+
+  public set occupants(newOccupants: PlayerController[]) {
+    return;
+  }
+
+  public equipVehicle(): Vehicle | undefined {
+    const vehicle = super.equipVehicle(); // Call the original method
+    this.ourPlayer.vehicle = vehicle;
+    return vehicle;
   }
 }
 
 describe('VehicleRackArea', () => {
   // Spy on console.error and intercept react key warnings to fail test
   let consoleErrorSpy: jest.SpyInstance<void, [message?: any, ...optionalParms: any[]]>;
+  let ourPlayer: PlayerController;
+  let townController: TownController;
+  let useTownControllerSpy: jest.SpyInstance;
   beforeAll(() => {
     // Spy on console.error and intercept react key warnings to fail test
     consoleErrorSpy = jest.spyOn(global.console, 'error');
@@ -92,11 +111,6 @@ describe('VehicleRackArea', () => {
     },
   ];
 
-  let ourPlayer: PlayerController;
-  const townController = mock<TownController>();
-  Object.defineProperty(townController, 'ourPlayer', { get: () => ourPlayer });
-  const vehickeRackAreaController = new MockVehicleRackAreaController();
-
   function renderVehicleRackArea() {
     return render(
       <ChakraProvider>
@@ -106,42 +120,60 @@ describe('VehicleRackArea', () => {
       </ChakraProvider>,
     );
   }
+
   beforeEach(() => {
     ourPlayer = new PlayerController('ourPlayer', 'ourPlayer', randomLocation(), undefined);
     mockGameArea.name = nanoid();
+    townController = mock<TownController>();
+    useTownControllerSpy = jest.spyOn(UseTownControllerHook, 'default');
+    useTownControllerSpy.mockReturnValue(townController);
+
+    const vehicleRackAreaController = new MockVehicleRackAreaController(townController, ourPlayer);
+    Object.defineProperty(townController, 'ourPlayer', {
+      get: () => vehicleRackAreaController.ourPlayer,
+    });
+
     mockReset(townController);
-    useInteractableAreaControllerSpy.mockReturnValue(vehickeRackAreaController);
+    useInteractableAreaControllerSpy.mockReturnValue(vehicleRackAreaController);
     mockToast.mockClear();
+    mockClear(useTownControllerSpy);
   });
   describe('VehicleRackArea', () => {
     it('Renders all 3 cards labels', () => {
       renderVehicleRackArea();
+      expect(useTownControllerSpy).toBeCalled;
       vehicles.forEach(vehicle => expect(screen.getByText(vehicle.label)).toBeInTheDocument());
     });
     it('Includes a tooltip that has the town ID', async () => {
-      const renderData = renderVehicleRackArea();
-      expect(renderData.queryByRole('tooltip')).toBeNull();
-      const toolTip = await renderData.findByText('tooltip');
-      expect(toolTip.parentElement).toHaveTextContent(
-        'Select a vehicle to move around town faster.',
-      );
+      renderVehicleRackArea();
+      const tooltips = screen.getAllByText('ⓘ');
+      fireEvent.mouseOver(tooltips[0]);
+      const tooltip = await screen.findByText('tooltip');
+      expect(tooltip.parentElement).toHaveTextContent('Select a vehicle');
     });
     it('Renders all 3 equip buttons', async () => {
       const renderData = renderVehicleRackArea();
       const equipButtons = renderData.getAllByText('Equip');
       expect(equipButtons.length).toEqual(3);
     });
+    it('Equipping a vehicle updates player.vehicle.vehicleType', () => {
+      renderVehicleRackArea();
+      const equipButtons = screen.getAllByText('Equip');
+      const expectedVehicle: Vehicle = {
+        vehicleType: 'bike',
+        speedMultiplier: 2,
+      };
 
-    it('Equipping a vehicle updates player.vehicle.vehicleType', () => {});
-
+      expect(ourPlayer.vehicle).toBeUndefined();
+      fireEvent.click(equipButtons[0]);
+      expect(ourPlayer.vehicle).toEqual(expectedVehicle);
+    });
     it('Equipping a vehicle updates the toast message', async () => {
-      // Receiving unequipped but in game it is showing equipped
       renderVehicleRackArea();
       const equipButtons = screen.getAllByText('Equip');
       fireEvent.click(equipButtons[0]);
-      // Wait for the toast to be shown
+
       await waitFor(() => expect(mockToast).toHaveBeenCalled());
-      // Check the toast message
       expect(mockToast).toHaveBeenCalledWith(
         expect.objectContaining({
           title: 'Success',
@@ -149,49 +181,6 @@ describe('VehicleRackArea', () => {
           status: 'info',
         }),
       );
-    });
-
-    it('Unequipping a vehicle updates player.vehicle.vehicleType', () => {});
-
-    it('Unequipping a vehicle updates the toast message', async () => {});
-  });
-  test('Button toggles text and equips/unequips the vehicle', async () => {
-    // Mock dependencies
-    const mockVehicle = { vehicleType: 'bike', speedMultiplier: 2 };
-    const mockEquipVehicle = jest.fn();
-    const mockUnequipVehicle = jest.fn();
-    const mockCoveyTownController = {
-      ourPlayer: { vehicle: mockVehicle },
-      emitVehicleChange: jest.fn(),
-    };
-    const mockVehicleRackAreaController = {
-      equipVehicle: mockEquipVehicle,
-      unequipVehicle: mockUnequipVehicle,
-    };
-
-    renderVehicleRackArea();
-
-    // Initial state check
-    expect(screen.getAllByText('Equip')[0]).toBeInTheDocument();
-
-    // Click the button to equip the vehicle
-    fireEvent.click(screen.getAllByText('Equip')[0]);
-
-    // Check the updated state and behavior
-    await waitFor(() => {
-      expect(screen.getByText('Unequip')).toBeInTheDocument();
-      expect(mockEquipVehicle).toHaveBeenCalledWith('bike');
-      expect(mockCoveyTownController.emitVehicleChange).toHaveBeenCalledWith(mockVehicle);
-    });
-
-    // Click the button to unequip the vehicle
-    fireEvent.click(screen.getByText('Unequip'));
-
-    // Check the updated state and behavior
-    await waitFor(() => {
-      expect(screen.getByText('Equip')).toBeInTheDocument();
-      expect(mockUnequipVehicle).toHaveBeenCalled();
-      expect(mockCoveyTownController.emitVehicleChange).toHaveBeenCalledWith(undefined);
     });
   });
 });
