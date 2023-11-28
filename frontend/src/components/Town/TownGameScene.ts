@@ -93,7 +93,6 @@ export default class TownGameScene extends Phaser.Scene {
 
   constructor(coveyTownController: TownController, resourcePathPrefix = '') {
     super('TownGameScene');
-    console.log('made 1');
     this._resourcePathPrefix = resourcePathPrefix;
     this.coveyTownController = coveyTownController;
     this._players = this.coveyTownController.players;
