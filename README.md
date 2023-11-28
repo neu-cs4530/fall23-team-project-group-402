@@ -1,5 +1,11 @@
 # Covey.Town
 
+## Group 402 instructions for running the project
+
+Download our code as a zip file, unzip it, and run `npm install` to install our project dependencies. Then, in the `townService` directory, run the command `npm start` to start the backend, and in another shell window, run the command `npm run dev` in the `frontend` directory to start the frontend. After these processes finish, open the localhost link to load into the town.
+
+## Covey.Town
+
 Covey.Town provides a virtual meeting space where different groups of people can have simultaneous video calls, allowing participants to drift between different conversations, just like in real life.
 Covey.Town was built for Northeastern's [Spring 2021 software engineering course](https://neu-se.github.io/CS4530-CS5500-Spring-2021/), and is designed to be reused across semesters.
 You can view our reference deployment of the app at [app.covey.town](https://app.covey.town/), and our project showcase ([Fall 2022](https://neu-se.github.io/CS4530-Fall-2022/assignments/project-showcase), [Spring 2022](https://neu-se.github.io/CS4530-Spring-2022/assignments/project-showcase), [Spring 2021](https://neu-se.github.io/CS4530-CS5500-Spring-2021/project-showcase)) highlight select student projects.
