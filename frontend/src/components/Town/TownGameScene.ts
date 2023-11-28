@@ -332,7 +332,7 @@ export default class TownGameScene extends Phaser.Scene {
                 sprite.setOffset(0, 10);
                 break;
               case 'horse':
-                sprite.setSize(80, 60);
+                sprite.setSize(80, 40);
                 sprite.setOffset(0, 10);
                 break;
               default:
