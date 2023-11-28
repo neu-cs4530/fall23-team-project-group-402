@@ -1,13 +1,20 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import VehicleTrick from './VehicleTrick';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
-import { mock } from 'jest-mock-extended';
+import { mock, mockClear } from 'jest-mock-extended';
 import { nanoid } from 'nanoid';
 import React from 'react';
-import { GameArea, GameStatus, VehicleTrickGameState } from '../../../../types/CoveyTownSocket';
+import {
+  GameArea,
+  GameStatus,
+  VehicleTrickGameState,
+  VehicleType,
+} from '../../../../types/CoveyTownSocket';
 import TownController from '../../../../classes/TownController';
 import PlayerController from '../../../../classes/PlayerController';
 import { act } from 'react-dom/test-utils';
+import { ChakraProvider, Modal } from '@chakra-ui/react';
+import TownControllerContext from '../../../../contexts/TownControllerContext';
 
 const mockToast = jest.fn();
 jest.mock('@chakra-ui/react', () => {
@@ -20,8 +27,6 @@ jest.mock('@chakra-ui/react', () => {
 });
 
 class MockVehicleTrickAreaController extends VehicleTrickAreaController {
-  enterWord = jest.fn();
-
   gameEnded = jest.fn();
 
   playTrickAnimation = jest.fn();
@@ -31,6 +36,16 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
   mockWord = 'cookies';
 
   mockScore = 100;
+
+  mockTimeLeft = 15;
+
+  mockThrowError = false;
+
+  public async enterWord() {
+    if (this.mockThrowError) {
+      throw new Error('some error');
+    }
+  }
 
   public constructor() {
     super(nanoid(), mock<GameArea<VehicleTrickGameState>>(), mock<TownController>());
@@ -42,6 +57,10 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
 
   get currentScore(): number {
     return this.mockScore;
+  }
+
+  get currentTimeLeft(): number {
+    return this.mockTimeLeft;
   }
 
   get observers(): PlayerController[] {
@@ -60,10 +79,17 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
     throw new Error('Method should not be called within this component.');
   }
 
+  protected _updateFrom(): void {}
+
+  public updateTimer(newTime: number) {
+    this.mockTimeLeft = newTime;
+    this.emit('timeLeftChanged', newTime);
+  }
+
   public mockReset() {
     this.mockWord = 'cookies';
     this.mockScore = 100;
-    this.enterWord.mockReset();
+    this.mockThrowError = false;
     this.gameEnded.mockReset();
     this.playTrickAnimation.mockReset();
   }
@@ -72,6 +98,8 @@ class MockVehicleTrickAreaController extends VehicleTrickAreaController {
 describe('VehicleTrick', () => {
   // Spy on console.error and intercept react key warnings to fail test
   let consoleErrorSpy: jest.SpyInstance<void, [message?: any, ...optionalParms: any[]]>;
+  let enterWordSpy: jest.SpyInstance;
+
   beforeAll(() => {
     // Spy on console.error and intercept react key warnings to fail test
     consoleErrorSpy = jest.spyOn(global.console, 'error');
@@ -90,30 +118,51 @@ describe('VehicleTrick', () => {
     consoleErrorSpy.mockRestore();
   });
 
+  const townController = mock<TownController>();
   const gameAreaController = new MockVehicleTrickAreaController();
   const observerText = 'Please wait, someone else is currently playing!';
   beforeEach(() => {
     gameAreaController.mockReset();
+    enterWordSpy = jest.spyOn(gameAreaController, 'enterWord');
     mockToast.mockReset();
+    mockClear(enterWordSpy);
   });
   async function checkWordInputField({
     interactable,
     checkWord,
     checkInvalidChar,
+    throwError,
   }: {
     interactable?: boolean;
     checkWord?: string;
     checkInvalidChar?: string;
+    throwError?: boolean;
   }) {
     if (interactable) {
       const inputField = screen.getByPlaceholderText('type word here');
       // Should be one interactable field if player is active
       expect(inputField).toBeEnabled();
-      gameAreaController.enterWord.mockReset();
+
+      if (throwError) {
+        gameAreaController.mockThrowError = true;
+        expect(mockToast).not.toBeCalled();
+        mockToast.mockClear();
+        fireEvent.change(inputField, { target: { value: 'should throw' } });
+        await expect(gameAreaController.enterWord()).rejects.toThrowError();
+        expect(enterWordSpy).toBeCalledWith('should throw');
+        expect(mockToast).toBeCalledWith(
+          expect.objectContaining({
+            description: 'Error: some error',
+            status: 'error',
+            title: 'Error entering word',
+          }),
+        );
+        mockClear(enterWordSpy);
+      }
 
       if (checkWord) {
         fireEvent.change(inputField, { target: { value: checkWord } });
-        expect(gameAreaController.enterWord).toBeCalledWith(checkWord);
+        expect(enterWordSpy).toBeCalledWith(checkWord);
       }
       if (checkInvalidChar) {
         fireEvent.change(inputField, { target: { value: checkInvalidChar } });
@@ -185,11 +234,15 @@ describe('VehicleTrick', () => {
     expect(currentWord).toHaveTextContent('cookies');
     const currentScore = screen.getByLabelText('score');
     expect(currentScore).toHaveTextContent('0');
+    const playerSprite = screen.getByLabelText('player-sprite');
+    expect(playerSprite).toHaveTextContent('Player Sprite');
   }
   async function checkForIncrementingTimer() {
     const timer = screen.getByLabelText('timer');
     expect(timer).toHaveTextContent('15');
-    jest.advanceTimersByTime(5000);
+    act(() => {
+      gameAreaController.updateTimer(10);
+    });
     expect(timer).toHaveTextContent('10');
   }
   async function checkTargetWordUpdate(interactable: boolean) {
@@ -212,34 +265,134 @@ describe('VehicleTrick', () => {
     await checkWordInputField({ interactable });
     expect(score).toHaveTextContent('100');
   }
+  function renderVehicleTrick(vehicleType: VehicleType, usePhaser: boolean) {
+    return render(
+      <ChakraProvider>
+        <TownControllerContext.Provider value={townController}>
+          <Modal
+            isOpen={true}
+            onClose={function (): void {
+              console.log('');
+            }}>
+            <VehicleTrick
+              gameAreaController={gameAreaController}
+              vehicleType={vehicleType}
+              usePhaser={usePhaser}
+            />
+          </Modal>
+        </TownControllerContext.Provider>
+      </ChakraProvider>,
+    );
+  }
+  describe('listeners', () => {
+    it('properly registers for listeners when the component is mounted', () => {
+      const addListenerSpy = jest.spyOn(gameAreaController, 'addListener');
+      addListenerSpy.mockClear();
+
+      renderVehicleTrick('skateboard', false);
+      expect(addListenerSpy).toBeCalledTimes(4);
+      expect(addListenerSpy).toHaveBeenCalledWith('scoreChanged', expect.any(Function));
+      expect(addListenerSpy).toHaveBeenCalledWith('targetWordChanged', expect.any(Function));
+      expect(addListenerSpy).toHaveBeenCalledWith('timeLeftChanged', expect.any(Function));
+      expect(addListenerSpy).toHaveBeenCalledWith('gameUpdated', expect.any(Function));
+    });
+    it('does not register listeners on every render', () => {
+      const removeListenerSpy = jest.spyOn(gameAreaController, 'removeListener');
+      const addListenerSpy = jest.spyOn(gameAreaController, 'addListener');
+      addListenerSpy.mockClear();
+      removeListenerSpy.mockClear();
+      const renderData = renderVehicleTrick('skateboard', false);
+      expect(addListenerSpy).toBeCalledTimes(4);
+      addListenerSpy.mockClear();
+
+      // renderData.rerender(<VehicleTrick gameAreaController={gameAreaController} />);
+      renderData.rerender(
+        <ChakraProvider>
+          <TownControllerContext.Provider value={townController}>
+            <Modal
+              isOpen={true}
+              onClose={function (): void {
+                console.log('');
+              }}>
+              <VehicleTrick
+                gameAreaController={gameAreaController}
+                vehicleType={'skateboard'}
+                usePhaser={false}
+              />
+            </Modal>
+          </TownControllerContext.Provider>
+        </ChakraProvider>,
+      );
+
+      expect(addListenerSpy).not.toBeCalled();
+      expect(removeListenerSpy).not.toBeCalled();
+    });
+    it('removes the listeners when the component is unmounted', () => {
+      const removeListenerSpy = jest.spyOn(gameAreaController, 'removeListener');
+      const addListenerSpy = jest.spyOn(gameAreaController, 'addListener');
+      addListenerSpy.mockClear();
+      removeListenerSpy.mockClear();
+      const renderData = renderVehicleTrick('skateboard', false);
+      expect(addListenerSpy).toBeCalledTimes(4);
+
+      const addedListeners = addListenerSpy.mock.calls;
+      const scoreChangedListener = addedListeners.find(call => call[0] === 'scoreChanged');
+      const targetWordChangedListener = addedListeners.find(
+        call => call[0] === 'targetWordChanged',
+      );
+      const timeLeftChangedListener = addedListeners.find(call => call[0] === 'timeLeftChanged');
+      const gameUpdatedListener = addedListeners.find(call => call[0] === 'gameUpdated');
+
+      expect(scoreChangedListener).toBeDefined();
+      expect(targetWordChangedListener).toBeDefined();
+      expect(timeLeftChangedListener).toBeDefined();
+      expect(gameUpdatedListener).toBeDefined();
+
+      renderData.unmount();
+
+      expect(removeListenerSpy).toBeCalledTimes(4);
+
+      const removedListeners = removeListenerSpy.mock.calls;
+      const removedScoreChangedListener = removedListeners.find(call => call[0] === 'scoreChanged');
+      const removedTargetWordChangedListener = removedListeners.find(
+        call => call[0] === 'targetWordChanged',
+      );
+      const removedTimeLeftChangedListener = removedListeners.find(
+        call => call[0] === 'timeLeftChanged',
+      );
+      const removedGameUpdatedListener = removedListeners.find(call => call[0] === 'gameUpdated');
+
+      expect(removedScoreChangedListener).toEqual(scoreChangedListener);
+      expect(removedTargetWordChangedListener).toEqual(targetWordChangedListener);
+      expect(removedTimeLeftChangedListener).toEqual(timeLeftChangedListener);
+      expect(removedGameUpdatedListener).toEqual(gameUpdatedListener);
+    });
+  });
   describe('When observing the game', () => {
     beforeEach(() => {
       gameAreaController.mockIsPlayer = false;
+      gameAreaController.updateTimer(15);
+      renderVehicleTrick('skateboard', false);
     });
     it('displays a timer, score and current word when the player starts game', async () => {
-      render(<VehicleTrick gameAreaController={gameAreaController} />);
       checkForGameComponents();
       await checkWordInputField({ interactable: false });
     });
     it('displays observer message in place of initials screen when timer runs out', async () => {
-      jest.useFakeTimers();
-      render(<VehicleTrick gameAreaController={gameAreaController} />);
-      jest.advanceTimersByTime(16000);
+      act(() => {
+        gameAreaController.updateTimer(0);
+      });
       await checkInitialsInputField({ interactable: false });
     });
-    it('increments the timer', async () => {
-      jest.useFakeTimers();
-      render(<VehicleTrick gameAreaController={gameAreaController} />);
+    it('the timer is updated when the controller changes it', async () => {
       await checkWordInputField({ interactable: false });
       checkForIncrementingTimer();
     });
     it('updates the targetWord in response to targetWordChanged events', async () => {
-      render(<VehicleTrick gameAreaController={gameAreaController} />);
       await checkWordInputField({ interactable: false });
       checkTargetWordUpdate(false);
     });
     it('updates the score in response to scoreChanged events', async () => {
-      render(<VehicleTrick gameAreaController={gameAreaController} />);
       await checkWordInputField({ interactable: false });
       checkScoreUpdate(false);
     });
@@ -247,62 +400,58 @@ describe('VehicleTrick', () => {
   describe('When playing the game', () => {
     beforeEach(() => {
       gameAreaController.mockIsPlayer = true;
+      act(() => {
+        gameAreaController.updateTimer(15);
+      });
+      renderVehicleTrick('skateboard', false);
     });
     describe('Gameplay screen', () => {
       it('displays an input field, timer, score and current word when the player starts game', async () => {
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         checkForGameComponents();
         await checkWordInputField({ interactable: true });
       });
       it('increments the timer', async () => {
-        jest.useFakeTimers();
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         checkForIncrementingTimer();
       });
       it('makes a move when word is typed', async () => {
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         await checkWordInputField({ interactable: true, checkWord: 'cook' });
       });
       it('field does not update when invalid word is typed', async () => {
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         await checkWordInputField({ interactable: true, checkInvalidChar: 'cook>' });
       });
       it('updates the targetWord in response to targetWordChanged events', async () => {
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         await checkWordInputField({ interactable: true });
         checkTargetWordUpdate(true);
       });
       it('updates the score in response to scoreChanged events', async () => {
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
         await checkWordInputField({ interactable: true });
         checkScoreUpdate(true);
       });
+      it('displays an error toast if an error occurs making the move', async () => {
+        await checkWordInputField({ interactable: true, throwError: true });
+      });
+      it('displays an error toast if an error occurs making the move', async () => {
+        await checkWordInputField({ interactable: true, throwError: true });
+      });
     });
     describe('Initials screen', () => {
+      beforeEach(() => {
+        act(() => {
+          gameAreaController.updateTimer(0);
+        });
+      });
       it('displays initials screen when timer runs out', async () => {
-        jest.useFakeTimers();
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
-        jest.advanceTimersByTime(16000);
         const highScore = screen.getByLabelText('highscore');
         expect(highScore).toHaveTextContent('Score: 0');
         checkInitialsInputField({ interactable: true });
       });
       it('input field ignores non-alphabetical characters', async () => {
-        jest.useFakeTimers();
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
-        jest.advanceTimersByTime(16000);
         checkInitialsInputField({ interactable: true, checkInvalidInitials: 'SW^' });
       });
       it('allows user to submit valid initials', async () => {
-        jest.useFakeTimers();
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
-        jest.advanceTimersByTime(16000);
         checkInitialsInputField({ interactable: true, checkInitials: 'SWE' });
       });
       it('does not allow user to submit initials under 3 characters', async () => {
-        jest.useFakeTimers();
-        render(<VehicleTrick gameAreaController={gameAreaController} />);
-        jest.advanceTimersByTime(16000);
         checkInitialsInputField({ interactable: true, checkShortInitials: 'SW' });
       });
     });

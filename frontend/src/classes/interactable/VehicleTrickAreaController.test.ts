@@ -88,6 +88,7 @@ describe('VehicleTrickAreaController', () => {
                 player: playerID,
                 targetWord: '',
                 currentScore: 0,
+                timeLeft: 15,
               },
             },
       },
@@ -110,6 +111,12 @@ describe('VehicleTrickAreaController', () => {
     it('should return the current score in the game', () => {
       const controller = vehicleTrickAreaControllerWithProp({});
       expect(controller.currentScore).toEqual(0);
+    });
+  });
+  describe('currentTimeLeft', () => {
+    it('should return the current time left in the game', () => {
+      const controller = vehicleTrickAreaControllerWithProp({});
+      expect(controller.currentTimeLeft).toEqual(15);
     });
   });
   describe('isPlayer', () => {
@@ -236,6 +243,57 @@ describe('VehicleTrickAreaController', () => {
         controller = vehicleTrickAreaControllerWithProp({
           status: 'IN_PROGRESS',
           playerID: ourPlayer.id,
+        });
+      });
+      describe('when the time left changes', () => {
+        it('should emit a timeLeftChanged event with the new time left', () => {
+          const model = controller.toInteractableAreaModel();
+          const newTimeLeft = 10;
+          assert(model.game);
+          const newModel: GameArea<VehicleTrickGameState> = {
+            ...model,
+            game: {
+              ...model.game,
+              state: {
+                ...model.game?.state,
+                timeLeft: newTimeLeft,
+              },
+            },
+          };
+          const emitSpy = jest.spyOn(controller, 'emit');
+          controller.updateFrom(newModel, otherPlayers.concat(ourPlayer));
+          const timeLeftChangedCall = emitSpy.mock.calls.find(
+            call => call[0] === 'timeLeftChanged',
+          );
+          expect(timeLeftChangedCall).toBeDefined();
+          if (timeLeftChangedCall) expect(timeLeftChangedCall[1]).toEqual(newTimeLeft);
+        });
+        it('should not emit a timeLeftChanged event if the time left has not changed', () => {
+          const model = controller.toInteractableAreaModel();
+          assert(model.game);
+          const emitSpy = jest.spyOn(controller, 'emit');
+          controller.updateFrom(model, otherPlayers.concat(ourPlayer));
+          const timeLeftChangedCall = emitSpy.mock.calls.find(
+            call => call[0] === 'timeLeftChanged',
+          );
+          expect(timeLeftChangedCall).not.toBeDefined();
+        });
+        it('should update the current time returned by the currentTimeLeft property', () => {
+          const model = controller.toInteractableAreaModel();
+          const newTimeLeft = 10;
+          assert(model.game);
+          const newModel: GameArea<VehicleTrickGameState> = {
+            ...model,
+            game: {
+              ...model.game,
+              state: {
+                ...model.game?.state,
+                timeLeft: newTimeLeft,
+              },
+            },
+          };
+          controller.updateFrom(newModel, otherPlayers.concat(ourPlayer));
+          expect(controller.currentTimeLeft).toEqual(newTimeLeft);
         });
       });
       describe('when the score changes', () => {

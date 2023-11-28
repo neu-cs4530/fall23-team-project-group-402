@@ -147,14 +147,13 @@ describe('VehicleTrickArea', () => {
     );
   });
   describe('Game update listeners', () => {
-    it('Registers exactly two listeners when mounted: one for gameUpdated and one for gameEnd', () => {
+    it('Registers one listener for gameUpdated', () => {
       const addListenerSpy = jest.spyOn(gameAreaController, 'addListener');
       addListenerSpy.mockClear();
 
       renderVehicleTrickArea();
-      expect(addListenerSpy).toBeCalledTimes(2);
+      expect(addListenerSpy).toBeCalledTimes(1);
       expect(addListenerSpy).toHaveBeenCalledWith('gameUpdated', expect.any(Function));
-      expect(addListenerSpy).toHaveBeenCalledWith('gameEnd', expect.any(Function));
     });
     it('Does not register listeners on every render', () => {
       const removeListenerSpy = jest.spyOn(gameAreaController, 'removeListener');
@@ -162,7 +161,7 @@ describe('VehicleTrickArea', () => {
       addListenerSpy.mockClear();
       removeListenerSpy.mockClear();
       const renderData = renderVehicleTrickArea();
-      expect(addListenerSpy).toBeCalledTimes(2);
+      expect(addListenerSpy).toBeCalledTimes(1);
       addListenerSpy.mockClear();
 
       renderData.rerender(
@@ -182,19 +181,15 @@ describe('VehicleTrickArea', () => {
       addListenerSpy.mockClear();
       removeListenerSpy.mockClear();
       const renderData = renderVehicleTrickArea();
-      expect(addListenerSpy).toBeCalledTimes(2);
+      expect(addListenerSpy).toBeCalledTimes(1);
       const addedListeners = addListenerSpy.mock.calls;
       const addedGameUpdateListener = addedListeners.find(call => call[0] === 'gameUpdated');
-      const addedGameEndedListener = addedListeners.find(call => call[0] === 'gameEnd');
-      expect(addedGameEndedListener).toBeDefined();
       expect(addedGameUpdateListener).toBeDefined();
       renderData.unmount();
-      expect(removeListenerSpy).toBeCalledTimes(2);
+      expect(removeListenerSpy).toBeCalledTimes(1);
       const removedListeners = removeListenerSpy.mock.calls;
       const removedGameUpdateListener = removedListeners.find(call => call[0] === 'gameUpdated');
-      const removedGameEndedListener = removedListeners.find(call => call[0] === 'gameEnd');
       expect(removedGameUpdateListener).toEqual(addedGameUpdateListener);
-      expect(removedGameEndedListener).toEqual(addedGameEndedListener);
     });
     it('Creates new listeners if the gameAreaController changes', () => {
       const removeListenerSpy = jest.spyOn(gameAreaController, 'removeListener');
@@ -202,7 +197,7 @@ describe('VehicleTrickArea', () => {
       addListenerSpy.mockClear();
       removeListenerSpy.mockClear();
       const renderData = renderVehicleTrickArea();
-      expect(addListenerSpy).toBeCalledTimes(2);
+      expect(addListenerSpy).toBeCalledTimes(1);
 
       gameAreaController = new MockVehicleTrickAreaController();
       const removeListenerSpy2 = jest.spyOn(gameAreaController, 'removeListener');
@@ -216,9 +211,9 @@ describe('VehicleTrickArea', () => {
           </TownControllerContext.Provider>
         </ChakraProvider>,
       );
-      expect(removeListenerSpy).toBeCalledTimes(2);
+      expect(removeListenerSpy).toBeCalledTimes(1);
 
-      expect(addListenerSpy2).toBeCalledTimes(2);
+      expect(addListenerSpy2).toBeCalledTimes(1);
       expect(removeListenerSpy2).not.toBeCalled();
     });
   });

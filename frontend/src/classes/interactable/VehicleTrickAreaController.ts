@@ -26,6 +26,8 @@ export default class VehicleTrickAreaController extends GameAreaController<
 
   private _currentScore = 0;
 
+  private _currentTimeLeft = 15;
+
   /**
    * Returns the player's current target word.
    */
@@ -38,6 +40,13 @@ export default class VehicleTrickAreaController extends GameAreaController<
    */
   get currentScore(): number {
     return this._currentScore;
+  }
+
+  /**
+   * Returns the time left in the game.
+   */
+  get currentTimeLeft(): number {
+    return this._currentTimeLeft;
   }
 
   /**
@@ -78,7 +87,8 @@ export default class VehicleTrickAreaController extends GameAreaController<
   /**
    * Updates the internal state of this controller to match the new model.
    * Emits a 'scoreChanged' event with the new score if the score changed, and
-   * emits a 'targetWordChanged' event with the new target word if the target word changed.
+   * Emits a 'targetWordChanged' event with the new target word if the target word changed.
+   * Emits a 'timeLeftChanged' event with the new time left if the time left changed.
    * @param newModel the new model to update the controller with
    */
   protected _updateFrom(newModel: GameArea<VehicleTrickGameState>): void {
@@ -87,6 +97,11 @@ export default class VehicleTrickAreaController extends GameAreaController<
     if (newState) {
       const newScore = newState.state.currentScore;
       const newWord = newState.state.targetWord;
+      const newTimeLeft = newState.state.timeLeft;
+      if (this._currentTimeLeft !== newTimeLeft) {
+        this._currentTimeLeft = newTimeLeft;
+        this.emit('timeLeftChanged', newTimeLeft);
+      }
       if (this._currentScore !== newScore) {
         this._currentScore = newScore;
         if (newScore > 0) {
@@ -142,7 +157,7 @@ export default class VehicleTrickAreaController extends GameAreaController<
       const vehicleType: VehicleType | undefined = player.vehicle?.vehicleType;
       const trickNumber: number =
         vehicleType === 'skateboard' ? Math.floor(Math.random() * 3) + 1 : 1;
-      sprite.anims.play(`${vehicleType}-trick-${trickNumber}`, true);
+      sprite.anims.play(`${vehicleType}-trick-${trickNumber}`, false);
     }
   }
 
