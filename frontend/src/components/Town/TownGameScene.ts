@@ -324,20 +324,39 @@ export default class TownGameScene extends Phaser.Scene {
 
           //updates sprite size (hitbox) based on vehicle
           const { sprite } = player.gameObjects;
-          switch (player.vehicle?.vehicleType) {
-            case 'bike':
-            case 'skateboard':
-              sprite.setSize(30, 40);
-              sprite.setOffset(0, 10);
-              break;
-            case 'horse':
-              sprite.setSize(80, 60);
-              sprite.setOffset(0, 10);
-              break;
-            default:
-              sprite.setSize(30, 40);
-              sprite.setOffset(0, 24);
-              break;
+          if (player.location.rotation === 'left' || player.location.rotation === 'right') {
+            switch (player.vehicle?.vehicleType) {
+              case 'bike':
+              case 'skateboard':
+                sprite.setSize(30, 40);
+                sprite.setOffset(0, 10);
+                break;
+              case 'horse':
+                sprite.setSize(80, 60);
+                sprite.setOffset(0, 10);
+                break;
+              default:
+                sprite.setSize(30, 40);
+                sprite.setOffset(0, 24);
+                break;
+            }
+          } else {
+            switch (player.vehicle?.vehicleType) {
+              case 'bike':
+              case 'skateboard':
+                sprite.setSize(30, 40);
+                sprite.setOffset(0, 24);
+                break;
+              case 'horse':
+                console.log('horse thin');
+                sprite.setSize(30, 40);
+                sprite.setOffset(0, 24);
+                break;
+              default:
+                sprite.setSize(30, 40);
+                sprite.setOffset(0, 24);
+                break;
+            }
           }
         }
       }
