@@ -141,7 +141,7 @@ describe('VehicleRackArea', () => {
   describe('VehicleRackArea', () => {
     it('Renders all 3 cards labels', () => {
       renderVehicleRackArea();
-      expect(useTownControllerSpy).toBeCalled;
+      expect(useTownControllerSpy).toBeCalled();
       vehicles.forEach(vehicle => expect(screen.getByText(vehicle.label)).toBeInTheDocument());
     });
     it('Includes a tooltip that has the town ID', async () => {
