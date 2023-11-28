@@ -41,6 +41,7 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
     useInteractableAreaController<VehicleTrickAreaController>(interactableID);
   const townController = useTownController();
 
+  const ourVehicle = townController.ourPlayer.vehicle?.vehicleType;
   const [localHistory, setLocalHistory] = useState<GameResult[]>(gameAreaController.localHistory);
   const [persistentHistory, setPersistentHistory] = useState<GameResult[]>(
     gameAreaController.persistentHistory,
@@ -67,9 +68,11 @@ function VehicleTrickArea({ interactableID }: { interactableID: InteractableID }
 
   if (gameStatus === 'IN_PROGRESS') {
     return (
-      <ModalBody bgImage={'./images/keydash.png'} bgColor={'lightblue'} maxWidth={'full'}>
-        <VehicleTrick gameAreaController={gameAreaController} />
-      </ModalBody>
+      <VehicleTrick
+        gameAreaController={gameAreaController}
+        vehicleType={ourVehicle}
+        usePhaser={true}
+      />
     );
   } else if (leaderboardView) {
     return (
@@ -207,7 +210,7 @@ export default function VehicleTrickAreaWrapper(): JSX.Element {
     return (
       <Modal isOpen={true} onClose={closeModal} closeOnOverlayClick={false}>
         <ModalOverlay bg={'none'} />
-        <ModalContent borderWidth={8} height={'458'} maxWidth={'616'} borderColor={'gold'}>
+        <ModalContent borderWidth={8} height={'465'} maxWidth={'616'} borderColor={'gold'}>
           <ModalCloseButton />
           <VehicleTrickArea interactableID={gameArea.name} />
         </ModalContent>

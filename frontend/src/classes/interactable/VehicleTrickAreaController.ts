@@ -157,7 +157,7 @@ export default class VehicleTrickAreaController extends GameAreaController<
       const vehicleType: VehicleType | undefined = player.vehicle?.vehicleType;
       const trickNumber: number =
         vehicleType === 'skateboard' ? Math.floor(Math.random() * 3) + 1 : 1;
-      sprite.anims.play(`${vehicleType}-trick-${trickNumber}`, true);
+      sprite.anims.play(`${vehicleType}-trick-${trickNumber}`, false);
     }
   }
 

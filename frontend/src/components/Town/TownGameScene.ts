@@ -321,6 +321,24 @@ export default class TownGameScene extends Phaser.Scene {
           player.gameObjects.label.setX(player.gameObjects.sprite.body.x);
           const playerLabelYOffset = player.vehicle ? 40 : 20;
           player.gameObjects.label.setY(player.gameObjects.sprite.body.y - playerLabelYOffset);
+
+          //updates sprite size (hitbox) based on vehicle
+          const { sprite } = player.gameObjects;
+          switch (player.vehicle?.vehicleType) {
+            case 'bike':
+            case 'skateboard':
+              sprite.setSize(30, 40);
+              sprite.setOffset(0, 10);
+              break;
+            case 'horse':
+              sprite.setSize(80, 60);
+              sprite.setOffset(0, 10);
+              break;
+            default:
+              sprite.setSize(30, 40);
+              sprite.setOffset(0, 24);
+              break;
+          }
         }
       }
     }

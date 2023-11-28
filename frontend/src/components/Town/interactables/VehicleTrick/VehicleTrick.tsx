@@ -7,12 +7,17 @@ import {
   Stack,
   useToast,
   FormControl,
+  Center,
+  ModalBody,
 } from '@chakra-ui/react';
 import React, { ChangeEvent, useEffect, useState } from 'react';
 import VehicleTrickAreaController from '../../../../classes/interactable/VehicleTrickAreaController';
+import PlayerSprite from './PlayerSprite';
 
 export type VehicleTrickGameProps = {
   gameAreaController: VehicleTrickAreaController;
+  vehicleType: string | undefined;
+  usePhaser: boolean;
 };
 
 /**
@@ -30,7 +35,11 @@ export type VehicleTrickGameProps = {
  *
  * @param gameAreaController the controller for the VehicleTrick game
  */
-export default function VehicleTrick({ gameAreaController }: VehicleTrickGameProps): JSX.Element {
+export default function VehicleTrick({
+  gameAreaController,
+  vehicleType,
+  usePhaser,
+}: VehicleTrickGameProps): JSX.Element {
   const [input, setInput] = useState<string>('');
   const [timeLeft, setTimeLeft] = useState(gameAreaController.currentTimeLeft);
   const [score, setScore] = useState(0);
@@ -58,24 +67,37 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
       }
     };
 
-    gameAreaController.addListener('scoreChanged', setScore);
+    const updateScore = () => {
+      setScore(gameAreaController.currentScore);
+    };
+
+    gameAreaController.addListener('scoreChanged', updateScore);
     gameAreaController.addListener('targetWordChanged', updateTargetWord);
     gameAreaController.addListener('timeLeftChanged', updateTimeLeft);
     gameAreaController.addListener('gameUpdated', updateIsPlayer);
 
     return () => {
-      gameAreaController.removeListener('scoreChanged', setScore);
+      gameAreaController.removeListener('scoreChanged', updateScore);
       gameAreaController.removeListener('targetWordChanged', updateTargetWord);
       gameAreaController.removeListener('timeLeftChanged', updateTimeLeft);
       gameAreaController.removeListener('gameUpdated', updateIsPlayer);
     };
   }, [gameAreaController]);
 
+  /**
+   * Determines if the given word is valid (only contains characters A/a-Z/z)
+   * @param word The word to check
+   * @returns True if the word contains only valid character, false otherwise.
+   */
   function onlyLetters(word: string) {
     const validCharacters = /^[A-Za-z]+$/;
     return validCharacters.test(word) || word === '';
   }
 
+  /**
+   * Handles updating state when the users enters their intials.
+   * @param e The input change event
+   */
   const handleInitialsChange = (e: ChangeEvent<HTMLInputElement>) => {
     const inputValue = e.target.value.slice(0, 3);
     if (onlyLetters(inputValue)) {
@@ -83,6 +105,10 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
     }
   };
 
+  /**
+   * Handles updating state when the user clicks the submit button on the initials screen.
+   * @param event The click event
+   */
   function handleClick(event: { preventDefault: () => void }) {
     event.preventDefault();
     if (userInitials.length === 3) {
@@ -91,6 +117,27 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
       toast({
         title: 'Invalid Initials',
         description: 'Username must be 3 characters long',
+        status: 'error',
+      });
+    }
+  }
+
+  /**
+   * Event handler for when the user enters a word.
+   * @param event The input event
+   */
+  async function enterWord(event: React.ChangeEvent<HTMLInputElement>) {
+    const targetValue = event.target.value;
+    if (onlyLetters(targetValue)) {
+      setInput(targetValue);
+    }
+
+    try {
+      await gameAreaController.enterWord(targetValue);
+    } catch (err) {
+      toast({
+        title: 'Error entering word',
+        description: (err as Error).toString(),
         status: 'error',
       });
     }
@@ -137,13 +184,7 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
             value={input}
             isDisabled={activeInput}
             autoFocus
-            onChange={event => {
-              const targetValue = event.target.value;
-              if (onlyLetters(targetValue)) {
-                setInput(targetValue);
-              }
-              gameAreaController.enterWord(targetValue);
-            }}
+            onChange={async event => enterWord(event)}
             variant='unstyled'
             style={{
               opacity: 0,
@@ -165,110 +206,142 @@ export default function VehicleTrick({ gameAreaController }: VehicleTrickGamePro
     }
   }
 
+  /**
+   * Renders the player sprite.
+   * NOTE: jest is unable to render Phaser game scenes, so we have a flag
+   * to replace the player sprite with text in our unit tests.
+   * @returns the rendered player sprite
+   */
+  function playerSprite() {
+    if (usePhaser) {
+      return <PlayerSprite vehicleType={vehicleType} targetWord={targetWord} />;
+    }
+
+    return (
+      <Box textAlign='center' aria-label='player-sprite'>
+        <b>Player Sprite</b>
+      </Box>
+    );
+  }
+
   if (!activeInput) {
     return (
-      <Container>
-        <Stack
-          direction={'row'}
-          spacing={20}
-          fontWeight={'bold'}
-          fontFamily={'fantasy'}
-          fontSize={24}
-          justify={'center'}
-          mt={2}>
-          <Stack align={'center'}>
-            <Text aria-label='timer'>{timeLeft} Seconds</Text>
-          </Stack>
-          <Stack align={'center'}>
-            <Text aria-label='score'>Score: {score} </Text>
-          </Stack>
-        </Stack>
-
-        <Box mt={16} textAlign='center' aria-label='target-word'>
-          <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={33}>
-            {targetWord}
-          </Text>
-          {gameContent({ word: targetWord })}
-        </Box>
-      </Container>
+      <ModalBody bgImage={'./images/emptyramp.png'} bgColor={'lightblue'} maxWidth={'full'}>
+        <Container>
+          <Center>
+            <Stack direction={'column'} spacing={5} justify={'center'} align={'center'}>
+              <Stack
+                direction={'row'}
+                spacing={20}
+                fontWeight={'bold'}
+                fontFamily={'fantasy'}
+                fontSize={24}
+                justify={'center'}
+                mt={2}>
+                <Stack align={'center'}>
+                  <Text aria-label='timer'>{timeLeft} Seconds</Text>
+                </Stack>
+                <Stack align={'center'}>
+                  <Text aria-label='score'>Score: {score} </Text>
+                </Stack>
+              </Stack>
+              <Stack align={'cente'}>
+                <Box mt={16} textAlign='center' aria-label='target-word'>
+                  <Text fontFamily={'cursive'} fontWeight={'semibold'} fontSize={33}>
+                    {targetWord}
+                  </Text>
+                  {gameContent({ word: targetWord })}
+                </Box>
+              </Stack>
+              <Stack align={'center'} mt={-100}>
+                {playerSprite()}
+              </Stack>
+            </Stack>
+          </Center>
+        </Container>
+      </ModalBody>
     );
   } else {
     if (isPlayer) {
       return (
-        <Container>
-          <Box textAlign='center' aria-label='highscore'>
-            <Text fontSize={24} fontWeight={'medium'} fontFamily={'fantasy'} mt={2}>
-              Score: {score}
-            </Text>
-          </Box>
-          <Box textAlign='center' mt={8}>
-            <Box>
-              <FormControl textAlign={'center'}>
-                <Box
-                  display='flex'
-                  justifyContent='center'
-                  alignItems='center'
-                  mt={12}
-                  fontFamily={'fantasy'}>
-                  {Array.from({ length: 3 }).map((_, index) => (
-                    <Box
-                      key={index}
-                      style={{ marginLeft: '6px', marginRight: '6px' }}
-                      fontSize={'42px'}>
-                      {userInitials[index] || '_'}
-                    </Box>
-                  ))}
-                </Box>
-                <Text mt={-1} fontSize={16} fontFamily={'fantasy'} fontWeight={'medium'}>
-                  Enter Your Initials
-                </Text>
-                <Input
-                  mt={7}
-                  textAlign='center'
-                  name='initials'
-                  placeholder='initials'
-                  value={userInitials}
-                  width={100}
-                  onChange={handleInitialsChange}
-                  variant='unstyled'
-                  maxLength={3}
-                  autoFocus
-                  fontFamily={'fantasy'}
-                  style={{
-                    opacity: 0,
-                    top: -88,
-                    color: 'transparent',
-                    width: `99px`,
-                    height: '35px',
-                    border: '2px solid black',
-                  }}
-                />
-              </FormControl>
+        <ModalBody bgImage={'./images/keydash.png'} bgColor={'lightblue'} maxWidth={'full'}>
+          <Container>
+            <Box textAlign='center' aria-label='highscore'>
+              <Text fontSize={24} fontWeight={'medium'} fontFamily={'fantasy'} mt={2}>
+                Score: {score}
+              </Text>
             </Box>
-            <Button
-              mt={-7}
-              bg='lightblue'
-              type='submit'
-              onClick={handleClick}
-              width={100}
-              aria-label='submit'
-              _hover={{}}
-              variant={'unstyled'}
-              _active={{ color: 'blue.800' }}
-              _focus={{}}
-              fontFamily={'fantasy'}
-              fontSize={19}
-              fontWeight={'medium'}>
-              Submit
-            </Button>
-          </Box>
-        </Container>
+            <Box textAlign='center' mt={8}>
+              <Box>
+                <FormControl textAlign={'center'}>
+                  <Box
+                    display='flex'
+                    justifyContent='center'
+                    alignItems='center'
+                    mt={12}
+                    fontFamily={'fantasy'}>
+                    {Array.from({ length: 3 }).map((_, index) => (
+                      <Box
+                        key={index}
+                        style={{ marginLeft: '6px', marginRight: '6px' }}
+                        fontSize={'42px'}>
+                        {userInitials[index] || '_'}
+                      </Box>
+                    ))}
+                  </Box>
+                  <Text mt={-1} fontSize={16} fontFamily={'fantasy'} fontWeight={'medium'}>
+                    Enter Your Initials
+                  </Text>
+                  <Input
+                    mt={7}
+                    textAlign='center'
+                    name='initials'
+                    placeholder='initials'
+                    value={userInitials}
+                    width={100}
+                    onChange={handleInitialsChange}
+                    variant='unstyled'
+                    maxLength={3}
+                    autoFocus
+                    fontFamily={'fantasy'}
+                    style={{
+                      opacity: 0,
+                      top: -88,
+                      color: 'transparent',
+                      width: `99px`,
+                      height: '35px',
+                      border: '2px solid black',
+                    }}
+                  />
+                </FormControl>
+              </Box>
+              <Button
+                mt={-7}
+                bg='lightblue'
+                type='submit'
+                onClick={handleClick}
+                width={100}
+                aria-label='submit'
+                _hover={{}}
+                variant={'unstyled'}
+                _active={{ color: 'blue.800' }}
+                _focus={{}}
+                fontFamily={'fantasy'}
+                fontSize={19}
+                fontWeight={'medium'}>
+                Submit
+              </Button>
+            </Box>
+          </Container>
+        </ModalBody>
       );
     } else {
       return (
-        <Container mt={0}>
-          <Box mt={130}>{pleaseWait()}</Box>
-        </Container>
+        <ModalBody bgImage={'./images/keydash.png'} bgColor={'lightblue'} maxWidth={'full'}>
+          <Container mt={0}>
+            <Box mt={130}>{pleaseWait()}</Box>
+          </Container>
+        </ModalBody>
       );
     }
   }
