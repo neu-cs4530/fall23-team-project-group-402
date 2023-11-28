@@ -29,7 +29,6 @@ import { HorseIcon } from './HorseIcon';
 import { SkateboardHalfIcon } from './SkateboardHalfIcon';
 
 const OVERLAY_COLOR = 'transparent';
-// const CARD_COLOR = '#BEE3F8';
 const CARD_COLOR = '#e5f3fc';
 const BORDER_CARD_COLOR_UNEQUIPPED = '#4299E1';
 const BORDER_CARD_COLOR_EQUIPPED = '#1A365D';
