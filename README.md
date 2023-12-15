@@ -1,5 +1,9 @@
 # Covey.Town
 
+## Deployed Application
+
+https://four02-covey-town.onrender.com/
+
 ## Group 402 instructions for running the project
 
 Download our code as a zip file, unzip it, and run `npm install` to install our project dependencies. Then, in the `townService` directory, run the command `npm start` to start the backend, and in another shell window, run the command `npm run dev` in the `frontend` directory to start the frontend. After these processes finish, open the localhost link to load into the town.
